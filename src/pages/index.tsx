@@ -1,9 +1,19 @@
-import Image from 'next/image'
-import { Inter } from 'next/font/google'
+// NextJs Imports
+import Image from "next/image";
+import { Inter } from "next/font/google";
+import { GetStaticProps, InferGetStaticPropsType } from "next";
 
-const inter = Inter({ subsets: ['latin'] })
+// I18n Imports
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { useTranslation } from "next-i18next";
 
-export default function Home() {
+const inter = Inter({ subsets: ["latin"] });
+
+export default function Home(
+  props: InferGetStaticPropsType<typeof getStaticProps>
+) {
+  const { t } = useTranslation("common");
+
   return (
     <main
       className={`flex min-h-screen flex-col items-center justify-between p-24 ${inter.className}`}
@@ -20,7 +30,7 @@ export default function Home() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            By{' '}
+            By{" "}
             <Image
               src="/vercel.svg"
               alt="Vercel Logo"
@@ -52,7 +62,7 @@ export default function Home() {
           rel="noopener noreferrer"
         >
           <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{' '}
+            Docs{" "}
             <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
               -&gt;
             </span>
@@ -69,7 +79,7 @@ export default function Home() {
           rel="noopener noreferrer"
         >
           <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{' '}
+            Learn{" "}
             <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
               -&gt;
             </span>
@@ -86,7 +96,7 @@ export default function Home() {
           rel="noopener noreferrer"
         >
           <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{' '}
+            Templates{" "}
             <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
               -&gt;
             </span>
@@ -103,16 +113,26 @@ export default function Home() {
           rel="noopener noreferrer"
         >
           <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{' '}
+            Deploy{" "}
             <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
               -&gt;
             </span>
           </h2>
           <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
+            {t(
+              "Instantly deploy your Next.js site to a shareable URL with Vercel."
+            )}
           </p>
         </a>
       </div>
     </main>
-  )
+  );
 }
+
+export const getStaticProps: GetStaticProps = async ({ locale }) => {
+  const props = await serverSideTranslations(locale || "en", ["common"]);
+
+  // console.log(props);
+
+  return { props: { hello: "hello", ...props } };
+};
