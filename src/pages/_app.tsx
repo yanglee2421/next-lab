@@ -1,6 +1,12 @@
-import '@/styles/globals.css'
-import type { AppProps } from 'next/app'
+// Styles Imports
+import "@/styles/globals.css";
 
-export default function App({ Component, pageProps }: AppProps) {
-  return <Component {...pageProps} />
-}
+// NextJs Imports
+import type { AppProps } from "next/app";
+
+// I18n Imports
+import { appWithTranslation } from "next-i18next";
+
+export default appWithTranslation(({ Component, pageProps }: AppProps) => {
+  return <Component {...pageProps} />;
+});
