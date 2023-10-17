@@ -7,12 +7,18 @@ import { GetStaticProps, InferGetStaticPropsType } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
 
+// Redux Imports
+import * as Redux from "@/redux";
+
 const inter = Inter({ subsets: ["latin"] });
 
 export default function Home(
   props: InferGetStaticPropsType<typeof getStaticProps>
 ) {
   const { t } = useTranslation("common");
+
+  const list = Redux.useAppSelector((s) => s.demo.list);
+  console.log(list);
 
   return (
     <main
