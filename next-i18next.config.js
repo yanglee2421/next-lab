@@ -1,3 +1,5 @@
+// @ts-check
+
 /** @type {import('next-i18next').UserConfig} */
 module.exports = {
   i18n: {
@@ -10,6 +12,7 @@ module.exports = {
   },
   nonExplicitSupportedLngs: true,
   // de, fr and en will be loaded as fallback languages for de-CH
+
   localePath:
     typeof window === "undefined"
       ? require("path").resolve("./public/locales")
