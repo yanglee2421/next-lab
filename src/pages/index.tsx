@@ -23,7 +23,7 @@ export default function Home(
 
   return (
     <main className={clsx(inter.className)}>
-      <h1>hello world</h1>
+      <h1 className="text-xl text-red-500">hello world</h1>
       <ul>
         <li>
           <button onClick={handleLink.bind(null, "token=link1")}>link 1</button>
