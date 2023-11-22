@@ -24,6 +24,7 @@ module.exports = {
   },
   localeStructure: "{lng}/{ns}",
 
-  debug: process.env.NODE_ENV === "development",
+  // debug: process.env.NODE_ENV === "development",
+  debug: false,
   reloadOnPrerender: process.env.NODE_ENV === "development",
 };

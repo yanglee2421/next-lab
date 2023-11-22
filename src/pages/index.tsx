@@ -9,6 +9,12 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 // Clsx Imports
 import clsx from "clsx";
 
+// Shopline Imports
+import Client, { shared, Oauth } from "@shoplinedev/appbridge";
+
+// React Imports
+import React from "react";
+
 const inter = Inter({ subsets: ["latin"] });
 
 export default function Home(
@@ -20,6 +26,19 @@ export default function Home(
   const handleLink = async (query: string) => {
     await router.replace({ query });
   };
+
+  React.useEffect(() => {
+    const app = Client.createApp({
+      appKey: "09f1af622812fe9d30e7a3ebb21b5717019928cd",
+      host: shared.getHost(),
+    });
+
+    Oauth.create(app).invoke({
+      scope: ["read_products"],
+      appKey: "09f1af622812fe9d30e7a3ebb21b5717019928cd",
+      redirectUri: "http://localhost:3000/api/hello",
+    });
+  }, []);
 
   return (
     <main className={clsx(inter.className)}>
