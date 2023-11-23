@@ -15,6 +15,9 @@ import Client, { shared, Oauth } from "@shoplinedev/appbridge";
 // React Imports
 import React from "react";
 
+// MUI Imports
+import { Button } from "@mui/material";
+
 const inter = Inter({ subsets: ["latin"] });
 
 export default function Home(
@@ -23,20 +26,30 @@ export default function Home(
   void props;
 
   const router = useRouter();
+
+  const shoplineAppRef = React.useRef<ReturnType<
+    typeof Client.createApp
+  > | null>(null);
+
   const handleLink = async (query: string) => {
     await router.replace({ query });
   };
 
-  React.useEffect(() => {
-    const app = Client.createApp({
-      appKey: "09f1af622812fe9d30e7a3ebb21b5717019928cd",
-      host: shared.getHost(),
-    });
+  const handleOauth = () => {
+    const app = shoplineAppRef.current;
+    if (!app) return;
 
     Oauth.create(app).invoke({
       scope: ["read_products"],
       appKey: "09f1af622812fe9d30e7a3ebb21b5717019928cd",
-      redirectUri: "http://localhost:3000/api/hello",
+      redirectUri: "http://localhost:3000/api/oauth",
+    });
+  };
+
+  React.useEffect(() => {
+    shoplineAppRef.current = Client.createApp({
+      appKey: "09f1af622812fe9d30e7a3ebb21b5717019928cd",
+      host: shared.getHost(),
     });
   }, []);
 
@@ -51,6 +64,9 @@ export default function Home(
           <button onClick={handleLink.bind(null, "")}>link clear</button>
         </li>
       </ul>
+      <Button onClick={handleOauth} variant="contained">
+        oauth
+      </Button>
     </main>
   );
 }
