@@ -10,7 +10,6 @@ import { appWithTranslation } from "next-i18next";
 
 // Provider Imports
 import { QueryProvider } from "@/api/provider";
-import { ReduxProvider } from "@/redux";
 import { ThemeProvider } from "@/theme";
 
 // Toast Imports
@@ -32,13 +31,11 @@ Router.events.on("routeChangeComplete", () => {
 
 export default appWithTranslation(({ Component, pageProps }: AppProps) => {
   return (
-    <ReduxProvider>
-      <QueryProvider>
-        <ThemeProvider>
-          <Toaster />
-          <Component {...pageProps} />
-        </ThemeProvider>
-      </QueryProvider>
-    </ReduxProvider>
+    <QueryProvider>
+      <Toaster />
+      <ThemeProvider>
+        <Component {...pageProps} />
+      </ThemeProvider>
+    </QueryProvider>
   );
 });

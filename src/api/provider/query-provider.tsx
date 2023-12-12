@@ -25,7 +25,7 @@ const queryClient = new QueryClient({
 
 // Persist client
 const persister = createSyncStoragePersister({
-  storage: sessionStorage,
+  storage: globalThis.sessionStorage,
   key: process.env.NEXT_PUBLIC_QUERY_PERSISTER_KEY,
 });
 persistQueryClient({
