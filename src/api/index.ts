@@ -18,7 +18,7 @@ axios.interceptors.request.use((config) => {
 function getTokenFromStorage(storage: Storage): string {
   try {
     const json = storage.getItem(authConfig.storageTokenKeyName);
-    return JSON.parse(json || "").accessToken;
+    return JSON.parse(json || "").state.accessToken;
   } catch (error) {
     console.error(error);
 

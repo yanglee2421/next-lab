@@ -69,6 +69,8 @@ import "../../styles/globals.css";
 // Plugins Imports
 import { QueryProvider } from "@/plugins/query";
 
+import "@/api";
+
 // ** Extend App Props with Emotion
 type ExtendedAppProps = AppProps & {
   Component: NextPage;
@@ -107,11 +109,13 @@ if (themeConfig.routingLoader) {
 const Guard = ({ children, authGuard, guestGuard }: GuardProps) => {
   if (guestGuard) {
     return <GuestGuard fallback={<Spinner />}>{children}</GuestGuard>;
-  } else if (!guestGuard && !authGuard) {
-    return <>{children}</>;
-  } else {
+  }
+
+  if (authGuard) {
     return <AuthGuard fallback={<Spinner />}>{children}</AuthGuard>;
   }
+
+  return <>{children}</>;
 };
 
 // ** Configure JSS & ClassName
