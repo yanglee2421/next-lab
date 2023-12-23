@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-const path = require('path')
+const path = require("path");
 
 /** @type {import('next').NextConfig} */
 
@@ -8,12 +8,16 @@ const path = require('path')
 module.exports = {
   trailingSlash: true,
   reactStrictMode: false,
-  webpack: config => {
+  webpack: (config) => {
     config.resolve.alias = {
       ...config.resolve.alias,
-      apexcharts: path.resolve(__dirname, './node_modules/apexcharts-clevision')
-    }
+      apexcharts: path.resolve(
+        __dirname,
+        "./node_modules/apexcharts-clevision"
+      ),
+      "@": path.resolve(__dirname, "./src"),
+    };
 
-    return config
-  }
-}
+    return config;
+  },
+};
