@@ -1,23 +1,19 @@
-const { i18n } = require("./next-i18next.config");
-const path = require("node:path");
+/* eslint-disable @typescript-eslint/no-var-requires */
+const path = require('path')
 
 /** @type {import('next').NextConfig} */
-const nextConfig = {
-  reactStrictMode: true,
-  eslint: {
-    // ignoreDuringBuilds: true,
-  },
-  typescript: {
-    // ignoreBuildErrors: true,
-  },
-  i18n,
-  webpack(config) {
+
+// Remove this if you're not using Fullcalendar features
+
+module.exports = {
+  trailingSlash: true,
+  reactStrictMode: false,
+  webpack: config => {
     config.resolve.alias = {
       ...config.resolve.alias,
-      "@": path.resolve(__dirname, "./src"),
-    };
-    return config;
-  },
-};
+      apexcharts: path.resolve(__dirname, './node_modules/apexcharts-clevision')
+    }
 
-module.exports = nextConfig;
+    return config
+  }
+}
