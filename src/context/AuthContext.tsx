@@ -16,28 +16,29 @@ import { AuthValuesType, LoginParams, ErrCallbackType } from "./types";
 // Query Imports
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
+// Store Imports
+import { useAuthStore } from "@/hooks/store";
+
 export function AuthProvider({ children }: React.PropsWithChildren) {
   // ** Hooks
   const router = useRouter();
+  const [accessToken, setAccessToken] = useAuthStore();
 
   // Query Hooks
   const queryClient = useQueryClient();
 
   const authQuery = useQuery({
-    queryKey: ["auth"],
+    queryKey: ["auth", accessToken],
     queryFn({ signal }) {
-      const storedToken =
-        sessionStorage.getItem(authConfig.storageTokenKeyName) ||
-        localStorage.getItem(authConfig.storageTokenKeyName) ||
-        "";
-
       return axios.get(authConfig.meEndpoint, {
         signal,
         headers: {
-          Authorization: storedToken,
+          Authorization: accessToken,
         },
       });
     },
+
+    enabled: Boolean(accessToken),
 
     retry: 1,
     retryDelay: 1000 * 2,
@@ -56,15 +57,7 @@ export function AuthProvider({ children }: React.PropsWithChildren) {
     },
     onSuccess(response, params) {
       // Remember me
-      const webStorage = params.rememberMe ? localStorage : sessionStorage;
-      webStorage.setItem(
-        authConfig.storageTokenKeyName,
-        response.data.accessToken
-      );
-
-      queryClient.invalidateQueries({
-        queryKey: ["auth"],
-      });
+      setAccessToken(response.data.accessToken, params.rememberMe);
     },
   });
 
@@ -99,7 +92,7 @@ export function AuthProvider({ children }: React.PropsWithChildren) {
   };
 
   const handleLogout = async () => {
-    localStorage.removeItem(authConfig.storageTokenKeyName);
+    setAccessToken("");
 
     queryClient.removeQueries({
       queryKey: ["auth"],
@@ -112,7 +105,7 @@ export function AuthProvider({ children }: React.PropsWithChildren) {
     <AuthContext.Provider
       value={{
         user: authQuery.data?.data.userData || null,
-        loading: authQuery.isPending,
+        loading: Boolean(accessToken) && authQuery.isPending,
         login: handleLogin,
         logout: handleLogout,
       }}
