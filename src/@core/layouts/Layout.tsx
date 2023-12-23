@@ -1,5 +1,5 @@
 // ** React Import
-import { useEffect, useRef } from "react";
+import React from "react";
 
 // ** Type Import
 import { LayoutProps } from "src/@core/layouts/types";
@@ -8,42 +8,48 @@ import { LayoutProps } from "src/@core/layouts/types";
 import VerticalLayout from "./VerticalLayout";
 import HorizontalLayout from "./HorizontalLayout";
 
-const Layout = (props: LayoutProps) => {
+export default function Layout(props: LayoutProps) {
   // ** Props
   const { hidden, children, settings, saveSettings } = props;
 
   // ** Ref
-  const isCollapsed = useRef(settings.navCollapsed);
+  const isCollapsed = React.useRef(settings.navCollapsed);
 
-  useEffect(() => {
-    if (!hidden) {
-      switch (Boolean(isCollapsed.current)) {
-        case true:
+  React.useEffect(() => {
+    if (hidden) {
+      settings.navCollapsed &&
+        void (() => {
           saveSettings({
             ...settings,
-            navCollapsed: true,
-            layout: settings.lastLayout,
+            navCollapsed: false,
+            layout: "vertical",
           });
-
-          isCollapsed.current = false;
-          break;
-
-        case false:
-          if (settings.lastLayout !== settings.layout) {
-            saveSettings({ ...settings, layout: settings.lastLayout });
-          }
-          break;
-
-        default:
-      }
+          isCollapsed.current = true;
+        })();
 
       return;
     }
 
-    if (settings.navCollapsed) {
-      saveSettings({ ...settings, navCollapsed: false, layout: "vertical" });
-      isCollapsed.current = true;
+    if (isCollapsed.current) {
+      isCollapsed.current = false;
+
+      saveSettings({
+        ...settings,
+        navCollapsed: true,
+        layout: settings.lastLayout,
+      });
+
+      return;
     }
+
+    if (settings.lastLayout === settings.layout) {
+      return;
+    }
+
+    saveSettings({
+      ...settings,
+      layout: settings.lastLayout,
+    });
   }, [hidden, settings, saveSettings]);
 
   if (settings.layout === "horizontal") {
@@ -51,6 +57,4 @@ const Layout = (props: LayoutProps) => {
   }
 
   return <VerticalLayout {...props}>{children}</VerticalLayout>;
-};
-
-export default Layout;
+}
