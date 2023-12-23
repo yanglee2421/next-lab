@@ -1,38 +1,43 @@
 // ** React Imports
-import { ReactNode, ReactElement, useEffect } from 'react'
+import React from "react";
 
 // ** Next Import
-import { useRouter } from 'next/router'
+import { useRouter } from "next/router";
 
 // ** Hooks Import
-import { useAuth } from 'src/hooks/useAuth'
+import { useAuth } from "src/hooks/useAuth";
 
 interface GuestGuardProps {
-  children: ReactNode
-  fallback: ReactElement | null
+  children: React.ReactNode;
+  fallback: React.ReactElement | null;
 }
 
-const GuestGuard = (props: GuestGuardProps) => {
-  const { children, fallback } = props
-  const auth = useAuth()
-  const router = useRouter()
+export default function GuestGuard(props: GuestGuardProps) {
+  // ** Props
+  const { children, fallback } = props;
 
-  useEffect(() => {
+  const auth = useAuth();
+  const router = useRouter();
+
+  const replace = router.replace;
+
+  React.useEffect(() => {
     if (!router.isReady) {
-      return
+      return;
     }
 
-    if (window.localStorage.getItem('userData')) {
-      router.replace('/')
+    if (auth.user) {
+      replace("/");
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [router.route])
+  }, [router.isReady, auth.user, replace]);
 
-  if (auth.loading || (!auth.loading && auth.user !== null)) {
-    return fallback
+  if (auth.loading) {
+    return <>{fallback}</>;
   }
 
-  return <>{children}</>
-}
+  if (auth.user) {
+    return <>{fallback}</>;
+  }
 
-export default GuestGuard
+  return <>{children}</>;
+}
