@@ -1,337 +1,447 @@
 // ** React Imports
-import { useState, ChangeEvent } from 'react'
+import { useState, ChangeEvent } from "react";
 
 // ** MUI Imports
-import Box from '@mui/material/Box'
-import Card from '@mui/material/Card'
-import Grid from '@mui/material/Grid'
-import Alert from '@mui/material/Alert'
-import Table from '@mui/material/Table'
-import Button from '@mui/material/Button'
-import Dialog from '@mui/material/Dialog'
-import Select from '@mui/material/Select'
-import Switch from '@mui/material/Switch'
-import Divider from '@mui/material/Divider'
-import MenuItem from '@mui/material/MenuItem'
-import TableRow from '@mui/material/TableRow'
-import { styled } from '@mui/material/styles'
-import TableCell from '@mui/material/TableCell'
-import TableBody from '@mui/material/TableBody'
-import TextField from '@mui/material/TextField'
-import CardHeader from '@mui/material/CardHeader'
-import Typography from '@mui/material/Typography'
-import AlertTitle from '@mui/material/AlertTitle'
-import InputLabel from '@mui/material/InputLabel'
-import CardContent from '@mui/material/CardContent'
-import DialogTitle from '@mui/material/DialogTitle'
-import FormControl from '@mui/material/FormControl'
-import DialogContent from '@mui/material/DialogContent'
-import DialogActions from '@mui/material/DialogActions'
-import LinearProgress from '@mui/material/LinearProgress'
-import TableContainer from '@mui/material/TableContainer'
-import FormControlLabel from '@mui/material/FormControlLabel'
-import DialogContentText from '@mui/material/DialogContentText'
+import Box from "@mui/material/Box";
+import Card from "@mui/material/Card";
+import Grid from "@mui/material/Grid";
+import Alert from "@mui/material/Alert";
+import Table from "@mui/material/Table";
+import Button from "@mui/material/Button";
+import Dialog from "@mui/material/Dialog";
+import Select from "@mui/material/Select";
+import Switch from "@mui/material/Switch";
+import Divider from "@mui/material/Divider";
+import MenuItem from "@mui/material/MenuItem";
+import TableRow from "@mui/material/TableRow";
+import { styled } from "@mui/material/styles";
+import TableCell from "@mui/material/TableCell";
+import TableBody from "@mui/material/TableBody";
+import TextField from "@mui/material/TextField";
+import CardHeader from "@mui/material/CardHeader";
+import Typography from "@mui/material/Typography";
+import AlertTitle from "@mui/material/AlertTitle";
+import InputLabel from "@mui/material/InputLabel";
+import CardContent from "@mui/material/CardContent";
+import DialogTitle from "@mui/material/DialogTitle";
+import FormControl from "@mui/material/FormControl";
+import DialogContent from "@mui/material/DialogContent";
+import DialogActions from "@mui/material/DialogActions";
+import LinearProgress from "@mui/material/LinearProgress";
+import TableContainer from "@mui/material/TableContainer";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import DialogContentText from "@mui/material/DialogContentText";
 
 // ** Icon Imports
-import Icon from 'src/@core/components/icon'
+import Icon from "src/@core/components/icon";
 
 // ** Third Party Imports
-import Payment from 'payment'
-import Cards, { Focused } from 'react-credit-cards'
+import Payment from "payment";
+import Cards, { Focused } from "react-credit-cards-2";
 
 // ** Custom Components
-import CustomChip from 'src/@core/components/mui/chip'
-import UserSubscriptionDialog from 'src/views/apps/user/view/UserSubscriptionDialog'
+import CustomChip from "src/@core/components/mui/chip";
+import UserSubscriptionDialog from "src/views/apps/user/view/UserSubscriptionDialog";
 
 // ** Util Import
-import { formatCVC, formatExpirationDate, formatCreditCardNumber } from 'src/@core/utils/format'
+import {
+  formatCVC,
+  formatExpirationDate,
+  formatCreditCardNumber,
+} from "src/@core/utils/format";
 
 // ** Types
-import { ThemeColor } from 'src/@core/layouts/types'
+import { ThemeColor } from "src/@core/layouts/types";
 
 // ** Styled Component Imports
-import CardWrapper from 'src/@core/styles/libs/react-credit-cards'
+import CardWrapper from "src/@core/styles/libs/react-credit-cards";
 
 // ** Styles Import
-import 'react-credit-cards/es/styles-compiled.css'
+import "react-credit-cards-2/es/styles-compiled.css";
 
 interface DataType {
-  name: string
-  imgSrc: string
-  imgAlt: string
-  cardCvc: string
-  expiryDate: string
-  cardNumber: string
-  cardStatus?: string
-  badgeColor?: ThemeColor
+  name: string;
+  imgSrc: string;
+  imgAlt: string;
+  cardCvc: string;
+  expiryDate: string;
+  cardNumber: string;
+  cardStatus?: string;
+  badgeColor?: ThemeColor;
 }
 
 // ** Styled <sup> component
-const Sup = styled('sup')(({ theme }) => ({
-  top: '0.2rem',
-  left: '-0.6rem',
-  position: 'absolute',
-  color: theme.palette.primary.main
-}))
+const Sup = styled("sup")(({ theme }) => ({
+  top: "0.2rem",
+  left: "-0.6rem",
+  position: "absolute",
+  color: theme.palette.primary.main,
+}));
 
 // ** Styled <sub> component
-const Sub = styled('sub')({
+const Sub = styled("sub")({
   fontWeight: 300,
-  fontSize: '1rem',
-  alignSelf: 'flex-end'
-})
+  fontSize: "1rem",
+  alignSelf: "flex-end",
+});
 
 const data: DataType[] = [
   {
-    cardCvc: '587',
-    name: 'Tom McBride',
-    expiryDate: '12/24',
-    imgAlt: 'Mastercard',
-    badgeColor: 'primary',
-    cardStatus: 'Primary',
-    cardNumber: '5577 0000 5577 9865',
-    imgSrc: '/images/logos/mastercard.png'
+    cardCvc: "587",
+    name: "Tom McBride",
+    expiryDate: "12/24",
+    imgAlt: "Mastercard",
+    badgeColor: "primary",
+    cardStatus: "Primary",
+    cardNumber: "5577 0000 5577 9865",
+    imgSrc: "/images/logos/mastercard.png",
   },
   {
-    cardCvc: '681',
-    imgAlt: 'Visa card',
-    expiryDate: '02/24',
-    name: 'Mildred Wagner',
-    cardNumber: '4532 3616 2070 5678',
-    imgSrc: '/images/logos/visa.png'
+    cardCvc: "681",
+    imgAlt: "Visa card",
+    expiryDate: "02/24",
+    name: "Mildred Wagner",
+    cardNumber: "4532 3616 2070 5678",
+    imgSrc: "/images/logos/visa.png",
   },
   {
-    cardCvc: '3845',
-    expiryDate: '08/20',
-    badgeColor: 'error',
-    cardStatus: 'Expired',
-    name: 'Lester Jennings',
-    imgAlt: 'American Express card',
-    cardNumber: '3700 000000 00002',
-    imgSrc: '/images/logos/american-express.png'
-  }
-]
+    cardCvc: "3845",
+    expiryDate: "08/20",
+    badgeColor: "error",
+    cardStatus: "Expired",
+    name: "Lester Jennings",
+    imgAlt: "American Express card",
+    cardNumber: "3700 000000 00002",
+    imgSrc: "/images/logos/american-express.png",
+  },
+];
 
 const UserViewBilling = () => {
   // ** States
-  const [cvc, setCvc] = useState<string>('')
-  const [name, setName] = useState<string>('')
-  const [focus, setFocus] = useState<Focused>()
-  const [cardId, setCardId] = useState<number>(0)
-  const [expiry, setExpiry] = useState<string>('')
-  const [cardNumber, setCardNumber] = useState<string>('')
-  const [dialogTitle, setDialogTitle] = useState<string>('Add')
-  const [openEditCard, setOpenEditCard] = useState<boolean>(false)
-  const [openAddressCard, setOpenAddressCard] = useState<boolean>(false)
-  const [openUpgradePlans, setOpenUpgradePlans] = useState<boolean>(false)
-  const [subscriptionDialogOpen, setSubscriptionDialogOpen] = useState<boolean>(false)
+  const [cvc, setCvc] = useState<string>("");
+  const [name, setName] = useState<string>("");
+  const [focus, setFocus] = useState<Focused>();
+  const [cardId, setCardId] = useState<number>(0);
+  const [expiry, setExpiry] = useState<string>("");
+  const [cardNumber, setCardNumber] = useState<string>("");
+  const [dialogTitle, setDialogTitle] = useState<string>("Add");
+  const [openEditCard, setOpenEditCard] = useState<boolean>(false);
+  const [openAddressCard, setOpenAddressCard] = useState<boolean>(false);
+  const [openUpgradePlans, setOpenUpgradePlans] = useState<boolean>(false);
+  const [subscriptionDialogOpen, setSubscriptionDialogOpen] =
+    useState<boolean>(false);
 
   // Handle Edit Card dialog and get card ID
   const handleEditCardClickOpen = (id: number) => {
-    setDialogTitle('Edit')
-    setCardId(id)
-    setCardNumber(data[id].cardNumber)
-    setName(data[id].name)
-    setCvc(data[id].cardCvc)
-    setExpiry(data[id].expiryDate)
-    setOpenEditCard(true)
-  }
+    setDialogTitle("Edit");
+    setCardId(id);
+    setCardNumber(data[id].cardNumber);
+    setName(data[id].name);
+    setCvc(data[id].cardCvc);
+    setExpiry(data[id].expiryDate);
+    setOpenEditCard(true);
+  };
 
   const handleAddCardClickOpen = () => {
-    setDialogTitle('Add')
-    setCardNumber('')
-    setName('')
-    setCvc('')
-    setExpiry('')
-    setOpenEditCard(true)
-  }
+    setDialogTitle("Add");
+    setCardNumber("");
+    setName("");
+    setCvc("");
+    setExpiry("");
+    setOpenEditCard(true);
+  };
 
   const handleEditCardClose = () => {
-    setDialogTitle('Add')
-    setCardNumber('')
-    setName('')
-    setCvc('')
-    setExpiry('')
-    setOpenEditCard(false)
-  }
+    setDialogTitle("Add");
+    setCardNumber("");
+    setName("");
+    setCvc("");
+    setExpiry("");
+    setOpenEditCard(false);
+  };
 
   // Handle Upgrade Plan dialog
-  const handleUpgradePlansClickOpen = () => setOpenUpgradePlans(true)
-  const handleUpgradePlansClose = () => setOpenUpgradePlans(false)
+  const handleUpgradePlansClickOpen = () => setOpenUpgradePlans(true);
+  const handleUpgradePlansClose = () => setOpenUpgradePlans(false);
 
-  const handleBlur = () => setFocus(undefined)
+  const handleBlur = () => setFocus(undefined);
 
   const handleInputChange = ({ target }: ChangeEvent<HTMLInputElement>) => {
-    if (target.name === 'number') {
-      target.value = formatCreditCardNumber(target.value, Payment)
-      setCardNumber(target.value)
-    } else if (target.name === 'expiry') {
-      target.value = formatExpirationDate(target.value)
-      setExpiry(target.value)
-    } else if (target.name === 'cvc') {
-      target.value = formatCVC(target.value, cardNumber, Payment)
-      setCvc(target.value)
+    if (target.name === "number") {
+      target.value = formatCreditCardNumber(target.value, Payment);
+      setCardNumber(target.value);
+    } else if (target.name === "expiry") {
+      target.value = formatExpirationDate(target.value);
+      setExpiry(target.value);
+    } else if (target.name === "cvc") {
+      target.value = formatCVC(target.value, cardNumber, Payment);
+      setCvc(target.value);
     }
-  }
+  };
 
   return (
     <Grid container spacing={6}>
       <Grid item xs={12}>
         <Card>
-          <CardHeader title='Current plan' />
+          <CardHeader title="Current plan" />
           <CardContent>
             <Grid container spacing={6}>
               <Grid item xs={12} md={6}>
                 <Box sx={{ mb: 4 }}>
-                  <Typography variant='body2'>
-                    Your Current Plan is{' '}
-                    <Typography component='span' sx={{ fontWeight: 600 }}>
+                  <Typography variant="body2">
+                    Your Current Plan is{" "}
+                    <Typography component="span" sx={{ fontWeight: 600 }}>
                       Basic
                     </Typography>
                   </Typography>
-                  <Typography variant='body2'>A simple start for everyone</Typography>
+                  <Typography variant="body2">
+                    A simple start for everyone
+                  </Typography>
                 </Box>
                 <Box sx={{ mb: 4 }}>
-                  <Typography variant='body2' sx={{ fontWeight: 600, color: 'text.primary' }}>
+                  <Typography
+                    variant="body2"
+                    sx={{ fontWeight: 600, color: "text.primary" }}
+                  >
                     Active until Dec 09, 2021
                   </Typography>
-                  <Typography variant='body2'>We will send you a notification upon Subscription expiration</Typography>
+                  <Typography variant="body2">
+                    We will send you a notification upon Subscription expiration
+                  </Typography>
                 </Box>
                 <div>
-                  <Box sx={{ display: 'flex', mb: 1, alignItems: 'center' }}>
-                    <Typography variant='body2' sx={{ mr: 4, fontWeight: 600, color: 'text.primary' }}>
+                  <Box sx={{ display: "flex", mb: 1, alignItems: "center" }}>
+                    <Typography
+                      variant="body2"
+                      sx={{ mr: 4, fontWeight: 600, color: "text.primary" }}
+                    >
                       $99 Per Month
                     </Typography>
-                    <CustomChip skin='light' size='small' label='Popular' color='primary' />
+                    <CustomChip
+                      skin="light"
+                      size="small"
+                      label="Popular"
+                      color="primary"
+                    />
                   </Box>
-                  <Typography variant='body2'>Standard plan for small to medium businesses</Typography>
+                  <Typography variant="body2">
+                    Standard plan for small to medium businesses
+                  </Typography>
                 </div>
               </Grid>
 
               <Grid item xs={12} md={6} sx={{ mt: [4, 4, 0] }}>
-                <Alert icon={false} severity='warning' sx={{ mb: 4 }}>
-                  <AlertTitle sx={{ fontWeight: 600, mb: theme => `${theme.spacing(1)} !important` }}>
+                <Alert icon={false} severity="warning" sx={{ mb: 4 }}>
+                  <AlertTitle
+                    sx={{
+                      fontWeight: 600,
+                      mb: (theme) => `${theme.spacing(1)} !important`,
+                    }}
+                  >
                     We need your attention!
                   </AlertTitle>
                   Your plan requires updates
                 </Alert>
-                <Box sx={{ display: 'flex', mb: 1.5, justifyContent: 'space-between' }}>
-                  <Typography variant='body2' sx={{ fontWeight: 600, color: 'text.primary' }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    mb: 1.5,
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <Typography
+                    variant="body2"
+                    sx={{ fontWeight: 600, color: "text.primary" }}
+                  >
                     Days
                   </Typography>
-                  <Typography variant='body2' sx={{ fontWeight: 600, color: 'text.primary' }}>
+                  <Typography
+                    variant="body2"
+                    sx={{ fontWeight: 600, color: "text.primary" }}
+                  >
                     26 of 30 Days
                   </Typography>
                 </Box>
-                <LinearProgress value={86.6666666} variant='determinate' sx={{ height: 10, borderRadius: '5px' }} />
-                <Typography variant='caption' sx={{ mt: 1.5, display: 'block' }}>
+                <LinearProgress
+                  value={86.6666666}
+                  variant="determinate"
+                  sx={{ height: 10, borderRadius: "5px" }}
+                />
+                <Typography
+                  variant="caption"
+                  sx={{ mt: 1.5, display: "block" }}
+                >
                   Your plan requires update
                 </Typography>
               </Grid>
 
-              <Grid item xs={12} sx={{ mt: 4, display: 'flex', flexWrap: 'wrap', alignItems: 'flex-start' }}>
-                <Button variant='contained' onClick={handleUpgradePlansClickOpen} sx={{ mr: 4, mb: [4, 0] }}>
+              <Grid
+                item
+                xs={12}
+                sx={{
+                  mt: 4,
+                  display: "flex",
+                  flexWrap: "wrap",
+                  alignItems: "flex-start",
+                }}
+              >
+                <Button
+                  variant="contained"
+                  onClick={handleUpgradePlansClickOpen}
+                  sx={{ mr: 4, mb: [4, 0] }}
+                >
                   Upgrade Plan
                 </Button>
-                <Button variant='outlined' color='error' onClick={() => setSubscriptionDialogOpen(true)}>
+                <Button
+                  variant="outlined"
+                  color="error"
+                  onClick={() => setSubscriptionDialogOpen(true)}
+                >
                   Cancel Subscription
                 </Button>
               </Grid>
             </Grid>
           </CardContent>
 
-          <UserSubscriptionDialog open={subscriptionDialogOpen} setOpen={setSubscriptionDialogOpen} />
+          <UserSubscriptionDialog
+            open={subscriptionDialogOpen}
+            setOpen={setSubscriptionDialogOpen}
+          />
 
           <Dialog
             open={openUpgradePlans}
             onClose={handleUpgradePlansClose}
-            aria-labelledby='user-view-plans'
-            aria-describedby='user-view-plans-description'
-            sx={{ '& .MuiPaper-root': { width: '100%', maxWidth: 650 } }}
+            aria-labelledby="user-view-plans"
+            aria-describedby="user-view-plans-description"
+            sx={{ "& .MuiPaper-root": { width: "100%", maxWidth: 650 } }}
           >
             <DialogTitle
-              id='user-view-plans'
+              id="user-view-plans"
               sx={{
-                textAlign: 'center',
-                fontSize: '1.5rem !important',
-                px: theme => [`${theme.spacing(5)} !important`, `${theme.spacing(15)} !important`],
-                pt: theme => [`${theme.spacing(8)} !important`, `${theme.spacing(12.5)} !important`]
+                textAlign: "center",
+                fontSize: "1.5rem !important",
+                px: (theme) => [
+                  `${theme.spacing(5)} !important`,
+                  `${theme.spacing(15)} !important`,
+                ],
+                pt: (theme) => [
+                  `${theme.spacing(8)} !important`,
+                  `${theme.spacing(12.5)} !important`,
+                ],
               }}
             >
               Upgrade Plan
             </DialogTitle>
 
-            <DialogContent sx={{ px: theme => [`${theme.spacing(5)} !important`, `${theme.spacing(15)} !important`] }}>
-              <DialogContentText variant='body2' sx={{ textAlign: 'center' }} id='user-view-plans-description'>
+            <DialogContent
+              sx={{
+                px: (theme) => [
+                  `${theme.spacing(5)} !important`,
+                  `${theme.spacing(15)} !important`,
+                ],
+              }}
+            >
+              <DialogContentText
+                variant="body2"
+                sx={{ textAlign: "center" }}
+                id="user-view-plans-description"
+              >
                 Choose the best plan for the user.
               </DialogContentText>
             </DialogContent>
 
             <DialogContent
               sx={{
-                display: 'flex',
-                alignItems: 'center',
-                flexWrap: ['wrap', 'nowrap'],
-                pt: theme => `${theme.spacing(2)} !important`,
-                pb: theme => `${theme.spacing(8)} !important`,
-                px: theme => [`${theme.spacing(5)} !important`, `${theme.spacing(15)} !important`]
+                display: "flex",
+                alignItems: "center",
+                flexWrap: ["wrap", "nowrap"],
+                pt: (theme) => `${theme.spacing(2)} !important`,
+                pb: (theme) => `${theme.spacing(8)} !important`,
+                px: (theme) => [
+                  `${theme.spacing(5)} !important`,
+                  `${theme.spacing(15)} !important`,
+                ],
               }}
             >
-              <FormControl fullWidth size='small' sx={{ mr: [0, 3], mb: [3, 0] }}>
-                <InputLabel id='user-view-plans-select-label'>Choose Plan</InputLabel>
+              <FormControl
+                fullWidth
+                size="small"
+                sx={{ mr: [0, 3], mb: [3, 0] }}
+              >
+                <InputLabel id="user-view-plans-select-label">
+                  Choose Plan
+                </InputLabel>
                 <Select
-                  label='Choose Plan'
-                  defaultValue='Standard'
-                  id='user-view-plans-select'
-                  labelId='user-view-plans-select-label'
+                  label="Choose Plan"
+                  defaultValue="Standard"
+                  id="user-view-plans-select"
+                  labelId="user-view-plans-select-label"
                 >
-                  <MenuItem value='Basic'>Basic - $0/month</MenuItem>
-                  <MenuItem value='Standard'>Standard - $99/month</MenuItem>
-                  <MenuItem value='Enterprise'>Enterprise - $499/month</MenuItem>
-                  <MenuItem value='Company'>Company - $999/month</MenuItem>
+                  <MenuItem value="Basic">Basic - $0/month</MenuItem>
+                  <MenuItem value="Standard">Standard - $99/month</MenuItem>
+                  <MenuItem value="Enterprise">
+                    Enterprise - $499/month
+                  </MenuItem>
+                  <MenuItem value="Company">Company - $999/month</MenuItem>
                 </Select>
               </FormControl>
-              <Button variant='contained' sx={{ minWidth: ['100%', 0] }}>
+              <Button variant="contained" sx={{ minWidth: ["100%", 0] }}>
                 Upgrade
               </Button>
             </DialogContent>
 
-            <Divider sx={{ m: '0 !important' }} />
+            <Divider sx={{ m: "0 !important" }} />
 
             <DialogContent
               sx={{
-                pt: theme => [`${theme.spacing(8)} !important`, `${theme.spacing(8)} !important`],
-                px: theme => [`${theme.spacing(5)} !important`, `${theme.spacing(15)} !important`],
-                pb: theme => [`${theme.spacing(8)} !important`, `${theme.spacing(12.5)} !important`]
+                pt: (theme) => [
+                  `${theme.spacing(8)} !important`,
+                  `${theme.spacing(8)} !important`,
+                ],
+                px: (theme) => [
+                  `${theme.spacing(5)} !important`,
+                  `${theme.spacing(15)} !important`,
+                ],
+                pb: (theme) => [
+                  `${theme.spacing(8)} !important`,
+                  `${theme.spacing(12.5)} !important`,
+                ],
               }}
             >
-              <Typography sx={{ fontWeight: 500, mb: 2, fontSize: '0.875rem' }}>
+              <Typography sx={{ fontWeight: 500, mb: 2, fontSize: "0.875rem" }}>
                 User current plan is standard plan
               </Typography>
               <Box
                 sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  flexWrap: ['wrap', 'nowrap'],
-                  justifyContent: 'space-between'
+                  display: "flex",
+                  alignItems: "center",
+                  flexWrap: ["wrap", "nowrap"],
+                  justifyContent: "space-between",
                 }}
               >
-                <Box sx={{ mr: 3, display: 'flex', ml: 2.4, position: 'relative' }}>
+                <Box
+                  sx={{ mr: 3, display: "flex", ml: 2.4, position: "relative" }}
+                >
                   <Sup>$</Sup>
                   <Typography
-                    variant='h3'
+                    variant="h3"
                     sx={{
                       mb: -1.2,
                       lineHeight: 1,
-                      color: 'primary.main',
-                      fontSize: '3rem !important'
+                      color: "primary.main",
+                      fontSize: "3rem !important",
                     }}
                   >
                     99
                   </Typography>
                   <Sub>/ month</Sub>
                 </Box>
-                <Button color='error' variant='outlined' sx={{ mt: 2 }} onClick={() => setSubscriptionDialogOpen(true)}>
+                <Button
+                  color="error"
+                  variant="outlined"
+                  sx={{ mt: 2 }}
+                  onClick={() => setSubscriptionDialogOpen(true)}
+                >
                   Cancel Subscription
                 </Button>
               </Box>
@@ -343,10 +453,14 @@ const UserViewBilling = () => {
       <Grid item xs={12}>
         <Card>
           <CardHeader
-            title='Payment Methods'
+            title="Payment Methods"
             action={
-              <Button variant='contained' onClick={handleAddCardClickOpen} sx={{ '& svg': { mr: 1 } }}>
-                <Icon icon='mdi:plus' fontSize='1.125rem' />
+              <Button
+                variant="contained"
+                onClick={handleAddCardClickOpen}
+                sx={{ "& svg": { mr: 1 } }}
+              >
+                <Icon icon="mdi:plus" fontSize="1.125rem" />
                 Add Card
               </Button>
             }
@@ -357,42 +471,59 @@ const UserViewBilling = () => {
                 key={index}
                 sx={{
                   p: 5,
-                  display: 'flex',
+                  display: "flex",
                   borderRadius: 1,
-                  flexDirection: ['column', 'row'],
-                  justifyContent: ['space-between'],
-                  alignItems: ['flex-start', 'center'],
+                  flexDirection: ["column", "row"],
+                  justifyContent: ["space-between"],
+                  alignItems: ["flex-start", "center"],
                   mb: index !== data.length - 1 ? 4 : undefined,
-                  border: theme => `1px solid ${theme.palette.divider}`
+                  border: (theme) => `1px solid ${theme.palette.divider}`,
                 }}
               >
                 <div>
-                  <img height='25' alt={item.imgAlt} src={item.imgSrc} />
-                  <Box sx={{ mt: 1, mb: 2.5, display: 'flex', alignItems: 'center' }}>
-                    <Typography sx={{ fontWeight: 600 }}>{item.name}</Typography>
+                  <img height="25" alt={item.imgAlt} src={item.imgSrc} />
+                  <Box
+                    sx={{
+                      mt: 1,
+                      mb: 2.5,
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Typography sx={{ fontWeight: 600 }}>
+                      {item.name}
+                    </Typography>
                     {item.cardStatus ? (
                       <CustomChip
-                        skin='light'
-                        size='small'
+                        skin="light"
+                        size="small"
                         sx={{ ml: 4 }}
                         label={item.cardStatus}
                         color={item.badgeColor}
                       />
                     ) : null}
                   </Box>
-                  <Typography variant='body2'>
-                    **** **** **** {item.cardNumber.substring(item.cardNumber.length - 4)}
+                  <Typography variant="body2">
+                    **** **** ****{" "}
+                    {item.cardNumber.substring(item.cardNumber.length - 4)}
                   </Typography>
                 </div>
 
-                <Box sx={{ mt: [3, 0], textAlign: ['start', 'end'] }}>
-                  <Button variant='outlined' sx={{ mr: 4 }} onClick={() => handleEditCardClickOpen(index)}>
+                <Box sx={{ mt: [3, 0], textAlign: ["start", "end"] }}>
+                  <Button
+                    variant="outlined"
+                    sx={{ mr: 4 }}
+                    onClick={() => handleEditCardClickOpen(index)}
+                  >
                     Edit
                   </Button>
-                  <Button variant='outlined' color='secondary'>
+                  <Button variant="outlined" color="secondary">
                     Delete
                   </Button>
-                  <Typography variant='caption' sx={{ mt: 4, display: 'block' }}>
+                  <Typography
+                    variant="caption"
+                    sx={{ mt: 4, display: "block" }}
+                  >
                     Card expires at {item.expiryDate}
                   </Typography>
                 </Box>
@@ -403,39 +534,54 @@ const UserViewBilling = () => {
           <Dialog
             open={openEditCard}
             onClose={handleEditCardClose}
-            aria-labelledby='user-view-billing-edit-card'
-            sx={{ '& .MuiPaper-root': { width: '100%', maxWidth: 650 } }}
-            aria-describedby='user-view-billing-edit-card-description'
+            aria-labelledby="user-view-billing-edit-card"
+            sx={{ "& .MuiPaper-root": { width: "100%", maxWidth: 650 } }}
+            aria-describedby="user-view-billing-edit-card-description"
           >
             <DialogTitle
-              id='user-view-billing-edit-card'
+              id="user-view-billing-edit-card"
               sx={{
-                textAlign: 'center',
-                fontSize: '1.5rem !important',
-                px: theme => [`${theme.spacing(5)} !important`, `${theme.spacing(15)} !important`],
-                pt: theme => [`${theme.spacing(8)} !important`, `${theme.spacing(12.5)} !important`]
+                textAlign: "center",
+                fontSize: "1.5rem !important",
+                px: (theme) => [
+                  `${theme.spacing(5)} !important`,
+                  `${theme.spacing(15)} !important`,
+                ],
+                pt: (theme) => [
+                  `${theme.spacing(8)} !important`,
+                  `${theme.spacing(12.5)} !important`,
+                ],
               }}
             >
               {dialogTitle} Card
             </DialogTitle>
             <DialogContent
               sx={{
-                pb: theme => `${theme.spacing(5)} !important`,
-                px: theme => [`${theme.spacing(5)} !important`, `${theme.spacing(15)} !important`]
+                pb: (theme) => `${theme.spacing(5)} !important`,
+                px: (theme) => [
+                  `${theme.spacing(5)} !important`,
+                  `${theme.spacing(15)} !important`,
+                ],
               }}
             >
               <DialogContentText
-                variant='body2'
-                id='user-view-billing-edit-card-description'
-                sx={{ textAlign: 'center', mb: 7 }}
+                variant="body2"
+                id="user-view-billing-edit-card-description"
+                sx={{ textAlign: "center", mb: 7 }}
               >
                 {dialogTitle} card for future billing
               </DialogContentText>
               <form>
                 <Grid container spacing={6}>
                   <Grid item xs={12}>
-                    <CardWrapper sx={{ '& .rccs': { m: '0 auto' } }}>
-                      <Cards cvc={cvc} focused={focus} expiry={expiry} name={name} number={cardNumber} />
+                    <CardWrapper sx={{ "& .rccs": { m: "0 auto" } }}>
+                      <Cards
+                        cvc={cvc}
+                        focused={focus}
+                        expiry={expiry}
+                        name={name}
+                        number={cardNumber}
+                      />
                     </CardWrapper>
                   </Grid>
                   <Grid item xs={12}>
@@ -443,75 +589,89 @@ const UserViewBilling = () => {
                       <Grid item xs={12}>
                         <TextField
                           fullWidth
-                          name='number'
+                          name="number"
                           value={cardNumber}
-                          autoComplete='off'
-                          label='Card Number'
+                          autoComplete="off"
+                          label="Card Number"
                           onBlur={handleBlur}
                           onChange={handleInputChange}
-                          placeholder='0000 0000 0000 0000'
-                          onFocus={e => setFocus(e.target.name as Focused)}
+                          placeholder="0000 0000 0000 0000"
+                          onFocus={(e) => setFocus(e.target.name as Focused)}
                         />
                       </Grid>
                       <Grid item xs={12} sm={8}>
                         <TextField
                           fullWidth
-                          name='name'
+                          name="name"
                           value={name}
-                          autoComplete='off'
+                          autoComplete="off"
                           onBlur={handleBlur}
-                          label='Name on Card'
-                          placeholder='John Doe'
-                          onChange={e => setName(e.target.value)}
-                          onFocus={e => setFocus(e.target.name as Focused)}
+                          label="Name on Card"
+                          placeholder="John Doe"
+                          onChange={(e) => setName(e.target.value)}
+                          onFocus={(e) => setFocus(e.target.name as Focused)}
                         />
                       </Grid>
                       <Grid item xs={12} sm={4}>
                         <TextField
                           fullWidth
-                          name='expiry'
-                          label='Expiry'
+                          name="expiry"
+                          label="Expiry"
                           value={expiry}
                           onBlur={handleBlur}
-                          placeholder='MM/YY'
+                          placeholder="MM/YY"
                           onChange={handleInputChange}
-                          inputProps={{ maxLength: '5' }}
-                          onFocus={e => setFocus(e.target.name as Focused)}
+                          inputProps={{ maxLength: "5" }}
+                          onFocus={(e) => setFocus(e.target.name as Focused)}
                         />
                       </Grid>
                       <Grid item xs={12} sm={8}>
                         <FormControl fullWidth>
-                          <InputLabel id='user-view-billing-edit-card-status-label'>Card Status</InputLabel>
+                          <InputLabel id="user-view-billing-edit-card-status-label">
+                            Card Status
+                          </InputLabel>
                           <Select
-                            label='Card Status'
-                            id='user-view-billing-edit-card-status'
-                            labelId='user-view-billing-edit-card-status-label'
-                            defaultValue={data[cardId].cardStatus ? data[cardId].cardStatus : ''}
+                            label="Card Status"
+                            id="user-view-billing-edit-card-status"
+                            labelId="user-view-billing-edit-card-status-label"
+                            defaultValue={
+                              data[cardId].cardStatus
+                                ? data[cardId].cardStatus
+                                : ""
+                            }
                           >
-                            <MenuItem value='Primary'>Primary</MenuItem>
-                            <MenuItem value='Expired'>Expired</MenuItem>
-                            <MenuItem value='Active'>Active</MenuItem>
+                            <MenuItem value="Primary">Primary</MenuItem>
+                            <MenuItem value="Expired">Expired</MenuItem>
+                            <MenuItem value="Active">Active</MenuItem>
                           </Select>
                         </FormControl>
                       </Grid>
                       <Grid item xs={12} sm={4}>
                         <TextField
                           fullWidth
-                          name='cvc'
-                          label='CVC'
+                          name="cvc"
+                          label="CVC"
                           value={cvc}
-                          autoComplete='off'
+                          autoComplete="off"
                           onBlur={handleBlur}
                           onChange={handleInputChange}
-                          onFocus={e => setFocus(e.target.name as Focused)}
-                          placeholder={Payment.fns.cardType(cardNumber) === 'amex' ? '1234' : '123'}
+                          onFocus={(e) => setFocus(e.target.name as Focused)}
+                          placeholder={
+                            Payment.fns.cardType(cardNumber) === "amex"
+                              ? "1234"
+                              : "123"
+                          }
                         />
                       </Grid>
                       <Grid item xs={12}>
                         <FormControlLabel
                           control={<Switch defaultChecked />}
-                          label='Save Card for future billing?'
-                          sx={{ '& .MuiTypography-root': { color: 'text.secondary' } }}
+                          label="Save Card for future billing?"
+                          sx={{
+                            "& .MuiTypography-root": {
+                              color: "text.secondary",
+                            },
+                          }}
                         />
                       </Grid>
                     </Grid>
@@ -521,15 +681,29 @@ const UserViewBilling = () => {
             </DialogContent>
             <DialogActions
               sx={{
-                justifyContent: 'center',
-                px: theme => [`${theme.spacing(5)} !important`, `${theme.spacing(15)} !important`],
-                pb: theme => [`${theme.spacing(8)} !important`, `${theme.spacing(12.5)} !important`]
+                justifyContent: "center",
+                px: (theme) => [
+                  `${theme.spacing(5)} !important`,
+                  `${theme.spacing(15)} !important`,
+                ],
+                pb: (theme) => [
+                  `${theme.spacing(8)} !important`,
+                  `${theme.spacing(12.5)} !important`,
+                ],
               }}
             >
-              <Button variant='contained' sx={{ mr: 2 }} onClick={handleEditCardClose}>
+              <Button
+                variant="contained"
+                sx={{ mr: 2 }}
+                onClick={handleEditCardClose}
+              >
                 Submit
               </Button>
-              <Button variant='outlined' color='secondary' onClick={handleEditCardClose}>
+              <Button
+                variant="outlined"
+                color="secondary"
+                onClick={handleEditCardClose}
+              >
                 Cancel
               </Button>
             </DialogActions>
@@ -540,9 +714,12 @@ const UserViewBilling = () => {
       <Grid item xs={12}>
         <Card>
           <CardHeader
-            title='Billing Address'
+            title="Billing Address"
             action={
-              <Button variant='contained' onClick={() => setOpenAddressCard(true)}>
+              <Button
+                variant="contained"
+                onClick={() => setOpenAddressCard(true)}
+              >
                 Edit Address
               </Button>
             }
@@ -551,24 +728,27 @@ const UserViewBilling = () => {
             <Grid container spacing={6}>
               <Grid item xs={12} lg={6}>
                 <TableContainer>
-                  <Table size='small' sx={{ width: '95%' }}>
+                  <Table size="small" sx={{ width: "95%" }}>
                     <TableBody
                       sx={{
-                        '& .MuiTableCell-root': {
+                        "& .MuiTableCell-root": {
                           border: 0,
                           pt: 2,
                           pb: 2.5,
-                          pl: '0 !important',
-                          pr: '0 !important',
-                          '&:first-of-type': {
-                            width: 148
-                          }
-                        }
+                          pl: "0 !important",
+                          pr: "0 !important",
+                          "&:first-of-type": {
+                            width: 148,
+                          },
+                        },
                       }}
                     >
                       <TableRow>
                         <TableCell>
-                          <Typography variant='subtitle2' sx={{ color: 'text.primary' }}>
+                          <Typography
+                            variant="subtitle2"
+                            sx={{ color: "text.primary" }}
+                          >
                             Company Name:
                           </Typography>
                         </TableCell>
@@ -576,7 +756,10 @@ const UserViewBilling = () => {
                       </TableRow>
                       <TableRow>
                         <TableCell>
-                          <Typography variant='subtitle2' sx={{ color: 'text.primary' }}>
+                          <Typography
+                            variant="subtitle2"
+                            sx={{ color: "text.primary" }}
+                          >
                             Billing Email:
                           </Typography>
                         </TableCell>
@@ -584,7 +767,10 @@ const UserViewBilling = () => {
                       </TableRow>
                       <TableRow>
                         <TableCell>
-                          <Typography variant='subtitle2' sx={{ color: 'text.primary' }}>
+                          <Typography
+                            variant="subtitle2"
+                            sx={{ color: "text.primary" }}
+                          >
                             Tax ID:
                           </Typography>
                         </TableCell>
@@ -592,7 +778,10 @@ const UserViewBilling = () => {
                       </TableRow>
                       <TableRow>
                         <TableCell>
-                          <Typography variant='subtitle2' sx={{ color: 'text.primary' }}>
+                          <Typography
+                            variant="subtitle2"
+                            sx={{ color: "text.primary" }}
+                          >
                             VAT Number:
                           </Typography>
                         </TableCell>
@@ -600,11 +789,16 @@ const UserViewBilling = () => {
                       </TableRow>
                       <TableRow>
                         <TableCell>
-                          <Typography variant='subtitle2' sx={{ color: 'text.primary' }}>
+                          <Typography
+                            variant="subtitle2"
+                            sx={{ color: "text.primary" }}
+                          >
                             Billing Address:
                           </Typography>
                         </TableCell>
-                        <TableCell>100 Water Plant Avenue, Building 1303 Wake Island</TableCell>
+                        <TableCell>
+                          100 Water Plant Avenue, Building 1303 Wake Island
+                        </TableCell>
                       </TableRow>
                     </TableBody>
                   </Table>
@@ -613,24 +807,27 @@ const UserViewBilling = () => {
 
               <Grid item xs={12} lg={6}>
                 <TableContainer>
-                  <Table size='small'>
+                  <Table size="small">
                     <TableBody
                       sx={{
-                        '& .MuiTableCell-root': {
+                        "& .MuiTableCell-root": {
                           border: 0,
                           pt: 2,
                           pb: 2.5,
-                          pl: '0 !important',
-                          pr: '0 !important',
-                          '&:first-of-type': {
-                            width: 148
-                          }
-                        }
+                          pl: "0 !important",
+                          pr: "0 !important",
+                          "&:first-of-type": {
+                            width: 148,
+                          },
+                        },
                       }}
                     >
                       <TableRow>
                         <TableCell>
-                          <Typography variant='subtitle2' sx={{ color: 'text.primary' }}>
+                          <Typography
+                            variant="subtitle2"
+                            sx={{ color: "text.primary" }}
+                          >
                             Contact:
                           </Typography>
                         </TableCell>
@@ -638,7 +835,10 @@ const UserViewBilling = () => {
                       </TableRow>
                       <TableRow>
                         <TableCell>
-                          <Typography variant='subtitle2' sx={{ color: 'text.primary' }}>
+                          <Typography
+                            variant="subtitle2"
+                            sx={{ color: "text.primary" }}
+                          >
                             Country:
                           </Typography>
                         </TableCell>
@@ -646,7 +846,10 @@ const UserViewBilling = () => {
                       </TableRow>
                       <TableRow>
                         <TableCell>
-                          <Typography variant='subtitle2' sx={{ color: 'text.primary' }}>
+                          <Typography
+                            variant="subtitle2"
+                            sx={{ color: "text.primary" }}
+                          >
                             State:
                           </Typography>
                         </TableCell>
@@ -654,7 +857,10 @@ const UserViewBilling = () => {
                       </TableRow>
                       <TableRow>
                         <TableCell>
-                          <Typography variant='subtitle2' sx={{ color: 'text.primary' }}>
+                          <Typography
+                            variant="subtitle2"
+                            sx={{ color: "text.primary" }}
+                          >
                             Zip Code:
                           </Typography>
                         </TableCell>
@@ -670,88 +876,149 @@ const UserViewBilling = () => {
           <Dialog
             open={openAddressCard}
             onClose={() => setOpenAddressCard(false)}
-            aria-labelledby='user-address-edit'
-            sx={{ '& .MuiPaper-root': { width: '100%', maxWidth: 650 } }}
-            aria-describedby='user-address-edit-description'
+            aria-labelledby="user-address-edit"
+            sx={{ "& .MuiPaper-root": { width: "100%", maxWidth: 650 } }}
+            aria-describedby="user-address-edit-description"
           >
             <DialogTitle
-              id='user-address-edit'
+              id="user-address-edit"
               sx={{
-                textAlign: 'center',
-                fontSize: '1.5rem !important',
-                px: theme => [`${theme.spacing(5)} !important`, `${theme.spacing(15)} !important`],
-                pt: theme => [`${theme.spacing(8)} !important`, `${theme.spacing(12.5)} !important`]
+                textAlign: "center",
+                fontSize: "1.5rem !important",
+                px: (theme) => [
+                  `${theme.spacing(5)} !important`,
+                  `${theme.spacing(15)} !important`,
+                ],
+                pt: (theme) => [
+                  `${theme.spacing(8)} !important`,
+                  `${theme.spacing(12.5)} !important`,
+                ],
               }}
             >
               Edit Address
             </DialogTitle>
             <DialogContent
               sx={{
-                pb: theme => `${theme.spacing(8)} !important`,
-                px: theme => [`${theme.spacing(5)} !important`, `${theme.spacing(15)} !important`]
+                pb: (theme) => `${theme.spacing(8)} !important`,
+                px: (theme) => [
+                  `${theme.spacing(5)} !important`,
+                  `${theme.spacing(15)} !important`,
+                ],
               }}
             >
-              <DialogContentText variant='body2' id='user-address-edit-description' sx={{ textAlign: 'center', mb: 7 }}>
+              <DialogContentText
+                variant="body2"
+                id="user-address-edit-description"
+                sx={{ textAlign: "center", mb: 7 }}
+              >
                 Edit Address for future billing
               </DialogContentText>
               <form>
                 <Grid container spacing={6}>
                   <Grid item xs={12} sm={6}>
-                    <TextField fullWidth defaultValue='ThemeSelection' label='Company Name' />
+                    <TextField
+                      fullWidth
+                      defaultValue="ThemeSelection"
+                      label="Company Name"
+                    />
                   </Grid>
                   <Grid item xs={12} sm={6}>
-                    <TextField fullWidth type='email' defaultValue='gertrude@gmail.com' label='Email' />
+                    <TextField
+                      fullWidth
+                      type="email"
+                      defaultValue="gertrude@gmail.com"
+                      label="Email"
+                    />
                   </Grid>
                   <Grid item xs={12} sm={6}>
-                    <TextField fullWidth defaultValue='TAX-875623' label='Tax ID' />
+                    <TextField
+                      fullWidth
+                      defaultValue="TAX-875623"
+                      label="Tax ID"
+                    />
                   </Grid>
                   <Grid item xs={12} sm={6}>
-                    <TextField fullWidth defaultValue='SDF754K77' label='VAT Number' />
+                    <TextField
+                      fullWidth
+                      defaultValue="SDF754K77"
+                      label="VAT Number"
+                    />
                   </Grid>
                   <Grid item xs={12}>
                     <TextField
                       fullWidth
                       multiline
                       minRows={2}
-                      label='Billing Address'
-                      defaultValue='100 Water Plant Avenue, Building 1303 Wake Island'
+                      label="Billing Address"
+                      defaultValue="100 Water Plant Avenue, Building 1303 Wake Island"
                     />
                   </Grid>
                   <Grid item xs={12} sm={6}>
-                    <TextField fullWidth defaultValue='+1(609) 933-44-22' label='Contact' />
+                    <TextField
+                      fullWidth
+                      defaultValue="+1(609) 933-44-22"
+                      label="Contact"
+                    />
                   </Grid>
                   <Grid item xs={12} sm={6}>
                     <FormControl fullWidth>
-                      <InputLabel id='country-select'>Country</InputLabel>
-                      <Select labelId='country-select' defaultValue='usa' label='Country'>
-                        <MenuItem value='usa'>USA</MenuItem>
-                        <MenuItem value='uk'>UK</MenuItem>
-                        <MenuItem value='france'>France</MenuItem>
-                        <MenuItem value='germany'>Germany</MenuItem>
-                        <MenuItem value='japan'>Japan</MenuItem>
+                      <InputLabel id="country-select">Country</InputLabel>
+                      <Select
+                        labelId="country-select"
+                        defaultValue="usa"
+                        label="Country"
+                      >
+                        <MenuItem value="usa">USA</MenuItem>
+                        <MenuItem value="uk">UK</MenuItem>
+                        <MenuItem value="france">France</MenuItem>
+                        <MenuItem value="germany">Germany</MenuItem>
+                        <MenuItem value="japan">Japan</MenuItem>
                       </Select>
                     </FormControl>
                   </Grid>
                   <Grid item xs={12} sm={6}>
-                    <TextField fullWidth defaultValue='Capholim' label='State' />
+                    <TextField
+                      fullWidth
+                      defaultValue="Capholim"
+                      label="State"
+                    />
                   </Grid>
                   <Grid item xs={12} sm={6}>
-                    <TextField fullWidth type='number' defaultValue='403114' label='Zip Code' />
+                    <TextField
+                      fullWidth
+                      type="number"
+                      defaultValue="403114"
+                      label="Zip Code"
+                    />
                   </Grid>
                 </Grid>
               </form>
             </DialogContent>
             <DialogActions
               sx={{
-                justifyContent: 'center',
-                px: theme => [`${theme.spacing(5)} !important`, `${theme.spacing(15)} !important`],
-                pb: theme => [`${theme.spacing(8)} !important`, `${theme.spacing(12.5)} !important`]
+                justifyContent: "center",
+                px: (theme) => [
+                  `${theme.spacing(5)} !important`,
+                  `${theme.spacing(15)} !important`,
+                ],
+                pb: (theme) => [
+                  `${theme.spacing(8)} !important`,
+                  `${theme.spacing(12.5)} !important`,
+                ],
               }}
             >
-              <Button variant='contained' sx={{ mr: 2 }} onClick={() => setOpenAddressCard(false)}>
+              <Button
+                variant="contained"
+                sx={{ mr: 2 }}
+                onClick={() => setOpenAddressCard(false)}
+              >
                 Submit
               </Button>
-              <Button variant='outlined' color='secondary' onClick={() => setOpenAddressCard(false)}>
+              <Button
+                variant="outlined"
+                color="secondary"
+                onClick={() => setOpenAddressCard(false)}
+              >
                 Cancel
               </Button>
             </DialogActions>
@@ -759,7 +1026,7 @@ const UserViewBilling = () => {
         </Card>
       </Grid>
     </Grid>
-  )
-}
+  );
+};
 
-export default UserViewBilling
+export default UserViewBilling;
