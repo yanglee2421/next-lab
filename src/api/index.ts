@@ -3,6 +3,10 @@ import axios from "axios";
 import authConfig from "@/configs/auth";
 
 axios.interceptors.request.use((config) => {
+  if (typeof window === "undefined") {
+    return config;
+  }
+
   const jwt = (() => {
     const sessionToken = getTokenFromStorage(sessionStorage);
     const localToken = getTokenFromStorage(localStorage);
@@ -10,7 +14,7 @@ axios.interceptors.request.use((config) => {
     return sessionToken || localToken;
   })();
 
-  config.headers.setAuthorization(`Bearer ${jwt}`, false);
+  jwt && config.headers.setAuthorization(`Bearer ${jwt}`, false);
 
   return config;
 });
