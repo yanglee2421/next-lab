@@ -7,11 +7,6 @@ import { useRouter } from "next/router";
 // ** Hooks Import
 import { useAuth } from "src/hooks/useAuth";
 
-interface GuestGuardProps {
-  children: React.ReactNode;
-  fallback: React.ReactElement | null;
-}
-
 export default function GuestGuard(props: GuestGuardProps) {
   // ** Props
   const { children, fallback } = props;
@@ -19,17 +14,21 @@ export default function GuestGuard(props: GuestGuardProps) {
   const auth = useAuth();
   const router = useRouter();
 
-  const replace = router.replace;
-
   React.useEffect(() => {
+    if (!auth.user) return;
+
     if (!router.isReady) {
       return;
     }
 
-    if (auth.user) {
-      replace("/");
-    }
-  }, [router.isReady, auth.user, replace]);
+    const timer = setTimeout(() => {
+      router.replace("/");
+    }, 16);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [auth.user, router]);
 
   if (auth.loading) {
     return <>{fallback}</>;
@@ -40,4 +39,9 @@ export default function GuestGuard(props: GuestGuardProps) {
   }
 
   return <>{children}</>;
+}
+
+export interface GuestGuardProps {
+  children: React.ReactNode;
+  fallback: React.ReactElement | null;
 }

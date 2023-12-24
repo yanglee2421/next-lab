@@ -8,28 +8,31 @@ import { useRouter } from "next/router";
 import { useAuth } from "src/hooks/useAuth";
 
 export default function AuthGuard(props: AuthGuardProps) {
+  // ** Props
   const { children, fallback } = props;
+
   const auth = useAuth();
   const router = useRouter();
 
-  const replace = router.replace;
-
   React.useEffect(() => {
+    if (auth.user) return;
+
     if (!router.isReady) {
       return;
     }
 
-    if (auth.user) return;
-
-    if (router.asPath !== "/") {
-      replace({
-        pathname: "/login",
-        query: { returnUrl: router.asPath },
+    const timer = setTimeout(() => {
+      router.replace("/login", {
+        query: {
+          returnUrl: router.asPath !== "/" ? router.asPath : void 0,
+        },
       });
-    }
+    }, 16);
 
-    replace("/login");
-  }, [router.isReady, auth.user, router.asPath, replace]);
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [router.isReady, auth.user, router]);
 
   if (auth.loading) {
     return <>{fallback}</>;

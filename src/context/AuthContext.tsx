@@ -20,29 +20,30 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAuthStore } from "@/hooks/store";
 
 export function AuthProvider({ children }: React.PropsWithChildren) {
-  // ** Hooks
   const router = useRouter();
-  const [accessToken, setAccessToken] = useAuthStore();
+  const authStore = useAuthStore();
 
   // Query Hooks
   const queryClient = useQueryClient();
 
   const authQuery = useQuery({
-    queryKey: ["auth", accessToken],
+    queryKey: ["auth"],
     queryFn({ signal }) {
       return axios.get(authConfig.meEndpoint, {
         signal,
         headers: {
-          Authorization: accessToken,
+          Authorization: authStore.accessToken,
         },
       });
     },
 
-    enabled: Boolean(accessToken),
+    enabled: Boolean(authStore.accessToken),
 
     retry: 1,
     retryDelay: 1000 * 2,
 
+    refetchInterval: 1000 * 60 * 30,
+    refetchIntervalInBackground: true,
     refetchOnMount: true,
     refetchOnReconnect: true,
     refetchOnWindowFocus: true,
@@ -57,7 +58,7 @@ export function AuthProvider({ children }: React.PropsWithChildren) {
     },
     onSuccess(response, params) {
       // Remember me
-      setAccessToken(response.data.accessToken, params.rememberMe);
+      authStore.setAccessToken(response.data.accessToken, params.rememberMe);
     },
   });
 
@@ -68,22 +69,20 @@ export function AuthProvider({ children }: React.PropsWithChildren) {
     mutation.mutate(params, {
       onError(err) {
         if (typeof errorCallback === "function") {
-          // @ts-ignore
           errorCallback(err);
         }
       },
       async onSuccess() {
         const returnURL = (() => {
-          const returnUrl = router.query.returnUrl;
-          if (!returnUrl) {
+          if (!router.query.returnUrl) {
             return "/";
           }
 
-          if (typeof returnUrl !== "string") {
+          if (typeof router.query.returnUrl !== "string") {
             return "/";
           }
 
-          return returnUrl;
+          return router.query.returnUrl;
         })();
 
         await router.replace(returnURL);
@@ -92,7 +91,7 @@ export function AuthProvider({ children }: React.PropsWithChildren) {
   };
 
   const handleLogout = async () => {
-    setAccessToken("");
+    authStore.clearAccessToken();
 
     queryClient.removeQueries({
       queryKey: ["auth"],
@@ -101,11 +100,27 @@ export function AuthProvider({ children }: React.PropsWithChildren) {
     await router.push("/login");
   };
 
+  React.useEffect(() => {
+    if (authQuery.isPending) {
+      return;
+    }
+
+    if (authQuery.isError) {
+      authStore.clearAccessToken();
+      return;
+    }
+
+    if (authQuery.isSuccess) {
+      authStore.updateAccessToken(authQuery.data.data.accessToken);
+      return;
+    }
+  }, [authQuery, authStore]);
+
   return (
     <AuthContext.Provider
       value={{
         user: authQuery.data?.data.userData || null,
-        loading: Boolean(accessToken) && authQuery.isPending,
+        loading: Boolean(authStore.accessToken) && authQuery.isPending,
         login: handleLogin,
         logout: handleLogout,
       }}

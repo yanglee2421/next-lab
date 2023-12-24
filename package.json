@@ -27,6 +27,7 @@
     "@fullcalendar/timegrid": "6.1.6",
     "@hookform/resolvers": "^3.3.2",
     "@iconify/react": "4.1.0",
+    "@mui/icons-material": "^5.15.1",
     "@mui/lab": "5.0.0-alpha.157",
     "@mui/material": "^5.15.1",
     "@mui/system": "^5.15.1",
@@ -97,6 +98,7 @@
     "@typescript-eslint/parser": "^6.15.0",
     "eslint": "^8.56.0",
     "eslint-config-next": "^14.0.4",
+    "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.5",
     "typescript": "^5.3.3"
   }

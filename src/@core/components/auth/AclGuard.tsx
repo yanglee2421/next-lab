@@ -32,21 +32,30 @@ export default function AclGuard(props: AclGuardProps) {
   const auth = useAuth();
   const router = useRouter();
 
-  const replace = router.replace;
-
   React.useEffect(() => {
     if (guestGuard) return;
-
-    if (router.route !== "/") {
-      return;
-    }
 
     if (!auth.user?.role) {
       return;
     }
 
-    replace(getHomeRoute(auth.user.role));
-  }, [guestGuard, auth.user, replace]);
+    if (!router.isReady) {
+      return;
+    }
+
+    if (router.route !== "/") {
+      return;
+    }
+
+    const role = auth.user.role;
+    const timer = setTimeout(() => {
+      router.replace(getHomeRoute(role));
+    }, 16);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [guestGuard, auth.user, router]);
 
   // User is not logged in
   if (!auth.user?.role) {
