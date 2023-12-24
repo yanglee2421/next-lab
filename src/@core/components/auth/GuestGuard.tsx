@@ -15,7 +15,7 @@ export default function GuestGuard(props: GuestGuardProps) {
   const { replace, ...router } = useRouter();
 
   React.useEffect(() => {
-    if (!auth.user) return;
+    if (!auth.user?.role) return;
 
     if (!router.isReady) {
       return;
@@ -28,7 +28,7 @@ export default function GuestGuard(props: GuestGuardProps) {
     return () => {
       clearTimeout(timer);
     };
-  }, [auth.user, router.isReady, replace]);
+  }, [auth.user?.role, router.isReady, replace]);
 
   if (auth.loading) {
     return <>{fallback}</>;

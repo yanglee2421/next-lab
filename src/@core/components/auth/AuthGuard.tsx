@@ -15,7 +15,7 @@ export default function AuthGuard(props: AuthGuardProps) {
   const { replace, ...router } = useRouter();
 
   React.useEffect(() => {
-    if (auth.user) return;
+    if (auth.user?.role) return;
 
     if (!router.isReady) {
       return;
@@ -33,7 +33,7 @@ export default function AuthGuard(props: AuthGuardProps) {
     return () => {
       clearTimeout(timer);
     };
-  }, [auth.user, router.isReady, router.asPath, replace]);
+  }, [auth.user?.role, router.isReady, router.asPath, replace]);
 
   console.log(auth.user);
 

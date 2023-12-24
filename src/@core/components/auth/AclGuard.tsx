@@ -55,7 +55,7 @@ export default function AclGuard(props: AclGuardProps) {
     return () => {
       clearTimeout(timer);
     };
-  }, [guestGuard, auth.user, router.isReady, router.route, replace]);
+  }, [guestGuard, auth.user?.role, router.isReady, router.route, replace]);
 
   // User is not logged in
   if (!auth.user?.role) {
