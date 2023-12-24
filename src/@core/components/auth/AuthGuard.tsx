@@ -12,7 +12,7 @@ export default function AuthGuard(props: AuthGuardProps) {
   const { children, fallback } = props;
 
   const auth = useAuth();
-  const router = useRouter();
+  const { replace, ...router } = useRouter();
 
   React.useEffect(() => {
     if (auth.user) return;
@@ -22,7 +22,7 @@ export default function AuthGuard(props: AuthGuardProps) {
     }
 
     const timer = setTimeout(() => {
-      router.replace("/login", {
+      replace("/login", {
         query: {
           returnUrl: router.asPath !== "/" ? router.asPath : void 0,
         },
@@ -32,7 +32,9 @@ export default function AuthGuard(props: AuthGuardProps) {
     return () => {
       clearTimeout(timer);
     };
-  }, [router.isReady, auth.user, router]);
+  }, [auth.user, router.isReady, router.asPath, replace]);
+
+  console.log(auth.user);
 
   if (auth.loading) {
     return <>{fallback}</>;

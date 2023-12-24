@@ -17,11 +17,36 @@ import { AuthValuesType, LoginParams, ErrCallbackType } from "./types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 // Store Imports
-import { useAuthStore } from "@/hooks/store";
+import { useShallow } from "zustand/react/shallow";
+import { useAuthLocalStore, useAuthSessionStore } from "@/hooks/store";
 
 export function AuthProvider({ children }: React.PropsWithChildren) {
   const router = useRouter();
-  const authStore = useAuthStore();
+
+  const { localToken, localClear, localSet, localUpdate } = useAuthLocalStore(
+    useShallow((store) => {
+      return {
+        localToken: store.accessToken,
+        localClear: store.clearAccessToken,
+        localSet: store.setAccessToken,
+        localUpdate: store.updateAccessToken,
+      };
+    })
+  );
+
+  const { sessionToken, sessionClear, sessionSet, sessionUpdate } =
+    useAuthSessionStore(
+      useShallow((store) => {
+        return {
+          sessionToken: store.accessToken,
+          sessionClear: store.clearAccessToken,
+          sessionSet: store.setAccessToken,
+          sessionUpdate: store.updateAccessToken,
+        };
+      })
+    );
+
+  const accessToken = localToken || sessionToken;
 
   // Query Hooks
   const queryClient = useQueryClient();
@@ -32,12 +57,12 @@ export function AuthProvider({ children }: React.PropsWithChildren) {
       return axios.get(authConfig.meEndpoint, {
         signal,
         headers: {
-          Authorization: authStore.accessToken,
+          Authorization: accessToken,
         },
       });
     },
 
-    enabled: Boolean(authStore.accessToken),
+    enabled: Boolean(accessToken),
 
     retry: 1,
     retryDelay: 1000 * 2,
@@ -58,7 +83,8 @@ export function AuthProvider({ children }: React.PropsWithChildren) {
     },
     onSuccess(response, params) {
       // Remember me
-      authStore.setAccessToken(response.data.accessToken, params.rememberMe);
+      const setToken = params.rememberMe ? localSet : sessionSet;
+      setToken(response.data.accessToken);
     },
   });
 
@@ -91,7 +117,8 @@ export function AuthProvider({ children }: React.PropsWithChildren) {
   };
 
   const handleLogout = async () => {
-    authStore.clearAccessToken();
+    localClear();
+    sessionClear();
 
     queryClient.removeQueries({
       queryKey: ["auth"],
@@ -106,21 +133,34 @@ export function AuthProvider({ children }: React.PropsWithChildren) {
     }
 
     if (authQuery.isError) {
-      authStore.clearAccessToken();
+      localClear();
+      sessionClear();
+
       return;
     }
 
     if (authQuery.isSuccess) {
-      authStore.updateAccessToken(authQuery.data.data.accessToken);
+      localUpdate(authQuery.data.data.accessToken);
+      sessionUpdate(authQuery.data.data.accessToken);
+
       return;
     }
-  }, [authQuery, authStore]);
+  }, [
+    authQuery.isPending,
+    authQuery.isError,
+    authQuery.isSuccess,
+    authQuery.data,
+    localClear,
+    sessionClear,
+    localUpdate,
+    sessionUpdate,
+  ]);
 
   return (
     <AuthContext.Provider
       value={{
         user: authQuery.data?.data.userData || null,
-        loading: Boolean(authStore.accessToken) && authQuery.isPending,
+        loading: Boolean(accessToken) && authQuery.isPending,
         login: handleLogin,
         logout: handleLogout,
       }}
