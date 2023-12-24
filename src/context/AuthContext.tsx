@@ -54,6 +54,8 @@ export function AuthProvider({ children }: React.PropsWithChildren) {
   const authQuery = useQuery({
     queryKey: ["auth"],
     queryFn({ signal }) {
+      console.log("auth query");
+
       return axios.get(authConfig.meEndpoint, {
         signal,
         headers: {
@@ -127,12 +129,33 @@ export function AuthProvider({ children }: React.PropsWithChildren) {
     await router.push("/login");
   };
 
+  const user = React.useMemo(() => {
+    if (authQuery.isPending) {
+      return null;
+    }
+
+    if (authQuery.isError) {
+      return null;
+    }
+
+    if (authQuery.isSuccess) {
+      return authQuery.data?.data.userData;
+    }
+  }, [
+    authQuery.isPending,
+    authQuery.isError,
+    authQuery.isSuccess,
+    authQuery.data,
+  ]);
+
   React.useEffect(() => {
     if (authQuery.isPending) {
       return;
     }
 
     if (authQuery.isError) {
+      console.error(authQuery.error);
+
       localClear();
       sessionClear();
 
@@ -148,6 +171,7 @@ export function AuthProvider({ children }: React.PropsWithChildren) {
   }, [
     authQuery.isPending,
     authQuery.isError,
+    authQuery.error,
     authQuery.isSuccess,
     authQuery.data,
     localClear,
@@ -159,7 +183,7 @@ export function AuthProvider({ children }: React.PropsWithChildren) {
   return (
     <AuthContext.Provider
       value={{
-        user: authQuery.data?.data.userData || null,
+        user,
         loading: Boolean(accessToken) && authQuery.isPending,
         login: handleLogin,
         logout: handleLogout,

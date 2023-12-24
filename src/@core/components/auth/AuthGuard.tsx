@@ -35,8 +35,6 @@ export default function AuthGuard(props: AuthGuardProps) {
     };
   }, [auth.user?.role, router.isReady, router.asPath, replace]);
 
-  console.log(auth.user);
-
   if (auth.loading) {
     return <>{fallback}</>;
   }
