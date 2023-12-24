@@ -22,7 +22,8 @@ export default function AuthGuard(props: AuthGuardProps) {
     }
 
     const timer = setTimeout(() => {
-      replace("/login", {
+      replace({
+        pathname: "/login",
         query: {
           returnUrl: router.asPath !== "/" ? router.asPath : void 0,
         },
