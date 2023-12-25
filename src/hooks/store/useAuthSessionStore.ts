@@ -39,6 +39,8 @@ export const useAuthSessionStore = create(
             return action;
           })();
 
+          if (!accessToken) return;
+
           return set({ accessToken });
         },
         clearAccessToken() {

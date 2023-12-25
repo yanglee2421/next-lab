@@ -51,11 +51,9 @@ export function AuthProvider({ children }: React.PropsWithChildren) {
   // Query Hooks
   const queryClient = useQueryClient();
 
-  const authQuery = useQuery({
+  const { refetch, ...authQuery } = useQuery({
     queryKey: ["auth"],
     queryFn({ signal }) {
-      console.log("auth query");
-
       return axios.get(authConfig.meEndpoint, {
         signal,
         headers: {
@@ -64,10 +62,12 @@ export function AuthProvider({ children }: React.PropsWithChildren) {
       });
     },
 
+    staleTime: 1000 * 30,
+
     enabled: Boolean(accessToken),
 
     retry: 1,
-    retryDelay: 1000 * 2,
+    retryDelay: 1000 * 1,
 
     refetchInterval: 1000 * 60 * 30,
     refetchIntervalInBackground: true,
