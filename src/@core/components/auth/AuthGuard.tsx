@@ -24,9 +24,12 @@ export default function AuthGuard(props: AuthGuardProps) {
     const timer = setTimeout(() => {
       replace({
         pathname: "/login",
-        query: {
-          returnUrl: router.asPath !== "/" ? router.asPath : void 0,
-        },
+        query:
+          router.asPath === "/"
+            ? void 0
+            : {
+                returnUrl: router.asPath,
+              },
       });
     }, 16);
 
@@ -39,7 +42,7 @@ export default function AuthGuard(props: AuthGuardProps) {
     return <>{fallback}</>;
   }
 
-  if (!auth.user) {
+  if (!auth.user?.role) {
     return <>{fallback}</>;
   }
 

@@ -34,7 +34,7 @@ export default function GuestGuard(props: GuestGuardProps) {
     return <>{fallback}</>;
   }
 
-  if (auth.user) {
+  if (auth.user?.role) {
     return <>{fallback}</>;
   }
 
