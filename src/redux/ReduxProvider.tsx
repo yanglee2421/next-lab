@@ -51,7 +51,7 @@ const reducer = persistReducer(
   {
     key: "import.meta.env.VITE_REDUX_PERSISTER_KEY",
     version: 1,
-    storage: createNoopStorage(true),
+    storage,
     blacklist: [
       sliceLoginSession.name,
       sliceAPI.reducerPath,
@@ -76,7 +76,7 @@ const reducer = persistReducer(
     [sliceLoginSession.name]: persistReducer(
       {
         key: sliceLoginSession.name,
-        storage: createNoopStorage(false),
+        storage: session,
         blacklist: [],
       },
       sliceLoginSession.reducer
@@ -113,22 +113,3 @@ type RootState = ReturnType<typeof store.getState>;
 type AppDispatch = typeof store.dispatch;
 export type UseAppDispatch = () => AppDispatch;
 export type UseAppSelector = TypedUseSelectorHook<RootState>;
-
-function createNoopStorage(useLocal: boolean) {
-  if (typeof window === "undefined") {
-    return {
-      async getItem(key: string) {
-        return key;
-      },
-      async setItem(key: string, value: string) {
-        void key;
-        return value;
-      },
-      async removeItem(key: string) {
-        return key;
-      },
-    };
-  }
-
-  return useLocal ? storage : session;
-}
