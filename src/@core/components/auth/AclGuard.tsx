@@ -22,7 +22,7 @@ import BlankLayout from "src/@core/layouts/BlankLayout";
 import { useAuth } from "src/hooks/useAuth";
 
 // ** Util Import
-import getHomeRoute from "src/layouts/components/acl/getHomeRoute";
+import { getHomeRoute } from "src/layouts/components/acl/getHomeRoute";
 
 export default function AclGuard(props: AclGuardProps) {
   // ** Props

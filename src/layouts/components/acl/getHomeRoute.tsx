@@ -1,9 +1,12 @@
 /**
  *  Set Home URL based on User Roles
  */
-const getHomeRoute = (role: string) => {
-  if (role === 'client') return '/acl'
-  else return '/dashboards/analytics'
-}
+export function getHomeRoute(role: string) {
+  switch (role) {
+    case "client":
+      return "/acl";
 
-export default getHomeRoute
+    default:
+      return "/dashboards/analytics";
+  }
+}
