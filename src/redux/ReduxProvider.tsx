@@ -28,12 +28,12 @@ import { sliceTheme } from "./sliceTheme";
 import { sliceAPI } from "./sliceAPI";
 
 // ** Reducers
-import chat from "src/store/apps/chat";
-import user from "src/store/apps/user";
-import email from "src/store/apps/email";
-import invoice from "src/store/apps/invoice";
-import calendar from "src/store/apps/calendar";
-import permissions from "src/store/apps/permissions";
+import chat from "./apps/chat";
+import user from "./apps/user";
+import email from "./apps/email";
+import invoice from "./apps/invoice";
+import calendar from "./apps/calendar";
+import permissions from "./apps/permissions";
 
 export function ReduxProvider(props: React.PropsWithChildren) {
   // ** Props
@@ -109,7 +109,7 @@ setupListeners(store.dispatch);
 const persistor = persistStore(store);
 
 // Hooks Types
-type RootState = ReturnType<typeof store.getState>;
-type AppDispatch = typeof store.dispatch;
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;
 export type UseAppDispatch = () => AppDispatch;
 export type UseAppSelector = TypedUseSelectorHook<RootState>;

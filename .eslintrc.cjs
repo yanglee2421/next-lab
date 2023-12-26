@@ -30,7 +30,6 @@ module.exports = {
     "/src/pages/ticket",
     "/src/pages/ui",
     "/src/pages/user",
-    "/src/store/apps",
     "/src/types",
     "/src/views/ui",
     "/src/views/table",
