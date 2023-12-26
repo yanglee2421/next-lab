@@ -10,29 +10,26 @@ import {
  * We have just shown Admin and Client rules for demo purpose where
  * admin can manage everything and client can just visit ACL page
  */
-export function buildAbilityFor(role: number): AppAbility {
+export function buildAbilityFor(role: string): AppAbility {
   const acl = new AbilityBuilder<AppAbility>(createMongoAbility);
 
   switch (role) {
     // Admin
-    case 2:
+    case "admin":
       acl.can("manage", "all");
       break;
 
     // User
-    case 1:
-      acl.can("read", "all");
+    case "client":
       acl.can("read", "acl-page");
       acl.can("create", "ticket");
-      acl.cannot("read", "page-billing-plan");
+      acl.cannot("read", "fallback");
       acl.cannot("update", "subscription");
       break;
 
     // Visitor
     default:
-      acl.can("read", "all");
-      acl.cannot("read", "page-billing-plan");
-      acl.cannot("update", "subscription");
+      acl.cannot("read", "fallback");
   }
 
   return acl.build();

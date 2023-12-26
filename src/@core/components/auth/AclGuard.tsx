@@ -67,7 +67,7 @@ export default function AclGuard(props: AclGuardProps) {
   }
 
   // Check the access of current user and render pages
-  const ability = buildAbilityFor(auth.user.role, aclAbilities.subject);
+  const ability = buildAbilityFor(auth.user.role);
 
   if (ability.can(aclAbilities.action, aclAbilities.subject)) {
     return (
