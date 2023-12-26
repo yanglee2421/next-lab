@@ -8,8 +8,7 @@ import type { NextPage } from "next";
 import type { AppProps } from "next/app";
 
 // ** Store Imports
-import { store } from "src/store";
-import { Provider } from "react-redux";
+import { ReduxProvider } from "src/redux";
 
 // ** Loader Import
 import NProgress from "nprogress";
@@ -71,28 +70,6 @@ import { QueryProvider } from "@/plugins/query";
 
 import "@/api";
 
-// ** Extend App Props with Emotion
-type ExtendedAppProps = AppProps & {
-  Component: NextPage;
-  emotionCache: EmotionCache;
-};
-
-type GuardProps = {
-  authGuard: boolean;
-  guestGuard: boolean;
-  children: ReactNode;
-};
-
-export default function AppRoot(props: ExtendedAppProps) {
-  return (
-    <QueryProvider>
-      <App {...props}></App>
-    </QueryProvider>
-  );
-}
-
-const clientSideEmotionCache = createEmotionCache();
-
 // ** Pace Loader
 if (themeConfig.routingLoader) {
   Router.events.on("routeChangeStart", () => {
@@ -106,20 +83,17 @@ if (themeConfig.routingLoader) {
   });
 }
 
-const Guard = ({ children, authGuard, guestGuard }: GuardProps) => {
-  if (guestGuard) {
-    return <GuestGuard fallback={<Spinner />}>{children}</GuestGuard>;
-  }
-
-  if (authGuard) {
-    return <AuthGuard fallback={<Spinner />}>{children}</AuthGuard>;
-  }
-
-  return <>{children}</>;
-};
+export default function AppRoot(props: ExtendedAppProps) {
+  return (
+    <QueryProvider>
+      <App {...props}></App>
+    </QueryProvider>
+  );
+}
 
 // ** Configure JSS & ClassName
-const App = (props: ExtendedAppProps) => {
+function App(props: ExtendedAppProps) {
+  // ** Props
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
 
   // Variables
@@ -131,15 +105,12 @@ const App = (props: ExtendedAppProps) => {
     ));
 
   const setConfig = Component.setConfig ?? undefined;
-
   const authGuard = Component.authGuard ?? true;
-
   const guestGuard = Component.guestGuard ?? false;
-
   const aclAbilities = Component.acl ?? defaultACLObj;
 
   return (
-    <Provider store={store}>
+    <ReduxProvider>
       <CacheProvider value={emotionCache}>
         <Head>
           <title>{`${themeConfig.templateName} - Material Design React Admin Template`}</title>
@@ -184,6 +155,35 @@ const App = (props: ExtendedAppProps) => {
           </SettingsProvider>
         </AuthProvider>
       </CacheProvider>
-    </Provider>
+    </ReduxProvider>
   );
+}
+
+const clientSideEmotionCache = createEmotionCache();
+
+function Guard(props: GuardProps) {
+  // ** Props
+  const { children, authGuard, guestGuard } = props;
+
+  if (guestGuard) {
+    return <GuestGuard fallback={<Spinner />}>{children}</GuestGuard>;
+  }
+
+  if (authGuard) {
+    return <AuthGuard fallback={<Spinner />}>{children}</AuthGuard>;
+  }
+
+  return <>{children}</>;
+}
+
+// ** Extend App Props with Emotion
+type ExtendedAppProps = AppProps & {
+  Component: NextPage;
+  emotionCache: EmotionCache;
+};
+
+type GuardProps = {
+  authGuard: boolean;
+  guestGuard: boolean;
+  children: ReactNode;
 };

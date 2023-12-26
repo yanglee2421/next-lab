@@ -51,7 +51,7 @@ export function AuthProvider({ children }: React.PropsWithChildren) {
   // Query Hooks
   const queryClient = useQueryClient();
 
-  const { refetch, ...authQuery } = useQuery({
+  const authQuery = useQuery({
     queryKey: ["auth"],
     queryFn({ signal }) {
       return axios.get(authConfig.meEndpoint, {
@@ -76,7 +76,7 @@ export function AuthProvider({ children }: React.PropsWithChildren) {
     refetchOnWindowFocus: true,
   });
 
-  const mutation = useMutation<any, Error, LoginParams>({
+  const mutation = useMutation<unknown, Error, LoginParams>({
     mutationFn(params) {
       return axios.post(authConfig.loginEndpoint, params);
     },
@@ -86,6 +86,8 @@ export function AuthProvider({ children }: React.PropsWithChildren) {
     onSuccess(response, params) {
       // Remember me
       const setToken = params.rememberMe ? localSet : sessionSet;
+
+      // @ts-ignore
       setToken(response.data.accessToken);
     },
   });
