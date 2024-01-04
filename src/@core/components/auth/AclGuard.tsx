@@ -33,12 +33,19 @@ export default function AclGuard(props: AclGuardProps) {
   const { replace, ...router } = useRouter();
 
   React.useEffect(() => {
-    if (guestGuard) return;
-
-    if (!auth.user?.role) {
+    // Allow passage if logged in guest guard disabled
+    if (guestGuard) {
       return;
     }
 
+    const role = auth.user?.role;
+
+    // Allow passage if logged in
+    if (!role) {
+      return;
+    }
+
+    // Redirect route when not Logged in
     if (!router.isReady) {
       return;
     }
@@ -47,7 +54,6 @@ export default function AclGuard(props: AclGuardProps) {
       return;
     }
 
-    const role = auth.user.role;
     const timer = setTimeout(() => {
       replace(getHomeRoute(role));
     }, 16);

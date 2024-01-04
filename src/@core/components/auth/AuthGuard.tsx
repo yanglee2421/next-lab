@@ -15,8 +15,12 @@ export default function AuthGuard(props: AuthGuardProps) {
   const { replace, ...router } = useRouter();
 
   React.useEffect(() => {
-    if (auth.user?.role) return;
+    // Allow passage if logged in
+    if (auth.user?.role) {
+      return;
+    }
 
+    // Redirect route when not Logged in
     if (!router.isReady) {
       return;
     }

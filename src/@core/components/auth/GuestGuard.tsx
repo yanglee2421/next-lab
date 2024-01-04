@@ -15,8 +15,12 @@ export default function GuestGuard(props: GuestGuardProps) {
   const { replace, ...router } = useRouter();
 
   React.useEffect(() => {
-    if (!auth.user?.role) return;
+    // Passed if not logged in
+    if (!auth.user?.role) {
+      return;
+    }
 
+    // Redirect route when Logged in
     if (!router.isReady) {
       return;
     }
