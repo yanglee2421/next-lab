@@ -55,13 +55,32 @@ export default function AclGuard(props: AclGuardProps) {
     }
 
     const timer = setTimeout(() => {
-      replace(getHomeRoute(role));
+      const returnURL = (() => {
+        if (!router.query.returnUrl) {
+          return getHomeRoute(role);
+        }
+
+        if (typeof router.query.returnUrl === "string") {
+          return router.query.returnUrl;
+        }
+
+        return getHomeRoute(role);
+      })();
+
+      replace(returnURL);
     }, 16);
 
     return () => {
       clearTimeout(timer);
     };
-  }, [guestGuard, auth.user?.role, router.isReady, router.route, replace]);
+  }, [
+    guestGuard,
+    auth.user?.role,
+    router.isReady,
+    router.route,
+    router.query.returnUrl,
+    replace,
+  ]);
 
   // User is not logged in
   if (!auth.user?.role) {

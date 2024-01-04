@@ -7,6 +7,9 @@ import { useRouter } from "next/router";
 // ** Hooks Import
 import { useAuth } from "src/hooks/useAuth";
 
+// ** Util Import
+import { getHomeRoute } from "src/layouts/components/acl/getHomeRoute";
+
 export default function GuestGuard(props: GuestGuardProps) {
   // ** Props
   const { children, fallback } = props;
@@ -15,8 +18,10 @@ export default function GuestGuard(props: GuestGuardProps) {
   const { replace, ...router } = useRouter();
 
   React.useEffect(() => {
+    const role = auth.user?.role;
+
     // Passed if not logged in
-    if (!auth.user?.role) {
+    if (!role) {
       return;
     }
 
@@ -26,13 +31,25 @@ export default function GuestGuard(props: GuestGuardProps) {
     }
 
     const timer = setTimeout(() => {
-      replace("/");
+      const returnURL = (() => {
+        if (!router.query.returnUrl) {
+          return getHomeRoute(role);
+        }
+
+        if (typeof router.query.returnUrl === "string") {
+          return router.query.returnUrl;
+        }
+
+        return getHomeRoute(role);
+      })();
+
+      replace(returnURL);
     }, 16);
 
     return () => {
       clearTimeout(timer);
     };
-  }, [auth.user?.role, router.isReady, replace]);
+  }, [auth.user?.role, router.isReady, router.query.returnUrl, replace]);
 
   if (auth.loading) {
     return <>{fallback}</>;
