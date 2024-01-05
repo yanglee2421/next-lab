@@ -16,7 +16,7 @@ import InputAdornment from "@mui/material/InputAdornment";
 import { useForm, Controller } from "react-hook-form";
 
 // ** Styles Import
-import "react-credit-cards-2/es/styles-compiled.css";
+import "react-credit-cards-2/dist/es/styles-compiled.css";
 
 const defaultValues = {
   companyName: "",

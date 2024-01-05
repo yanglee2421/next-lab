@@ -32,7 +32,7 @@ import {
 import CardWrapper from "src/@core/styles/libs/react-credit-cards";
 
 // ** Styles Import
-import "react-credit-cards-2/es/styles-compiled.css";
+import "react-credit-cards-2/dist/es/styles-compiled.css";
 
 // ** Icon Imports
 import Icon from "src/@core/components/icon";

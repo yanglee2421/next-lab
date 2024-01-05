@@ -31,7 +31,7 @@ import {
 } from "src/@core/utils/format";
 
 // ** Styles Import
-import "react-credit-cards-2/es/styles-compiled.css";
+import "react-credit-cards-2/dist/es/styles-compiled.css";
 
 const data: CustomRadioIconsData[] = [
   {

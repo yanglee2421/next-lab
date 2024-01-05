@@ -57,7 +57,7 @@ import { ThemeColor } from "src/@core/layouts/types";
 import CardWrapper from "src/@core/styles/libs/react-credit-cards";
 
 // ** Styles Import
-import "react-credit-cards-2/es/styles-compiled.css";
+import "react-credit-cards-2/dist/es/styles-compiled.css";
 
 interface DataType {
   name: string;
