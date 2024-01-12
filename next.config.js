@@ -7,16 +7,15 @@ const path = require("path");
 
 module.exports = {
   trailingSlash: true,
-  reactStrictMode: false,
-  webpack: (config) => {
-    config.resolve.alias = {
-      ...config.resolve.alias,
+  reactStrictMode: true,
+  webpack(config) {
+    Object.assign(config.resolve.alias, {
       apexcharts: path.resolve(
         __dirname,
         "./node_modules/apexcharts-clevision"
       ),
       "@": path.resolve(__dirname, "./src"),
-    };
+    });
 
     return config;
   },
@@ -25,5 +24,17 @@ module.exports = {
   },
   eslint: {
     ignoreDuringBuilds: false,
+  },
+  rewrites() {
+    return [
+      // {
+      //   source: "/wd/:slug*",
+      //   destination: `${process.env.NEXT_PUBLIC_WARP_BASEURL}/wd/:slug*`,
+      // },
+    ];
+  },
+  i18n: {
+    defaultLocale: "en_US",
+    locales: ["en_US", "zh_CN"],
   },
 };
