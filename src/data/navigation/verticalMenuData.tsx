@@ -11,11 +11,6 @@ const verticalMenuData = (): VerticalMenuDataType[] => [
     label: 'About',
     href: '/about',
     icon: 'ri-information-line'
-  },
-  {
-    label: 'About',
-    href: '/about',
-    icon: 'ri-information-line'
   }
 ]
 

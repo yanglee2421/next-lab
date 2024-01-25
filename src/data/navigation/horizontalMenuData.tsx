@@ -11,11 +11,6 @@ const horizontalMenuData = (): HorizontalMenuDataType[] => [
     label: 'About',
     href: '/about',
     icon: 'ri-information-line'
-  },
-  {
-    label: 'About11',
-    href: '/about',
-    icon: 'ri-information-line'
   }
 ]
 
