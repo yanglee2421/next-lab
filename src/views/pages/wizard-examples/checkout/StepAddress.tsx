@@ -1,339 +1,278 @@
-// ** React Imports
-import { ChangeEvent, useState } from 'react'
+// React Imports
+import { useState } from 'react'
+import type { ChangeEvent } from 'react'
 
-// ** Next Import
+// Next Imports
 import Link from 'next/link'
 
-// ** MUI Imports
-import Box from '@mui/material/Box'
+// MUI Imports
 import Grid from '@mui/material/Grid'
-import Button from '@mui/material/Button'
-import Divider from '@mui/material/Divider'
 import Typography from '@mui/material/Typography'
+import Chip from '@mui/material/Chip'
+import Divider from '@mui/material/Divider'
+import Button from '@mui/material/Button'
 import CardContent from '@mui/material/CardContent'
-import { Theme, useTheme } from '@mui/material/styles'
-import useMediaQuery from '@mui/material/useMediaQuery'
+import { styled } from '@mui/material/styles'
+import type { TypographyProps } from '@mui/material/Typography'
+import type { ButtonProps } from '@mui/material/Button'
 
-// ** Type Imports
-import {
-  CustomRadioBasicData,
-  CustomRadioIconsData,
-  CustomRadioIconsProps
-} from 'src/@core/components/custom-radio/types'
+// Third-party Imports
+import classnames from 'classnames'
 
-// ** Custom Components Imports
-import CustomChip from 'src/@core/components/mui/chip'
-import CustomRadioBasic from 'src/@core/components/custom-radio/basic'
-import CustomRadioIcons from 'src/@core/components/custom-radio/icons'
+// Type Imports
+import type { CustomInputHorizontalData, CustomInputVerticalData } from '@core/components/custom-inputs/types'
 
-interface IconType {
-  icon: CustomRadioIconsProps['icon']
-  iconProps: CustomRadioIconsProps['iconProps']
-}
+// Component Imports
+import CustomInputHorizontal from '@core/components/custom-inputs/Horizontal'
+import CustomInputVertical from '@core/components/custom-inputs/Vertical'
+import AddEditAddress from '@components/dialogs/add-edit-address'
+import OpenDialogOnElementClick from '@components/dialogs/OpenDialogOnElementClick'
 
-const data: CustomRadioBasicData[] = [
+// Styled Components
+const HorizontalContent = styled(Typography, {
+  name: 'MuiCustomInputHorizontal',
+  slot: 'content'
+})<TypographyProps>({})
+
+const VerticalContent = styled(Typography, {
+  name: 'MuiCustomInputVertical',
+  slot: 'content'
+})<TypographyProps>({
+  textAlign: 'center'
+})
+
+// Vars
+const data: CustomInputHorizontalData[] = [
   {
+    title: 'John Doe (Default)',
+    meta: <Chip size='small' variant='tonal' label='Home' color='primary' />,
     value: 'home',
     isSelected: true,
-    title: 'John Doe (Default)',
-    meta: <CustomChip size='small' skin='light' label='Home' color='primary' />,
     content: (
-      <Box sx={{ mt: 3, height: '100%', display: 'flex', flexDirection: 'column' }}>
-        <Typography variant='body2' sx={{ mb: 'auto' }}>
+      <HorizontalContent component='div' className='flex flex-col bs-full gap-3'>
+        <Typography variant='body2'>
           4135 Parkway Street, Los Angeles, CA, 90017.
           <br />
           Mobile : 1234567890 Cash / Card on delivery available
         </Typography>
-        <Divider sx={{ m: theme => `${theme.spacing(3, 0, 4)} !important` }} />
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <Box
-            href='/'
-            component={Link}
-            sx={{ mr: 3, color: 'primary.main', textDecoration: 'none' }}
-            onClick={e => {
-              e.preventDefault()
-              e.stopPropagation()
-            }}
-          >
+        <Divider />
+        <div className='flex items-center gap-4 mbs-0.5'>
+          <Typography href='/' component={Link} onClick={e => e.preventDefault()} color='primary'>
             Edit
-          </Box>
-          <Box
-            href='/'
-            component={Link}
-            sx={{ color: 'primary.main', textDecoration: 'none' }}
-            onClick={e => {
-              e.preventDefault()
-              e.stopPropagation()
-            }}
-          >
+          </Typography>
+          <Typography href='/' component={Link} onClick={e => e.preventDefault()} color='primary'>
             Remove
-          </Box>
-        </Box>
-      </Box>
+          </Typography>
+        </div>
+      </HorizontalContent>
     )
   },
   {
-    value: 'office',
     title: 'ACME Inc.',
-    meta: <CustomChip size='small' skin='light' label='Office' color='success' />,
+    meta: <Chip size='small' variant='tonal' label='Office' color='success' />,
+    value: 'office',
     content: (
-      <Box sx={{ mt: 3, height: '100%', display: 'flex', flexDirection: 'column' }}>
-        <Typography variant='body2' sx={{ mb: 'auto' }}>
+      <HorizontalContent component='div' className='flex flex-col bs-full gap-3'>
+        <Typography variant='body2'>
           87 Hoffman Avenue, New York, NY, 10016.
           <br />
           Mobile : 1234567890 Cash / Card on delivery available
         </Typography>
-        <Divider sx={{ m: theme => `${theme.spacing(3, 0, 4)} !important` }} />
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <Box
-            href='/'
-            component={Link}
-            sx={{ mr: 3, color: 'primary.main', textDecoration: 'none' }}
-            onClick={e => {
-              e.preventDefault()
-              e.stopPropagation()
-            }}
-          >
+        <Divider />
+        <div className='flex items-center gap-4 mbs-0.5'>
+          <Typography href='/' component={Link} onClick={e => e.preventDefault()} color='primary'>
             Edit
-          </Box>
-          <Box
-            href='/'
-            component={Link}
-            sx={{ color: 'primary.main', textDecoration: 'none' }}
-            onClick={e => {
-              e.preventDefault()
-              e.stopPropagation()
-            }}
-          >
+          </Typography>
+          <Typography href='/' component={Link} onClick={e => e.preventDefault()} color='primary'>
             Remove
-          </Box>
-        </Box>
-      </Box>
+          </Typography>
+        </div>
+      </HorizontalContent>
     )
   }
 ]
 
-const dataIcons: CustomRadioIconsData[] = [
+const dataIcons: CustomInputVerticalData[] = [
   {
     isSelected: true,
     value: 'standard',
     title: 'Standard',
+    asset: 'ri-user-3-line',
     content: (
       <>
-        <CustomChip
-          size='small'
-          skin='light'
-          label='Free'
-          color='success'
-          sx={{ top: 12, right: 12, position: 'absolute' }}
-        />
-        <Typography variant='body2' sx={{ my: 'auto', textAlign: 'center' }}>
+        <Chip size='small' variant='tonal' label='Free' color='success' className='absolute inline-end-5' />
+        <VerticalContent variant='body2' className='my-auto'>
           Get your product in 1 Week.
-        </Typography>
+        </VerticalContent>
       </>
     )
   },
   {
     value: 'express',
     title: 'Express',
+    asset: 'ri-star-smile-line',
     content: (
       <>
-        <CustomChip
-          label='$10'
-          size='small'
-          skin='light'
-          color='secondary'
-          sx={{ top: 12, right: 12, position: 'absolute' }}
-        />
-        <Typography variant='body2' sx={{ my: 'auto', textAlign: 'center' }}>
+        <Chip label='$10' variant='tonal' size='small' color='secondary' className='absolute inline-end-5' />
+        <VerticalContent variant='body2' className='my-auto'>
           Get your product in 3-4 days.
-        </Typography>
+        </VerticalContent>
       </>
     )
   },
   {
     value: 'overnight',
     title: 'Overnight',
+    asset: 'ri-vip-crown-line',
     content: (
       <>
-        <CustomChip
-          label='$15'
-          size='small'
-          skin='light'
-          color='secondary'
-          sx={{ top: 12, right: 12, position: 'absolute' }}
-        />
-        <Typography variant='body2' sx={{ my: 'auto', textAlign: 'center' }}>
+        <Chip label='$15' variant='tonal' size='small' color='secondary' className='absolute inline-end-5' />
+        <VerticalContent variant='body2' className='my-auto'>
           Get your product in 1 day.
-        </Typography>
+        </VerticalContent>
       </>
     )
   }
 ]
 
 const StepAddress = ({ handleNext }: { handleNext: () => void }) => {
-  const initialBasicSelected: string = data.filter(item => item.isSelected)[
+  // Vars
+  const initialSelectedOption: string = data.filter(item => item.isSelected)[
     data.filter(item => item.isSelected).length - 1
   ].value
-  const initialIconSelected: string = dataIcons.filter(item => item.isSelected)[
-    dataIcons.filter(item => item.isSelected).length - 1
-  ].value
 
-  // ** States
-  const [selectedIconRadio, setSelectedIconRadio] = useState<string>(initialIconSelected)
-  const [selectedBasicRadio, setSelectedBasicRadio] = useState<string>(initialBasicSelected)
+  // Vars
+  const buttonProps: ButtonProps = {
+    variant: 'outlined',
+    children: 'Add New Address'
+  }
 
-  // ** Hook
-  const theme = useTheme()
-  const breakpointMD = useMediaQuery((theme: Theme) => theme.breakpoints.between('sm', 'lg'))
+  // States
+  const [selectedOption, setSelectedOption] = useState<string>(initialSelectedOption)
+  const [selectedSpeed, setSelectedSpeed] = useState<string>('standard')
 
-  const icons: IconType[] = [
-    {
-      icon: 'mdi:account-outline',
-      iconProps: { fontSize: '2rem', style: { marginBottom: 4 }, color: theme.palette.text.secondary }
-    },
-    {
-      icon: 'mdi:crown-outline',
-      iconProps: { fontSize: '2rem', style: { marginBottom: 4 }, color: theme.palette.text.secondary }
-    },
-    {
-      icon: 'mdi:rocket-launch-outline',
-      iconProps: { fontSize: '2rem', style: { marginBottom: 4 }, color: theme.palette.text.secondary }
-    }
-  ]
-
-  const handleBasicRadioChange = (prop: string | ChangeEvent<HTMLInputElement>) => {
+  const handleOptionChange = (prop: string | ChangeEvent<HTMLInputElement>) => {
     if (typeof prop === 'string') {
-      setSelectedBasicRadio(prop)
+      setSelectedOption(prop)
     } else {
-      setSelectedBasicRadio((prop.target as HTMLInputElement).value)
+      setSelectedOption((prop.target as HTMLInputElement).value)
     }
   }
-  const handleIconRadioChange = (prop: string | ChangeEvent<HTMLInputElement>) => {
+
+  const handleSpeedChange = (prop: string | ChangeEvent<HTMLInputElement>) => {
     if (typeof prop === 'string') {
-      setSelectedIconRadio(prop)
+      setSelectedSpeed(prop)
     } else {
-      setSelectedIconRadio((prop.target as HTMLInputElement).value)
+      setSelectedSpeed((prop.target as HTMLInputElement).value)
     }
   }
 
   return (
     <Grid container spacing={6}>
-      <Grid item xs={12} lg={8}>
-        <Typography sx={{ mb: 4 }}>Select your preferable address</Typography>
-        <Grid container spacing={4}>
-          {data.map((item, index) => (
-            <CustomRadioBasic
-              key={index}
-              data={data[index]}
-              name='custom-radios-address'
-              selected={selectedBasicRadio}
-              gridProps={{ sm: 6, xs: 12 }}
-              handleChange={handleBasicRadioChange}
-            />
-          ))}
-        </Grid>
-        <Button variant='outlined' sx={{ mt: 4 }}>
-          Add new address
-        </Button>
-        <Typography sx={{ mt: 9, mb: 4 }}>Choose Delivery Speed</Typography>
-        <Grid container spacing={4}>
-          {dataIcons.map((item, index) => (
-            <CustomRadioIcons
-              key={index}
-              data={dataIcons[index]}
-              icon={icons[index].icon}
-              selected={selectedIconRadio}
-              name='custom-radios-delivery'
-              gridProps={{ sm: 4, xs: 12 }}
-              iconProps={icons[index].iconProps}
-              handleChange={handleIconRadioChange}
-            />
-          ))}
-        </Grid>
+      <Grid item xs={12} lg={8} className='flex flex-col gap-6'>
+        <div className='flex flex-col items-start gap-4'>
+          <Typography color='text.primary' className='font-medium'>
+            Select your preferable address
+          </Typography>
+          <Grid container spacing={6}>
+            {data.map((item, index) => (
+              <CustomInputHorizontal
+                type='radio'
+                key={index}
+                data={item}
+                gridProps={{ sm: 6, xs: 12 }}
+                selected={selectedOption}
+                name='custom-radios-basic'
+                handleChange={handleOptionChange}
+              />
+            ))}
+          </Grid>
+          <OpenDialogOnElementClick element={Button} elementProps={buttonProps} dialog={AddEditAddress} />
+        </div>
+        <div className='flex flex-col items-start gap-4'>
+          <Typography color='text.primary' className='font-medium'>
+            Choose Delivery Speed
+          </Typography>
+          <Grid container spacing={6}>
+            {dataIcons.map((item, index) => {
+              let asset
+
+              if (item.asset && typeof item.asset === 'string') {
+                asset = <i className={classnames(item.asset, 'text-[28px]')} />
+              }
+
+              return (
+                <CustomInputVertical
+                  type='radio'
+                  key={index}
+                  gridProps={{ sm: 4, xs: 12 }}
+                  selected={selectedSpeed}
+                  name='custom-radios-basic'
+                  handleChange={handleSpeedChange}
+                  data={typeof item.asset === 'string' ? { ...item, asset } : item}
+                />
+              )
+            })}
+          </Grid>
+        </div>
       </Grid>
-      <Grid item xs={12} lg={4}>
-        <Box sx={{ mb: 4, borderRadius: 1, border: theme => `1px solid ${theme.palette.divider}` }}>
-          <CardContent>
-            <Typography sx={{ mb: 4, fontWeight: 600 }}>Estimated Delivery Date</Typography>
-            <Box sx={{ mb: 4, display: 'flex' }}>
-              <Box sx={{ mr: 4 }}>
-                <img width={50} src='/images/products/google-home.png' alt='Google Home' />
-              </Box>
+      <Grid item xs={12} lg={4} className='flex flex-col gap-4'>
+        <div className='border rounded'>
+          <CardContent className='flex flex-col gap-4'>
+            <Typography className='font-medium' color='text.primary'>
+              Estimated Delivery Date
+            </Typography>
+            <div className='flex gap-4 items-center'>
+              <img width={60} height={60} src='/images/pages/google-home.png' alt='Google Home' />
               <div>
-                <Typography variant='body2'>Google - Google Home - White</Typography>
-                <Typography variant='body2' sx={{ fontWeight: 600 }}>
-                  18th Nov 2021
-                </Typography>
+                <Typography>Google - Google Home - White</Typography>
+                <Typography className='font-medium'>18th Nov 2021</Typography>
               </div>
-            </Box>
-            <Box sx={{ display: 'flex' }}>
-              <Box sx={{ mr: 4 }}>
-                <img width={50} src='/images/products/iphone-11.png' alt='iphone 11' />
-              </Box>
+            </div>
+            <div className='flex gap-4 items-center'>
+              <img width={60} height={60} src='/images/pages/iPhone-11.png' alt='iphone 11' />
               <div>
-                <Typography variant='body2'>Apple iPhone 11 (64GB, Black)</Typography>
-                <Typography variant='body2' sx={{ fontWeight: 600 }}>
-                  20th Nov 2021
-                </Typography>
+                <Typography>Apple iPhone 11 (64GB, Black)</Typography>
+                <Typography className='font-medium'>20th Nov 2021</Typography>
               </div>
-            </Box>
+            </div>
           </CardContent>
-          <Divider sx={{ m: '0 !important' }} />
-          <CardContent>
-            <Typography sx={{ mb: 4, fontWeight: 600 }}>Price Details</Typography>
-            <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-              <Box
-                sx={{
-                  mb: 2,
-                  gap: 2,
-                  display: 'flex',
-                  flexWrap: 'wrap',
-                  alignItems: 'center',
-                  justifyContent: 'space-between'
-                }}
-              >
-                <Typography variant='body2' sx={{ color: 'text.primary' }}>
-                  Order Total
-                </Typography>
-                <Typography variant='body2'>$1198.00</Typography>
-              </Box>
-              <Box
-                sx={{
-                  gap: 2,
-                  display: 'flex',
-                  flexWrap: 'wrap',
-                  alignItems: 'center',
-                  justifyContent: 'space-between'
-                }}
-              >
-                <Typography variant='body2' sx={{ color: 'text.primary' }}>
-                  Delivery Charges
-                </Typography>
-                <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                  <Typography variant='body2' sx={{ mr: 2, textDecoration: 'line-through', color: 'text.disabled' }}>
+          <Divider />
+          <CardContent className='flex flex-col gap-4'>
+            <Typography className='font-medium' color='text.primary'>
+              Price Details
+            </Typography>
+            <div className='flex flex-col gap-2'>
+              <div className='flex gap-2 justify-between flex-wrap'>
+                <Typography color='text.primary'>Order Total</Typography>
+                <Typography>$1198.00</Typography>
+              </div>
+              <div className='flex justify-between flex-wrap'>
+                <Typography color='text.primary'>Delivery Charges</Typography>
+                <div className='flex gap-2'>
+                  <Typography color='text.disabled' className='line-through'>
                     $5.00
                   </Typography>
-                  <CustomChip size='small' skin='light' color='success' label='Free' />
-                </Box>
-              </Box>
-            </Box>
+                  <Chip size='small' variant='tonal' color='success' label='Free' />
+                </div>
+              </div>
+            </div>
           </CardContent>
-          <Divider sx={{ m: '0 !important' }} />
-          <CardContent sx={{ py: theme => `${theme.spacing(3.5)} !important` }}>
-            <Box
-              sx={{ gap: 2, display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between' }}
-            >
-              <Typography sx={{ fontWeight: 600 }}>Total</Typography>
-              <Typography sx={{ fontWeight: 600 }}>$1198.00</Typography>
-            </Box>
+          <Divider />
+          <CardContent className='flex items-center justify-between flex-wrap'>
+            <Typography className='font-medium' color='text.primary'>
+              Total
+            </Typography>
+            <Typography className='font-medium' color='text.primary'>
+              $1198.00
+            </Typography>
           </CardContent>
-        </Box>
-        <Box sx={{ display: 'flex', ...(breakpointMD ? { justifyContent: 'flex-end' } : {}) }}>
-          <Button fullWidth={!breakpointMD} variant='contained' onClick={handleNext}>
+        </div>
+        <div className='flex justify-end'>
+          <Button className='is-full sm:is-auto lg:is-full' variant='contained' onClick={handleNext}>
             Place Order
           </Button>
-        </Box>
+        </div>
       </Grid>
     </Grid>
   )

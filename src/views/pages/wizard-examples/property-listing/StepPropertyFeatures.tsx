@@ -1,24 +1,33 @@
-// ** React Imports
+// React Imports
 import { useState } from 'react'
 
-// ** MUI Imports
-import Box from '@mui/material/Box'
+// MUI Imports
 import Grid from '@mui/material/Grid'
-import Radio from '@mui/material/Radio'
-import MenuItem from '@mui/material/MenuItem'
 import TextField from '@mui/material/TextField'
-import FormLabel from '@mui/material/FormLabel'
-import RadioGroup from '@mui/material/RadioGroup'
-import InputLabel from '@mui/material/InputLabel'
 import FormControl from '@mui/material/FormControl'
-import OutlinedInput from '@mui/material/OutlinedInput'
+import InputLabel from '@mui/material/InputLabel'
+import Select from '@mui/material/Select'
+import MenuItem from '@mui/material/MenuItem'
+import FormLabel from '@mui/material/FormLabel'
+import Radio from '@mui/material/Radio'
+import RadioGroup from '@mui/material/RadioGroup'
+import Button from '@mui/material/Button'
+import Autocomplete from '@mui/material/Autocomplete'
 import FormControlLabel from '@mui/material/FormControlLabel'
-import Select, { SelectChangeEvent } from '@mui/material/Select'
+import Chip from '@mui/material/Chip'
 
-// ** Custom Components Imports
-import CustomChip from 'src/@core/components/mui/chip'
+// Component Imports
+import DirectionalIcon from '@components/DirectionalIcon'
 
-const furnishingArray = [
+type Props = {
+  activeStep: number
+  handleNext: () => void
+  handlePrev: () => void
+  steps: { title: string; subtitle: string }[]
+}
+
+// Vars
+const furnishingArray: string[] = [
   'AC',
   'TV',
   'RO',
@@ -32,16 +41,9 @@ const furnishingArray = [
   'Washing Machine'
 ]
 
-const StepPropertyFeatures = () => {
-  // ** State
-  const [furnishingDetails, setFurnishingDetails] = useState<string[]>(['Fridge', 'AC', 'TV', 'Wifi'])
-
-  const handleChange = (event: SelectChangeEvent<typeof furnishingDetails>) => {
-    const {
-      target: { value }
-    } = event
-    setFurnishingDetails(typeof value === 'string' ? value.split(',') : value)
-  }
+const StepPropertyFeatures = ({ activeStep, handleNext, handlePrev, steps }: Props) => {
+  // States
+  const [furnishingDetails, setFurnishingDetails] = useState<string[]>(['Fridge', 'AC', 'TV'])
 
   return (
     <Grid container spacing={5}>
@@ -58,65 +60,77 @@ const StepPropertyFeatures = () => {
         <FormControl fullWidth>
           <InputLabel id='select-furnished-status'>Furnished Status</InputLabel>
           <Select id='demo-simple-select' label='Furnished Status' labelId='select-furnished-status' defaultValue=''>
-            <MenuItem value='Fully Furnished'>Fully Furnished</MenuItem>
-            <MenuItem value='Furnished'>Furnished</MenuItem>
-            <MenuItem value='Semi Furnished'>Semi Furnished</MenuItem>
-            <MenuItem value='UnFurnished'>UnFurnished</MenuItem>
+            <MenuItem value='fully-furnished'>Fully Furnished</MenuItem>
+            <MenuItem value='furnished'>Furnished</MenuItem>
+            <MenuItem value='semi-furnished'>Semi Furnished</MenuItem>
+            <MenuItem value='unfurnished'>UnFurnished</MenuItem>
           </Select>
         </FormControl>
       </Grid>
       <Grid item xs={12}>
-        <FormControl fullWidth>
-          <InputLabel id='select-furnishing-details'>Furnishing Details</InputLabel>
-          <Select
-            labelId='select-furnishing-details'
-            multiple
-            onChange={handleChange}
-            value={furnishingDetails}
-            input={<OutlinedInput label='Furnishing Details' />}
-            renderValue={selected => (
-              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                {selected.map(value => (
-                  <CustomChip key={value} label={value} skin='light' />
-                ))}
-              </Box>
-            )}
-          >
-            {furnishingArray.map(furniture => (
-              <MenuItem key={furniture} value={furniture}>
-                {furniture}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+        <Autocomplete
+          fullWidth
+          multiple
+          onChange={(event, value) => setFurnishingDetails(value as string[])}
+          id='select-furnishing-details'
+          options={furnishingArray}
+          value={furnishingDetails}
+          defaultValue={furnishingDetails}
+          getOptionLabel={option => option || ''}
+          renderInput={params => <TextField {...params} label='Furnishing Details' />}
+          renderTags={(value: string[], getTagProps) =>
+            value.map((option: string, index: number) => {
+              const { key, ...otherProps } = getTagProps({ index })
+
+              return <Chip key={key} size='small' label={option} {...otherProps} />
+            })
+          }
+        />
       </Grid>
       <Grid item xs={12} md={6}>
-        <FormControl>
-          <FormLabel
-            id='common-area-radio'
-            sx={{ fontWeight: 500, fontSize: '0.875rem', lineHeight: '21px', letterSpacing: '0.1px' }}
-          >
-            Is There Any Common Area
-          </FormLabel>
-          <RadioGroup defaultValue='yes' name='common-area-group' aria-labelledby='common-area-radio'>
+        <FormControl className='gap-2'>
+          <FormLabel>Is There Any Common Area</FormLabel>
+          <RadioGroup defaultValue='yes'>
             <FormControlLabel value='yes' control={<Radio />} label='Yes' />
             <FormControlLabel value='no' control={<Radio />} label='No' />
           </RadioGroup>
         </FormControl>
       </Grid>
       <Grid item xs={12} md={6}>
-        <FormControl>
-          <FormLabel
-            id='balcony-radio'
-            sx={{ fontWeight: 500, fontSize: '0.875rem', lineHeight: '21px', letterSpacing: '0.1px' }}
-          >
-            Is There Any Attached Balcony
-          </FormLabel>
-          <RadioGroup defaultValue='yes' name='balcony-group' aria-labelledby='balcony-radio'>
+        <FormControl className='gap-2'>
+          <FormLabel>Is There Any Attached Balcony</FormLabel>
+          <RadioGroup defaultValue='yes'>
             <FormControlLabel value='yes' control={<Radio />} label='Yes' />
             <FormControlLabel value='no' control={<Radio />} label='No' />
           </RadioGroup>
         </FormControl>
+      </Grid>
+      <Grid item xs={12}>
+        <div className='flex items-center justify-between'>
+          <Button
+            variant='outlined'
+            color='secondary'
+            disabled={activeStep === 0}
+            onClick={handlePrev}
+            startIcon={<DirectionalIcon ltrIconClass='ri-arrow-left-line' rtlIconClass='ri-arrow-right-line' />}
+          >
+            Previous
+          </Button>
+          <Button
+            variant='contained'
+            color={activeStep === steps.length - 1 ? 'success' : 'primary'}
+            onClick={handleNext}
+            endIcon={
+              activeStep === steps.length - 1 ? (
+                <i className='ri-check-line' />
+              ) : (
+                <DirectionalIcon ltrIconClass='ri-arrow-right-line' rtlIconClass='ri-arrow-left-line' />
+              )
+            }
+          >
+            {activeStep === steps.length - 1 ? 'Submit' : 'Next'}
+          </Button>
+        </div>
       </Grid>
     </Grid>
   )

@@ -1,56 +1,69 @@
-// ** Next Import
+'use client'
+
+// React Imports
+import { useState } from 'react'
+
+// Next Imports
 import Link from 'next/link'
+import { useParams } from 'next/navigation'
 
-// ** MUI Imports
+// MUI Imports
 import Card from '@mui/material/Card'
-import Grid from '@mui/material/Grid'
-import Select from '@mui/material/Select'
-import Button from '@mui/material/Button'
-import Switch from '@mui/material/Switch'
-import MenuItem from '@mui/material/MenuItem'
-import { styled } from '@mui/material/styles'
-import InputLabel from '@mui/material/InputLabel'
-import Box, { BoxProps } from '@mui/material/Box'
-import FormControl from '@mui/material/FormControl'
 import CardContent from '@mui/material/CardContent'
+import Button from '@mui/material/Button'
+import Grid from '@mui/material/Grid'
+import FormControl from '@mui/material/FormControl'
+import InputLabel from '@mui/material/InputLabel'
+import Select from '@mui/material/Select'
+import MenuItem from '@mui/material/MenuItem'
+import Switch from '@mui/material/Switch'
 
-// ** Icon Imports
-import Icon from 'src/@core/components/icon'
-
-const OptionsWrapper = styled(Box)<BoxProps>(() => ({
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between'
-}))
+// Component Imports
+import SendInvoiceDrawer from '@views/apps/invoice/shared/SendInvoiceDrawer'
 
 const AddActions = () => {
+  // States
+  const [sendDrawerOpen, setSendDrawerOpen] = useState(false)
+
+  // Hooks
+  const { lang: locale } = useParams()
+
   return (
     <Grid container spacing={6}>
       <Grid item xs={12}>
         <Card>
-          <CardContent>
-            <Button fullWidth sx={{ mb: 3.5 }} variant='contained' startIcon={<Icon icon='mdi:send-outline' />}>
+          <CardContent className='flex flex-col gap-4'>
+            <Button
+              fullWidth
+              variant='contained'
+              className='capitalize'
+              startIcon={<i className='ri-send-plane-line' />}
+              onClick={() => setSendDrawerOpen(true)}
+            >
               Send Invoice
             </Button>
-            <Button fullWidth component={Link} sx={{ mb: 3.5 }} variant='outlined' href='/apps/invoice/preview/4987'>
+            <Button
+              fullWidth
+              component={Link}
+              color='secondary'
+              variant='outlined'
+              className='capitalize'
+              href={`/${locale}/apps/invoice/preview/4987`}
+            >
               Preview
             </Button>
-            <Button fullWidth variant='outlined' sx={{ mb: 3.5 }}>
+            <Button fullWidth color='secondary' variant='outlined' className='capitalize'>
               Save
             </Button>
           </CardContent>
         </Card>
+        <SendInvoiceDrawer open={sendDrawerOpen} handleClose={() => setSendDrawerOpen(false)} />
       </Grid>
+
       <Grid item xs={12}>
-        <FormControl fullWidth>
+        <FormControl fullWidth className='mbe-4'>
           <InputLabel id='payment-select'>Accept payments via</InputLabel>
-          <Select
-            fullWidth
-            defaultValue='Internet Banking'
-            label='Accept payments via'
-            labelId='payment-select'
-            sx={{ mb: 4 }}
-          >
+          <Select fullWidth defaultValue='Internet Banking' label='Accept payments via' labelId='payment-select'>
             <MenuItem value='Internet Banking'>Internet Banking</MenuItem>
             <MenuItem value='Debit Card'>Debit Card</MenuItem>
             <MenuItem value='Credit Card'>Credit Card</MenuItem>
@@ -58,33 +71,24 @@ const AddActions = () => {
             <MenuItem value='UPI Transfer'>UPI Transfer</MenuItem>
           </Select>
         </FormControl>
-        <OptionsWrapper sx={{ mb: 1 }}>
-          <InputLabel
-            htmlFor='invoice-add-payment-terms'
-            sx={{ cursor: 'pointer', fontSize: '0.875rem', color: 'text.secondary' }}
-          >
+        <div className='flex items-center justify-between'>
+          <InputLabel htmlFor='invoice-edit-payment-terms' className='cursor-pointer'>
             Payment Terms
           </InputLabel>
-          <Switch defaultChecked id='invoice-add-payment-terms' />
-        </OptionsWrapper>
-        <OptionsWrapper sx={{ mb: 1 }}>
-          <InputLabel
-            htmlFor='invoice-add-client-notes'
-            sx={{ cursor: 'pointer', fontSize: '0.875rem', color: 'text.secondary' }}
-          >
+          <Switch defaultChecked id='invoice-edit-payment-terms' />
+        </div>
+        <div className='flex items-center justify-between'>
+          <InputLabel htmlFor='invoice-edit-client-notes' className='cursor-pointer'>
             Client Notes
           </InputLabel>
-          <Switch id='invoice-add-client-notes' />
-        </OptionsWrapper>
-        <OptionsWrapper>
-          <InputLabel
-            htmlFor='invoice-add-payment-stub'
-            sx={{ cursor: 'pointer', fontSize: '0.875rem', color: 'text.secondary' }}
-          >
+          <Switch id='invoice-edit-client-notes' />
+        </div>
+        <div className='flex items-center justify-between'>
+          <InputLabel htmlFor='invoice-edit-payment-stub' className='cursor-pointer'>
             Payment Stub
           </InputLabel>
-          <Switch id='invoice-add-payment-stub' />
-        </OptionsWrapper>
+          <Switch id='invoice-edit-payment-stub' />
+        </div>
       </Grid>
     </Grid>
   )

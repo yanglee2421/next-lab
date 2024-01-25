@@ -1,301 +1,180 @@
-// ** React Imports
-import { useState, ChangeEvent } from "react";
+// React Imports
+import { useState } from 'react'
+import type { ChangeEvent } from 'react'
 
-// ** MUI Components
-import Box from "@mui/material/Box";
-import Grid from "@mui/material/Grid";
-import Button from "@mui/material/Button";
-import Tooltip from "@mui/material/Tooltip";
-import TextField from "@mui/material/TextField";
-import Typography from "@mui/material/Typography";
-import FormControl from "@mui/material/FormControl";
-import InputAdornment from "@mui/material/InputAdornment";
+// MUI Imports
+import Grid from '@mui/material/Grid'
+import Button from '@mui/material/Button'
+import TextField from '@mui/material/TextField'
+import Typography from '@mui/material/Typography'
+import type { TypographyProps } from '@mui/material/Typography'
+import { styled } from '@mui/material/styles'
 
-// ** Third Party Imports
-import Payment from "payment";
+// Component Imports
+import CustomInputVertical from '@core/components/custom-inputs/Vertical'
+import DirectionalIcon from '@components/DirectionalIcon'
+import type { CustomInputVerticalData } from '@core/components/custom-inputs/types'
 
-// ** Type Import
-import { CustomRadioIconsData } from "src/@core/components/custom-radio/types";
+type StepBillingDetailsProps = {
+  handlePrev: () => void
+  activeStep: number
+}
 
-// ** Icon Imports
-import Icon from "src/@core/components/icon";
+// Styled Components
+const Content = styled(Typography, {
+  name: 'MuiCustomInputVertical',
+  slot: 'content'
+})<TypographyProps>(({ theme }) => ({
+  ...theme.typography.body2,
+  textAlign: 'center'
+}))
 
-// ** Custom Components Imports
-import CustomRadioIcons from "src/@core/components/custom-radio/icons";
-
-// ** Util Import
-import {
-  formatCVC,
-  formatExpirationDate,
-  formatCreditCardNumber,
-} from "src/@core/utils/format";
-
-// ** Styles Import
-import "react-credit-cards-2/dist/es/styles-compiled.css";
-
-const data: CustomRadioIconsData[] = [
+// Vars
+const customInputData: CustomInputVerticalData[] = [
   {
-    value: "basic",
-    title: <Typography variant="h5">Basic</Typography>,
+    title: 'Basic',
+    value: 'basic',
     content: (
-      <Box
-        sx={{
-          my: "auto",
-          display: "flex",
-          alignItems: "center",
-          flexDirection: "column",
-        }}
-      >
-        <Typography sx={{ textAlign: "center", color: "text.secondary" }}>
+      <Content component='div' className='flex justify-center items-center flex-col bs-full gap-2'>
+        <Typography variant='body2' className='mlb-auto'>
           A simple start for start ups & Students
         </Typography>
-        <Box sx={{ mt: 2, display: "flex" }}>
-          <Typography
-            component="sup"
-            sx={{ mt: 1.5, color: "primary.main", alignSelf: "flex-start" }}
-          >
+        <div>
+          <Typography color='primary' variant='body2' component='sup' className='self-start'>
             $
           </Typography>
-          <Typography
-            component="span"
-            sx={{ fontSize: "2rem", color: "primary.main" }}
-          >
+          <Typography color='primary' variant='h4' component='span'>
             0
           </Typography>
-          <Typography
-            component="sub"
-            sx={{ mb: 1.5, alignSelf: "flex-end", color: "text.disabled" }}
-          >
+          <Typography color='text.disabled' variant='body2' component='sub' className='self-end'>
             /month
           </Typography>
-        </Box>
-      </Box>
+        </div>
+      </Content>
     ),
+    isSelected: true
   },
   {
-    isSelected: true,
-    value: "standard",
-    title: <Typography variant="h5">Standard</Typography>,
+    title: 'Standard',
+    value: 'standard',
     content: (
-      <Box
-        sx={{
-          my: "auto",
-          display: "flex",
-          alignItems: "center",
-          flexDirection: "column",
-        }}
-      >
-        <Typography sx={{ textAlign: "center", color: "text.secondary" }}>
+      <Content component='div' className='flex justify-center items-center flex-col bs-full'>
+        <Typography variant='body2' className='mlb-auto'>
           For small to medium businesses
         </Typography>
-        <Box sx={{ mt: 2, display: "flex" }}>
-          <Typography
-            component="sup"
-            sx={{ mt: 1.5, color: "primary.main", alignSelf: "flex-start" }}
-          >
+        <div>
+          <Typography color='primary' variant='body2' component='sup' className='self-start'>
             $
           </Typography>
-          <Typography
-            component="span"
-            sx={{ fontSize: "2rem", fontWeight: 500, color: "primary.main" }}
-          >
+          <Typography color='primary' variant='h4' component='span'>
             99
           </Typography>
-          <Typography
-            component="sub"
-            sx={{ mb: 1.5, alignSelf: "flex-end", color: "text.disabled" }}
-          >
+          <Typography variant='body2' component='sub' className='self-end' color='text.disabled'>
             /month
           </Typography>
-        </Box>
-      </Box>
-    ),
+        </div>
+      </Content>
+    )
   },
   {
-    value: "enterprise",
-    title: <Typography variant="h5">Enterprise</Typography>,
+    title: 'Enterprise',
+    value: 'enterprise',
     content: (
-      <Box
-        sx={{
-          my: "auto",
-          display: "flex",
-          alignItems: "center",
-          flexDirection: "column",
-        }}
-      >
-        <Typography sx={{ textAlign: "center", color: "text.secondary" }}>
+      <Content component='div' className='flex justify-center items-center flex-col bs-full'>
+        <Typography variant='body2' className='mlb-auto'>
           Solution for enterprise & organizations
         </Typography>
-        <Box sx={{ mt: 2, display: "flex" }}>
-          <Typography
-            component="sup"
-            sx={{ mt: 1.5, color: "primary.main", alignSelf: "flex-start" }}
-          >
+        <div>
+          <Typography color='primary' variant='body2' component='sup' className='self-start'>
             $
           </Typography>
-          <Typography
-            component="span"
-            sx={{ fontSize: "2rem", color: "primary.main" }}
-          >
+          <Typography color='primary' variant='h4' component='span'>
             499
           </Typography>
-          <Typography
-            component="sub"
-            sx={{ mb: 1.5, alignSelf: "flex-end", color: "text.disabled" }}
-          >
+          <Typography variant='body2' component='sub' className='self-end' color='text.disabled'>
             /month
           </Typography>
-        </Box>
-      </Box>
-    ),
-  },
-];
+        </div>
+      </Content>
+    )
+  }
+]
 
-const StepBillingDetails = ({ handlePrev }: { handlePrev: () => void }) => {
-  const initialSelected: string = data.filter((item) => item.isSelected)[
-    data.filter((item) => item.isSelected).length - 1
-  ].value;
+const StepBillingDetails = ({ handlePrev, activeStep }: StepBillingDetailsProps) => {
+  // Vars
+  const initialSelectedOption: string = customInputData.filter(item => item.isSelected)[
+    customInputData.filter(item => item.isSelected).length - 1
+  ].value
 
-  // ** State
-  const [cvc, setCvc] = useState<string>("");
-  const [name, setName] = useState<string>("");
-  const [expiry, setExpiry] = useState<string>("");
-  const [cardNumber, setCardNumber] = useState<string>("");
-  const [selectedRadio, setSelectedRadio] = useState<string>(initialSelected);
+  // States
+  const [selectedOption, setSelectedOption] = useState<string>(initialSelectedOption)
 
-  const handleInputChange = ({ target }: ChangeEvent<HTMLInputElement>) => {
-    if (target.name === "cardNumber") {
-      target.value = formatCreditCardNumber(target.value, Payment);
-      setCardNumber(target.value);
-    } else if (target.name === "expiry") {
-      target.value = formatExpirationDate(target.value);
-      setExpiry(target.value);
-    } else if (target.name === "cvc") {
-      target.value = formatCVC(target.value, cardNumber, Payment);
-      setCvc(target.value);
-    }
-  };
-
-  const handleRadioChange = (prop: string | ChangeEvent<HTMLInputElement>) => {
-    if (typeof prop === "string") {
-      setSelectedRadio(prop);
+  const handleOptionChange = (prop: string | ChangeEvent<HTMLInputElement>) => {
+    if (typeof prop === 'string') {
+      setSelectedOption(prop)
     } else {
-      setSelectedRadio((prop.target as HTMLInputElement).value);
+      setSelectedOption((prop.target as HTMLInputElement).value)
     }
-  };
+  }
 
   return (
     <>
-      <Box sx={{ mb: 4 }}>
-        <Typography variant="h5">Select Plan</Typography>
-        <Typography sx={{ color: "text.secondary" }}>
-          Select plan as per your requirement
-        </Typography>
-      </Box>
-
+      <div className='mbe-5'>
+        <Typography variant='h4'>Select Plan</Typography>
+        <Typography>Select plan as per your requirement</Typography>
+      </div>
       <Grid container spacing={5}>
-        {data.map((item, index) => (
-          <CustomRadioIcons
+        {customInputData.map((item, index) => (
+          <CustomInputVertical
+            type='radio'
             key={index}
-            data={data[index]}
-            selected={selectedRadio}
-            name="custom-radios-plan"
-            gridProps={{ sm: 4, xs: 12 }}
-            handleChange={handleRadioChange}
+            data={item}
+            gridProps={{ xs: 12, sm: 4 }}
+            selected={selectedOption}
+            name='custom-radios-basic'
+            handleChange={handleOptionChange}
           />
         ))}
-
-        <Grid
-          item
-          xs={12}
-          sx={{ pt: (theme) => `${theme.spacing(11.5)} !important` }}
-        >
-          <Typography variant="h5">Payment Information</Typography>
-          <Typography sx={{ color: "text.secondary" }}>
-            Enter your card information
-          </Typography>
-        </Grid>
+      </Grid>
+      <div className='mbs-12 mbe-5'>
+        <Typography variant='h4'>Payment Information</Typography>
+        <Typography>Enter your card information</Typography>
+      </div>
+      <Grid container spacing={5}>
         <Grid item xs={12}>
-          <FormControl fullWidth>
-            <TextField
-              fullWidth
-              name="cardNumber"
-              value={cardNumber}
-              autoComplete="off"
-              label="Card Number"
-              onChange={handleInputChange}
-              placeholder="0000 0000 0000 0000"
-            />
-          </FormControl>
+          <TextField fullWidth label='Card Number' placeholder='1234 1234 1234 1234' />
         </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField
-            fullWidth
-            name="name"
-            value={name}
-            autoComplete="off"
-            label="Name on Card"
-            placeholder="John Doe"
-            onChange={(e) => setName(e.target.value)}
-          />
+        <Grid item xs={12} sm={4}>
+          <TextField fullWidth label='Name on Card' placeholder='John Doe' />
         </Grid>
-        <Grid item xs={6} sm={3}>
-          <TextField
-            fullWidth
-            name="expiry"
-            label="Expiry"
-            value={expiry}
-            placeholder="MM/YY"
-            onChange={handleInputChange}
-            inputProps={{ maxLength: "5" }}
-          />
+        <Grid item xs={12} sm={4}>
+          <TextField fullWidth label='Expiry Date' placeholder='MM/YY' />
         </Grid>
-        <Grid item xs={6} sm={3}>
-          <TextField
-            fullWidth
-            name="cvc"
-            label="CVC"
-            value={cvc}
-            autoComplete="off"
-            onChange={handleInputChange}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment
-                  position="start"
-                  sx={{ "& svg": { cursor: "pointer" } }}
-                >
-                  <Tooltip title="Card Verification Value">
-                    <Box sx={{ display: "flex" }}>
-                      <Icon icon="mdi:help-circle-outline" fontSize={20} />
-                    </Box>
-                  </Tooltip>
-                </InputAdornment>
-              ),
-            }}
-          />
+        <Grid item xs={12} sm={4}>
+          <TextField fullWidth label='CVV' placeholder='123' />
         </Grid>
-        <Grid item xs={12}>
-          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            <Button
-              color="secondary"
-              variant="contained"
-              onClick={handlePrev}
-              startIcon={<Icon icon="mdi:chevron-left" fontSize={20} />}
-            >
-              Previous
-            </Button>
-            <Button
-              color="success"
-              variant="contained"
-              onClick={() => alert("Submitted..!!")}
-            >
-              Submit
-            </Button>
-          </Box>
+        <Grid item xs={12} className='flex justify-between'>
+          <Button
+            disabled={activeStep === 0}
+            variant='outlined'
+            color='secondary'
+            onClick={handlePrev}
+            startIcon={<DirectionalIcon ltrIconClass='ri-arrow-left-line' rtlIconClass='ri-arrow-right-line' />}
+          >
+            Previous
+          </Button>
+          <Button
+            variant='contained'
+            color='success'
+            onClick={() => alert('Submitted..!!')}
+            endIcon={<i className='ri-check-line' />}
+          >
+            Submit
+          </Button>
         </Grid>
       </Grid>
     </>
-  );
-};
+  )
+}
 
-export default StepBillingDetails;
+export default StepBillingDetails

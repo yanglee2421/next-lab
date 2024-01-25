@@ -1,149 +1,162 @@
-// ** React Imports
-import { ChangeEvent, useState } from 'react'
+// React Imports
+import { useState } from 'react'
+import type { ChangeEvent } from 'react'
 
-// ** MUI Imports
-import Box from '@mui/material/Box'
+// MUI Imports
 import Grid from '@mui/material/Grid'
-import MenuItem from '@mui/material/MenuItem'
 import TextField from '@mui/material/TextField'
-import InputLabel from '@mui/material/InputLabel'
 import FormControl from '@mui/material/FormControl'
-import OutlinedInput from '@mui/material/OutlinedInput'
-import { styled, useTheme } from '@mui/material/styles'
 import FormHelperText from '@mui/material/FormHelperText'
-import Select, { SelectChangeEvent } from '@mui/material/Select'
+import InputLabel from '@mui/material/InputLabel'
+import Select from '@mui/material/Select'
+import MenuItem from '@mui/material/MenuItem'
+import OutlinedInput from '@mui/material/OutlinedInput'
+import Button from '@mui/material/Button'
+import type { SelectChangeEvent } from '@mui/material/Select'
 
-// ** Type Imports
-import { CustomRadioIconsData, CustomRadioIconsProps } from 'src/@core/components/custom-radio/types'
+// Third-party Imports
+import classnames from 'classnames'
 
-// ** Custom Components Imports
-import CustomChip from 'src/@core/components/mui/chip'
-import CustomRadioIcons from 'src/@core/components/custom-radio/icons'
+// Type Imports
+import type { CustomInputVerticalData } from '@core/components/custom-inputs/types'
 
-interface IconType {
-  icon: CustomRadioIconsProps['icon']
-  iconProps: CustomRadioIconsProps['iconProps']
+// Component Imports
+import CustomInputVertical from '@core/components/custom-inputs/Vertical'
+import DirectionalIcon from '@components/DirectionalIcon'
+
+type Props = {
+  activeStep: number
+  handleNext: () => void
+  handlePrev: () => void
+  steps: { title: string; subtitle: string }[]
 }
 
-const data: CustomRadioIconsData[] = [
+// Vars
+const data: CustomInputVerticalData[] = [
   {
-    isSelected: true,
-    value: 'percentage',
     title: 'Percentage',
-    content: 'Create a deal which offer uses some % off (i.e 5% OFF) on total.'
+    value: 'percentage',
+    content: 'Create a deal which offer uses some % off (i.e 5% OFF) on total.',
+    asset: 'ri-percent-line',
+    isSelected: true
   },
   {
-    value: 'flat-amount',
     title: 'Flat Amount',
-    content: 'Create a deal which offer uses flat $ off (i.e $5 OFF) on the total.'
+    value: 'flat-amount',
+    content: 'Create a deal which offer uses flat $ off (i.e $5 OFF) on the total.',
+    asset: 'ri-money-dollar-circle-line'
   },
   {
-    value: 'prime-member',
     title: 'Prime Member',
-    content: 'Create prime member only deal to encourage the prime members.'
+    value: 'prime member',
+    content: 'Create prime member only deal to encourage the prime members.',
+    asset: 'ri-user-3-line'
   }
 ]
 
 const regionArray = ['Asia', 'Europe', 'Africa', 'Australia', 'North America', 'South America']
 
-const Img = styled('img')({
-  width: '100%',
-  height: 'auto',
-  maxWidth: '100%'
-})
-
-const StepDealType = () => {
-  const initialIconSelected: string = data.filter(item => item.isSelected)[
+const StepDealType = ({ activeStep, handleNext, handlePrev, steps }: Props) => {
+  // Vars
+  const initialSelectedOption: string = data.filter(item => item.isSelected)[
     data.filter(item => item.isSelected).length - 1
   ].value
 
-  // ** States
-  const [region, setRegion] = useState<string[]>([])
-  const [selectedRadio, setSelectedRadio] = useState<string>(initialIconSelected)
+  // States
+  const [selectedOption, setSelectedOption] = useState<string>(initialSelectedOption)
+  const [region, setRegion] = useState<string>('')
 
-  // ** Hook
-  const theme = useTheme()
-
-  const icons: IconType[] = [
-    {
-      icon: 'mdi:tag-outline',
-      iconProps: { fontSize: '2rem', style: { marginBottom: 4 }, color: theme.palette.text.secondary }
-    },
-    {
-      icon: 'mdi:currency-usd',
-      iconProps: { fontSize: '2rem', style: { marginBottom: 4 }, color: theme.palette.text.secondary }
-    },
-    {
-      icon: 'mdi:account-outline',
-      iconProps: { fontSize: '2rem', style: { marginBottom: 4 }, color: theme.palette.text.secondary }
-    }
-  ]
-
-  const handleChange = (event: SelectChangeEvent<typeof region>) => {
-    const {
-      target: { value }
-    } = event
-    setRegion(typeof value === 'string' ? value.split(',') : value)
-  }
-
-  const handleRadioChange = (prop: string | ChangeEvent<HTMLInputElement>) => {
+  const handleOptionChange = (prop: string | ChangeEvent<HTMLInputElement>) => {
     if (typeof prop === 'string') {
-      setSelectedRadio(prop)
+      setSelectedOption(prop)
     } else {
-      setSelectedRadio((prop.target as HTMLInputElement).value)
+      setSelectedOption((prop.target as HTMLInputElement).value)
     }
   }
 
   return (
     <Grid container spacing={5}>
       <Grid item xs={12}>
-        <Box sx={{ borderRadius: 1, display: 'flex', border: `1px solid ${theme.palette.divider}` }}>
-          <Img alt='illustration' src='/images/pages/shopping-girl.png' />
-        </Box>
+        <div className='flex mbs-5 border rounded'>
+          <img
+            alt='illustration'
+            src='/images/illustrations/characters-with-objects/6.png'
+            className='is-full max-is-full bs-auto'
+          />
+        </div>
       </Grid>
-      {data.map((item, index) => (
-        <CustomRadioIcons
-          key={index}
-          data={data[index]}
-          icon={icons[index].icon}
-          selected={selectedRadio}
-          name='custom-radios-deal'
-          gridProps={{ sm: 4, xs: 12 }}
-          handleChange={handleRadioChange}
-          iconProps={icons[index].iconProps}
-        />
-      ))}
+      {data.map((item, index) => {
+        let asset
+
+        if (item.asset && typeof item.asset === 'string') {
+          asset = <i className={classnames(item.asset, 'text-[28px]')} />
+        }
+
+        return (
+          <CustomInputVertical
+            type='radio'
+            key={index}
+            gridProps={{ sm: 4, xs: 12 }}
+            selected={selectedOption}
+            name='custom-radios-basic'
+            handleChange={handleOptionChange}
+            data={typeof item.asset === 'string' ? { ...item, asset } : item}
+          />
+        )
+      })}
       <Grid item xs={12} sm={6}>
-        <FormControl fullWidth>
-          <TextField type='number' label='Discount' placeholder='25' />
-          <FormHelperText>Enter the discount percentage. 10 = 10%</FormHelperText>
-        </FormControl>
+        <TextField
+          fullWidth
+          type='number'
+          label='Discount'
+          placeholder='25'
+          helperText='Enter the discount percentage. 10 = 10%'
+        />
       </Grid>
       <Grid item xs={12} sm={6}>
         <FormControl fullWidth>
           <InputLabel id='select-region'>Region</InputLabel>
           <Select
-            multiple
             value={region}
             labelId='select-region'
-            onChange={handleChange}
+            onChange={(e: SelectChangeEvent) => setRegion(e.target.value as string)}
             input={<OutlinedInput label='Region' />}
-            renderValue={selected => (
-              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                {selected.map(value => (
-                  <CustomChip key={value} label={value} skin='light' />
-                ))}
-              </Box>
-            )}
           >
-            {regionArray.map(reg => (
-              <MenuItem key={reg} value={reg}>
-                {reg}
+            {regionArray.map(item => (
+              <MenuItem key={item} value={item}>
+                {item}
               </MenuItem>
             ))}
           </Select>
           <FormHelperText>Select applicable regions for the deal.</FormHelperText>
         </FormControl>
+      </Grid>
+      <Grid item xs={12}>
+        <div className='flex items-center justify-between'>
+          <Button
+            variant='outlined'
+            color='secondary'
+            disabled={activeStep === 0}
+            onClick={handlePrev}
+            startIcon={<DirectionalIcon ltrIconClass='ri-arrow-left-line' rtlIconClass='ri-arrow-right-line' />}
+          >
+            Previous
+          </Button>
+          <Button
+            variant='contained'
+            color={activeStep === steps.length - 1 ? 'success' : 'primary'}
+            onClick={handleNext}
+            endIcon={
+              activeStep === steps.length - 1 ? (
+                <i className='ri-check-line' />
+              ) : (
+                <DirectionalIcon ltrIconClass='ri-arrow-right-line' rtlIconClass='ri-arrow-left-line' />
+              )
+            }
+          >
+            {activeStep === steps.length - 1 ? 'Submit' : 'Next'}
+          </Button>
+        </div>
       </Grid>
     </Grid>
   )

@@ -1,21 +1,37 @@
-// ** React Import
+'use client'
+
+// React Imports
 import { useEffect, useRef } from 'react'
 
-// ** Full Calendar & it's Plugins
+// MUI Imports
+import { useTheme } from '@mui/material/styles'
+
+// Third-party imports
+import 'bootstrap-icons/font/bootstrap-icons.css'
+
 import FullCalendar from '@fullcalendar/react'
 import listPlugin from '@fullcalendar/list'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
-import bootstrap5Plugin from '@fullcalendar/bootstrap5'
 import interactionPlugin from '@fullcalendar/interaction'
 
-// ** Types
-import { CalendarType } from 'src/types/apps/calendarTypes'
+// Type Imports
+import type { AddEventType, CalendarColors, CalendarType } from '@/types/apps/calendarTypes'
 
-// ** Third Party Style Import
-import 'bootstrap-icons/font/bootstrap-icons.css'
+type CalenderProps = {
+  mdAbove: boolean
+  calendars: CalendarType
+  calendarApi: any
+  setCalendarApi: (val: any) => void
+  calendarsColor: CalendarColors
+  handleSelectEvent: (event: any) => void
+  handleUpdateEvent: (event: any) => void
+  handleLeftSidebarToggle: () => void
+  handleAddEventSidebarToggle: () => void
+}
 
-const blankEvent = {
+// Vars
+const blankEvent: AddEventType = {
   title: '',
   start: '',
   end: '',
@@ -24,28 +40,28 @@ const blankEvent = {
   extendedProps: {
     calendar: '',
     guests: [],
-    location: '',
     description: ''
   }
 }
 
-const Calendar = (props: CalendarType) => {
-  // ** Props
+const Calendar = (props: CalenderProps) => {
+  // Props
   const {
-    store,
-    dispatch,
-    direction,
-    updateEvent,
+    calendars,
     calendarApi,
-    calendarsColor,
     setCalendarApi,
+    calendarsColor,
     handleSelectEvent,
-    handleLeftSidebarToggle,
-    handleAddEventSidebarToggle
+    handleUpdateEvent,
+    handleAddEventSidebarToggle,
+    handleLeftSidebarToggle
   } = props
 
-  // ** Refs
+  // Refs
   const calendarRef = useRef()
+
+  // Hooks
+  const theme = useTheme()
 
   useEffect(() => {
     if (calendarApi === null) {
@@ -54,121 +70,122 @@ const Calendar = (props: CalendarType) => {
     }
   }, [calendarApi, setCalendarApi])
 
-  if (store) {
-    // ** calendarOptions(Props)
-    const calendarOptions = {
-      events: store.events.length ? store.events : [],
-      plugins: [interactionPlugin, dayGridPlugin, timeGridPlugin, listPlugin, bootstrap5Plugin],
-      initialView: 'dayGridMonth',
-      headerToolbar: {
-        start: 'sidebarToggle, prev, next, title',
-        end: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth'
-      },
-      views: {
-        week: {
-          titleFormat: { year: 'numeric', month: 'long', day: 'numeric' }
-        }
-      },
+  // calendarOptions(Props)
+  const calendarOptions = {
+    events: calendars.events,
+    plugins: [interactionPlugin, dayGridPlugin, timeGridPlugin, listPlugin],
+    initialView: 'dayGridMonth',
+    headerToolbar: {
+      start: 'sidebarToggle, prev, next, title',
+      end: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth'
+    },
+    views: {
+      week: {
+        titleFormat: { year: 'numeric', month: 'short', day: 'numeric' }
+      }
+    },
 
-      /*
+    /*
       Enable dragging and resizing event
       ? Docs: https://fullcalendar.io/docs/editable
     */
-      editable: true,
+    editable: true,
 
-      /*
+    /*
       Enable resizing event from start
       ? Docs: https://fullcalendar.io/docs/eventResizableFromStart
     */
-      eventResizableFromStart: true,
+    eventResizableFromStart: true,
 
-      /*
-        Automatically scroll the scroll-containers during event drag-and-drop and date selecting
-        ? Docs: https://fullcalendar.io/docs/dragScroll
-      */
-      dragScroll: true,
+    /*
+      Automatically scroll the scroll-containers during event drag-and-drop and date selecting
+      ? Docs: https://fullcalendar.io/docs/dragScroll
+    */
+    dragScroll: true,
 
-      /*
-        Max number of events within a given day
-        ? Docs: https://fullcalendar.io/docs/dayMaxEvents
-      */
-      dayMaxEvents: 2,
+    /*
+      Max number of events within a given day
+      ? Docs: https://fullcalendar.io/docs/dayMaxEvents
+    */
+    dayMaxEvents: 2,
 
-      /*
-        Determines if day names and week names are clickable
-        ? Docs: https://fullcalendar.io/docs/navLinks
-      */
-      navLinks: true,
+    /*
+      Determines if day names and week names are clickable
+      ? Docs: https://fullcalendar.io/docs/navLinks
+    */
+    navLinks: true,
 
-      eventClassNames({ event: calendarEvent }: any) {
-        // @ts-ignore
-        const colorName = calendarsColor[calendarEvent._def.extendedProps.calendar]
+    eventClassNames({ event: calendarEvent }: any) {
+      // @ts-ignore
+      const colorName = calendarsColor[calendarEvent._def.extendedProps.calendar]
 
-        return [
-          // Background Color
-          `bg-${colorName}`
-        ]
-      },
+      return [
+        // Background Color
+        `event-bg-${colorName}`
+      ]
+    },
 
-      eventClick({ event: clickedEvent }: any) {
-        dispatch(handleSelectEvent(clickedEvent))
-        handleAddEventSidebarToggle()
+    eventClick({ event: clickedEvent, jsEvent }: any) {
+      jsEvent.preventDefault()
 
-        // * Only grab required field otherwise it goes in infinity loop
-        // ! Always grab all fields rendered by form (even if it get `undefined`) otherwise due to Vue3/Composition API you might get: "object is not extensible"
-        // event.value = grabEventDataFromEventApi(clickedEvent)
+      handleSelectEvent(clickedEvent)
+      handleAddEventSidebarToggle()
 
-        // isAddNewEventSidebarActive.value = true
-      },
+      if (clickedEvent.url) {
+        // Open the URL in a new tab
+        window.open(clickedEvent.url, '_blank')
+      }
 
-      customButtons: {
-        sidebarToggle: {
-          icon: 'bi bi-list',
-          click() {
-            handleLeftSidebarToggle()
-          }
+      //* Only grab required field otherwise it goes in infinity loop
+      //! Always grab all fields rendered by form (even if it get `undefined`)
+      // event.value = grabEventDataFromEventApi(clickedEvent)
+      // isAddNewEventSidebarActive.value = true
+    },
+
+    customButtons: {
+      sidebarToggle: {
+        icon: 'bi bi-list',
+        click() {
+          handleLeftSidebarToggle()
         }
-      },
+      }
+    },
 
-      dateClick(info: any) {
-        const ev = { ...blankEvent }
-        ev.start = info.date
-        ev.end = info.date
-        ev.allDay = true
+    dateClick(info: any) {
+      const ev = { ...blankEvent }
 
-        // @ts-ignore
-        dispatch(handleSelectEvent(ev))
-        handleAddEventSidebarToggle()
-      },
+      ev.start = info.date
+      ev.end = info.date
+      ev.allDay = true
 
-      /*
-        Handle event drop (Also include dragged event)
-        ? Docs: https://fullcalendar.io/docs/eventDrop
-        ? We can use `eventDragStop` but it doesn't return updated event so we have to use `eventDrop` which returns updated event
-      */
-      eventDrop({ event: droppedEvent }: any) {
-        dispatch(updateEvent(droppedEvent))
-      },
+      handleSelectEvent(ev)
+      handleAddEventSidebarToggle()
+    },
 
-      /*
-        Handle event resize
-        ? Docs: https://fullcalendar.io/docs/eventResize
-      */
-      eventResize({ event: resizedEvent }: any) {
-        dispatch(updateEvent(resizedEvent))
-      },
+    /*
+      Handle event drop (Also include dragged event)
+      ? Docs: https://fullcalendar.io/docs/eventDrop
+      ? We can use `eventDragStop` but it doesn't return updated event so we have to use `eventDrop` which returns updated event
+    */
+    eventDrop({ event: droppedEvent }: any) {
+      handleUpdateEvent(droppedEvent)
+    },
 
-      ref: calendarRef,
+    /*
+      Handle event resize
+      ? Docs: https://fullcalendar.io/docs/eventResize
+    */
+    eventResize({ event: resizedEvent }: any) {
+      handleUpdateEvent(resizedEvent)
+    },
 
-      // Get direction from app state (store)
-      direction
-    }
+    ref: calendarRef,
 
-    // @ts-ignore
-    return <FullCalendar {...calendarOptions} />
-  } else {
-    return null
+    direction: theme.direction
   }
+
+  // @ts-ignore
+  return <FullCalendar {...calendarOptions} />
 }
 
 export default Calendar

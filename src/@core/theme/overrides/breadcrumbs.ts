@@ -1,25 +1,27 @@
-// ** Type Import
-import { OwnerStateThemeType } from './'
+// MUI Imports
+import type { Theme } from '@mui/material/styles'
 
-const Breadcrumbs = () => {
-  return {
-    MuiBreadcrumbs: {
-      styleOverrides: {
-        root: ({ theme }: OwnerStateThemeType) => ({
-          '& a': {
-            textDecoration: 'none',
-            color: theme.palette.primary.main
+const breadcrumbs: Theme['components'] = {
+  MuiBreadcrumbs: {
+    styleOverrides: {
+      root: {
+        '& svg, & i': {
+          fontSize: '1.25rem'
+        },
+        '& a': {
+          textDecoration: 'none',
+          color: 'var(--mui-palette-text-secondary)',
+          '&:hover': {
+            color: 'var(--mui-palette-text-primary)'
           }
-        }),
-        li: ({ theme }: OwnerStateThemeType) => ({
-          color: theme.palette.text.secondary,
-          '& .MuiTypography-root': {
-            color: 'inherit'
-          }
-        })
-      }
+        }
+      },
+      li: ({ theme }) => ({
+        lineHeight: theme.typography.body1.lineHeight,
+        color: 'var(--mui-palette-text-primary)'
+      })
     }
   }
 }
 
-export default Breadcrumbs
+export default breadcrumbs

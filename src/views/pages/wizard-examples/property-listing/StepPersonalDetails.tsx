@@ -1,109 +1,100 @@
-// ** React Imports
-import { useState, ChangeEvent } from 'react'
+// React Imports
+import { useState } from 'react'
+import type { ChangeEvent } from 'react'
 
-// ** MUI Imports
+// MUI Imports
 import Grid from '@mui/material/Grid'
+import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
-import { useTheme } from '@mui/material/styles'
 import IconButton from '@mui/material/IconButton'
-import FormControl from '@mui/material/FormControl'
 import InputAdornment from '@mui/material/InputAdornment'
 
-// ** Type Imports
-import { CustomRadioIconsData, CustomRadioIconsProps } from 'src/@core/components/custom-radio/types'
+// Third-party Imports
+import classnames from 'classnames'
 
-// ** Icon Imports
-import Icon from 'src/@core/components/icon'
+// Type Imports
+import type { CustomInputVerticalData } from '@core/components/custom-inputs/types'
 
-// ** Custom Components Imports
-import CustomRadioIcons from 'src/@core/components/custom-radio/icons'
+// Component Imports
+import CustomInputVertical from '@core/components/custom-inputs/Vertical'
+import DirectionalIcon from '@components/DirectionalIcon'
 
-interface IconType {
-  icon: CustomRadioIconsProps['icon']
-  iconProps: CustomRadioIconsProps['iconProps']
+type Props = {
+  activeStep: number
+  handleNext: () => void
+  handlePrev: () => void
+  steps: { title: string; subtitle: string }[]
 }
 
-const data: CustomRadioIconsData[] = [
+// Vars
+const data: CustomInputVerticalData[] = [
   {
-    value: 'builder',
-    isSelected: true,
     title: 'I am the Builder',
-    content: 'List property as Builder, list your project and get highest reach.'
+    value: 'builder',
+    content: 'List property as Builder, list your project and get highest reach.',
+    asset: 'ri-home-6-line',
+    isSelected: true
   },
   {
-    value: 'owner',
     title: 'I am the Owner',
-    content: 'Submit property as an Individual. Lease, Rent or Sell at the best price.'
+    value: 'owner',
+    content: 'Submit property as an Individual. Lease, Rent or Sell at the best price.',
+    asset: 'ri-user-3-line'
   },
   {
+    title: 'I am the broker',
     value: 'broker',
-    title: 'I am the Broker',
-    content: 'Earn highest commission by listing your clients properties at the best price.'
+    content: 'Earn highest commission by listing your clients properties at the best price.',
+    asset: 'ri-money-dollar-circle-line'
   }
 ]
 
-const StepPersonalDetails = () => {
-  const initialIconSelected: string = data.filter(item => item.isSelected)[
+const StepPersonalDetails = ({ activeStep, handleNext, handlePrev, steps }: Props) => {
+  // Vars
+  const initialSelectedOption: string = data.filter(item => item.isSelected)[
     data.filter(item => item.isSelected).length - 1
   ].value
 
-  // ** States
-  const [showValues, setShowValues] = useState<boolean>(false)
-  const [selectedRadio, setSelectedRadio] = useState<string>(initialIconSelected)
+  // States
+  const [selectedOption, setSelectedOption] = useState<string>(initialSelectedOption)
+  const [isPasswordShown, setIsPasswordShown] = useState<boolean>(false)
 
-  // ** Hook
-  const theme = useTheme()
+  const handleClickShowPassword = () => setIsPasswordShown(show => !show)
 
-  const icons: IconType[] = [
-    {
-      icon: 'mdi:office-building-outline',
-      iconProps: { fontSize: '2rem', style: { marginBottom: 4 }, color: theme.palette.text.secondary }
-    },
-    {
-      icon: 'mdi:crown-outline',
-      iconProps: { fontSize: '2rem', style: { marginBottom: 4 }, color: theme.palette.text.secondary }
-    },
-    {
-      icon: 'mdi:briefcase-outline',
-      iconProps: { fontSize: '2rem', style: { marginBottom: 4 }, color: theme.palette.text.secondary }
-    }
-  ]
-
-  const handleTogglePasswordView = () => {
-    setShowValues(!showValues)
-  }
-
-  const handleRadioChange = (prop: string | ChangeEvent<HTMLInputElement>) => {
+  const handleOptionChange = (prop: string | ChangeEvent<HTMLInputElement>) => {
     if (typeof prop === 'string') {
-      setSelectedRadio(prop)
+      setSelectedOption(prop)
     } else {
-      setSelectedRadio((prop.target as HTMLInputElement).value)
+      setSelectedOption((prop.target as HTMLInputElement).value)
     }
   }
 
   return (
     <Grid container spacing={5}>
-      {data.map((item, index) => (
-        <CustomRadioIcons
-          key={index}
-          data={data[index]}
-          name='custom-radios'
-          icon={icons[index].icon}
-          selected={selectedRadio}
-          gridProps={{ sm: 4, xs: 12 }}
-          handleChange={handleRadioChange}
-          iconProps={icons[index].iconProps}
-        />
-      ))}
+      {data.map((item, index) => {
+        let asset
+
+        if (item.asset && typeof item.asset === 'string') {
+          asset = <i className={classnames(item.asset, 'text-[28px]')} />
+        }
+
+        return (
+          <CustomInputVertical
+            type='radio'
+            key={index}
+            gridProps={{ sm: 4, xs: 12 }}
+            selected={selectedOption}
+            name='custom-radios-basic'
+            handleChange={handleOptionChange}
+            data={typeof item.asset === 'string' ? { ...item, asset } : item}
+          />
+        )
+      })}
       <Grid item xs={12} md={6}>
-        <FormControl fullWidth>
-          <TextField label='First Name' placeholder='John' />
-        </FormControl>
+        <TextField fullWidth label='First Name' placeholder='John' />
       </Grid>
       <Grid item xs={12} md={6}>
-        <FormControl fullWidth>
-          <TextField label='Last Name' placeholder='Doe' />
-        </FormControl>
+        <TextField fullWidth label='Last Name' placeholder='Doe' />
       </Grid>
       <Grid item xs={12} md={6}>
         <TextField fullWidth label='Username' placeholder='john.doe' />
@@ -112,17 +103,19 @@ const StepPersonalDetails = () => {
         <TextField
           fullWidth
           label='Password'
-          type={showValues ? 'text' : 'password'}
+          placeholder='············'
+          id='personal-details-password'
+          type={isPasswordShown ? 'text' : 'password'}
           InputProps={{
             endAdornment: (
               <InputAdornment position='end'>
                 <IconButton
                   edge='end'
-                  onClick={handleTogglePasswordView}
+                  onClick={handleClickShowPassword}
                   onMouseDown={e => e.preventDefault()}
                   aria-label='toggle password visibility'
                 >
-                  <Icon icon={showValues ? 'mdi:eye-outline' : 'mdi:eye-off-outline'} />
+                  <i className={isPasswordShown ? 'ri-eye-off-line' : 'ri-eye-line'} />
                 </IconButton>
               </InputAdornment>
             )
@@ -130,7 +123,7 @@ const StepPersonalDetails = () => {
         />
       </Grid>
       <Grid item xs={12} md={6}>
-        <TextField fullWidth type='email' label='Email' placeholder='john.doe@email.com' />
+        <TextField fullWidth label='Email' placeholder='john.doe@gmail.com' />
       </Grid>
       <Grid item xs={12} md={6}>
         <TextField
@@ -141,6 +134,33 @@ const StepPersonalDetails = () => {
             startAdornment: <InputAdornment position='start'>US (+1)</InputAdornment>
           }}
         />
+      </Grid>
+      <Grid item xs={12}>
+        <div className='flex items-center justify-between'>
+          <Button
+            variant='outlined'
+            color='secondary'
+            disabled={activeStep === 0}
+            onClick={handlePrev}
+            startIcon={<DirectionalIcon ltrIconClass='ri-arrow-left-line' rtlIconClass='ri-arrow-right-line' />}
+          >
+            Previous
+          </Button>
+          <Button
+            variant='contained'
+            color={activeStep === steps.length - 1 ? 'success' : 'primary'}
+            onClick={handleNext}
+            endIcon={
+              activeStep === steps.length - 1 ? (
+                <i className='ri-check-line' />
+              ) : (
+                <DirectionalIcon ltrIconClass='ri-arrow-right-line' rtlIconClass='ri-arrow-left-line' />
+              )
+            }
+          >
+            {activeStep === steps.length - 1 ? 'Submit' : 'Next'}
+          </Button>
+        </div>
       </Grid>
     </Grid>
   )

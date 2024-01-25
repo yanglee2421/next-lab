@@ -1,140 +1,110 @@
-// ** Next Import
+'use client'
+
+// Next Imports
 import Link from 'next/link'
 
-// ** MUI Components
-import Box from '@mui/material/Box'
-import Grid from '@mui/material/Grid'
+// MUI Imports
 import Card from '@mui/material/Card'
-import Button from '@mui/material/Button'
-import Avatar from '@mui/material/Avatar'
-import Typography from '@mui/material/Typography'
 import CardHeader from '@mui/material/CardHeader'
 import CardContent from '@mui/material/CardContent'
+import Typography from '@mui/material/Typography'
+import Button from '@mui/material/Button'
+import Grid from '@mui/material/Grid'
+import Chip from '@mui/material/Chip'
 
-// ** Icon Imports
-import Icon from 'src/@core/components/icon'
+// Type Imports
+import type { ProfileTeamsTechType, ProfileConnectionsType } from '@/types/pages/profileTypes'
 
-// ** Custom Components Imports
-import CustomChip from 'src/@core/components/mui/chip'
-import OptionsMenu from 'src/@core/components/option-menu'
+// Component Imports
+import CustomAvatar from '@core/components/mui/Avatar'
+import OptionMenu from '@core/components/option-menu'
 
-// ** Types
-import { ProfileTeamsTechType, ProfileConnectionsType } from 'src/@fake-db/types'
-
-interface Props {
-  teams: ProfileTeamsTechType[]
-  connections: ProfileConnectionsType[]
+type Props = {
+  teamsTech?: ProfileTeamsTechType[]
+  connections?: ProfileConnectionsType[]
 }
 
-const ConnectionsTeams = ({ connections, teams }: Props) => {
+const ConnectionsTeams = (props: Props) => {
+  // props
+  const { teamsTech, connections } = props
+
   return (
     <>
-      <Grid item md={6} xs={12}>
+      <Grid item xs={12} md={6}>
         <Card>
           <CardHeader
             title='Connections'
             action={
-              <OptionsMenu
-                iconButtonProps={{ size: 'small' }}
-                options={['Share connections', 'Suggest edits', { divider: true }, 'Report bug']}
+              <OptionMenu
+                iconButtonProps={{ size: 'small', className: '!text-textDisabled' }}
+                options={['Share Connections', 'Suggest Edits', { divider: true }, 'Report Bug']}
               />
             }
           />
-          <CardContent>
+          <CardContent className='flex flex-col gap-4'>
             {connections &&
-              connections.map((connection: ProfileConnectionsType, index) => {
-                return (
-                  <Box
-                    key={index}
-                    sx={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      '&:not(:last-of-type)': { mb: 4 }
-                    }}
+              connections.map((connection, index) => (
+                <div key={index} className='flex items-center gap-2'>
+                  <div className='flex items-center flex-grow gap-2'>
+                    <CustomAvatar size={38} src={connection.avatar} />
+                    <div className='flex flex-grow flex-col gap-1'>
+                      <Typography className='font-medium' color='text.primary'>
+                        {connection.name}
+                      </Typography>
+                      <Typography variant='body2'>{connection.connections} Connections</Typography>
+                    </div>
+                  </div>
+                  <Button
+                    variant={connection.isFriend ? 'contained' : 'outlined'}
+                    size='small'
+                    className='is-[38px] bs-[38px] min-is-0 p-1.5'
                   >
-                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                      <Avatar src={connection.avatar} sx={{ mr: 3.5, width: 38, height: 38 }} />
-                      <div>
-                        <Typography sx={{ fontSize: '0.875rem', fontWeight: 600 }}>{connection.name}</Typography>
-                        <Typography variant='caption'>{connection.connections} Connections</Typography>
-                      </div>
-                    </Box>
-                    <Button
-                      size='small'
-                      color='primary'
-                      variant={connection.isFriend ? 'contained' : 'outlined'}
-                      sx={{ minWidth: 38, p: theme => `${theme.spacing(1.5)} !important` }}
-                    >
-                      <Icon icon='mdi:account-outline' />
-                    </Button>
-                  </Box>
-                )
-              })}
-            <Box sx={{ mt: 3.5, width: '100%', textAlign: 'center' }}>
-              <Typography
-                href='/'
-                component={Link}
-                onClick={e => e.preventDefault()}
-                sx={{ color: 'primary.main', textDecoration: 'none' }}
-              >
+                    <i className={connection.isFriend ? 'ri-user-3-line' : 'ri-user-add-line'} />
+                  </Button>
+                </div>
+              ))}
+            <div className='text-center'>
+              <Typography href='/' component={Link} onClick={e => e.preventDefault()} color='primary'>
                 View all connections
               </Typography>
-            </Box>
+            </div>
           </CardContent>
         </Card>
       </Grid>
-      <Grid item md={6} xs={12}>
+      <Grid item xs={12} md={6}>
         <Card>
           <CardHeader
             title='Teams'
             action={
-              <OptionsMenu
+              <OptionMenu
                 iconButtonProps={{ size: 'small' }}
-                options={['Share teams', 'Suggest edits', { divider: true }, 'Report bug']}
+                options={['Share Teams', 'Suggest Edits', { divider: true }, 'Report Bug']}
               />
             }
           />
-          <CardContent>
-            {teams &&
-              teams.map((team: ProfileTeamsTechType, index) => {
-                return (
-                  <Box
-                    key={index}
-                    sx={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      '&:not(:last-of-type)': { mb: 4 }
-                    }}
-                  >
-                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                      <Avatar src={team.avatar} sx={{ mr: 3.5, width: 38, height: 38 }} />
-                      <div>
-                        <Typography sx={{ fontSize: '0.875rem', fontWeight: 600 }}>{team.title}</Typography>
-                        <Typography variant='caption'>{team.members} Members</Typography>
-                      </div>
-                    </Box>
-                    <Box
-                      href='/'
-                      component={Link}
-                      onClick={e => e.preventDefault()}
-                      sx={{ height: 0, textDecoration: 'none', '& .MuiChip-root': { cursor: 'pointer' } }}
-                    >
-                      <CustomChip size='small' skin='light' color={team.ChipColor} label={team.chipText} />
-                    </Box>
-                  </Box>
-                )
-              })}
-            <Box sx={{ width: '100%', textAlign: 'center' }}>
-              <Typography
-                href='/'
-                component={Link}
-                onClick={e => e.preventDefault()}
-                sx={{ color: 'primary.main', textDecoration: 'none' }}
-              >
-                View all teams
-              </Typography>
-            </Box>
+          <CardContent className='flex flex-col gap-4'>
+            {teamsTech &&
+              teamsTech.map((team: ProfileTeamsTechType, index) => (
+                <div key={index} className='flex items-center gap-2'>
+                  <div className='flex flex-grow items-center gap-2'>
+                    <CustomAvatar size={38} src={team.avatar} />
+                    <div className='flex flex-grow flex-col gap-1'>
+                      <Typography className='font-medium' color='text.primary'>
+                        {team.title}
+                      </Typography>
+                      <Typography variant='body2'>{team.members} Members</Typography>
+                    </div>
+                  </div>
+                  <Chip variant='tonal' color={team.ChipColor} label={team.chipText} size='small' />
+                </div>
+              ))}
+            <div>
+              <div className='text-center'>
+                <Typography href='/' component={Link} onClick={e => e.preventDefault()} color='primary'>
+                  View all teams
+                </Typography>
+              </div>
+            </div>
           </CardContent>
         </Card>
       </Grid>

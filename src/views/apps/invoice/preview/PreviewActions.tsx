@@ -1,68 +1,83 @@
-// ** Next Import
+'use client'
+
+// React Imports
+import { useState } from 'react'
+
+// Next Imports
 import Link from 'next/link'
+import { useParams } from 'next/navigation'
 
-// ** MUI Imports
+// MUI Imports
 import Card from '@mui/material/Card'
-import Button from '@mui/material/Button'
 import CardContent from '@mui/material/CardContent'
+import Button from '@mui/material/Button'
 
-// ** Icon Imports
-import Icon from 'src/@core/components/icon'
+// Component Imports
+import AddPaymentDrawer from '@views/apps/invoice/shared/AddPaymentDrawer'
+import SendInvoiceDrawer from '@views/apps/invoice/shared/SendInvoiceDrawer'
 
-interface Props {
-  id: string | undefined
-  toggleAddPaymentDrawer: () => void
-  toggleSendInvoiceDrawer: () => void
-}
+const PreviewActions = ({ id }: { id: string }) => {
+  // States
+  const [paymentDrawerOpen, setPaymentDrawerOpen] = useState(false)
+  const [sendDrawerOpen, setSendDrawerOpen] = useState(false)
 
-const PreviewActions = ({ id, toggleSendInvoiceDrawer, toggleAddPaymentDrawer }: Props) => {
+  // Hooks
+  const { lang: locale } = useParams()
+
   return (
-    <Card>
-      <CardContent>
-        <Button
-          fullWidth
-          sx={{ mb: 3.5 }}
-          variant='contained'
-          onClick={toggleSendInvoiceDrawer}
-          startIcon={<Icon icon='mdi:send-outline' />}
-        >
-          Send Invoice
-        </Button>
-        <Button fullWidth sx={{ mb: 3.5 }} color='secondary' variant='outlined'>
-          Download
-        </Button>
-        <Button
-          fullWidth
-          target='_blank'
-          sx={{ mb: 3.5 }}
-          component={Link}
-          color='secondary'
-          variant='outlined'
-          href={`/apps/invoice/print/${id}`}
-        >
-          Print
-        </Button>
-        <Button
-          fullWidth
-          sx={{ mb: 3.5 }}
-          component={Link}
-          color='secondary'
-          variant='outlined'
-          href={`/apps/invoice/edit/${id}`}
-        >
-          Edit Invoice
-        </Button>
-        <Button
-          fullWidth
-          color='success'
-          variant='contained'
-          onClick={toggleAddPaymentDrawer}
-          startIcon={<Icon icon='mdi:currency-usd' />}
-        >
-          Add Payment
-        </Button>
-      </CardContent>
-    </Card>
+    <>
+      <Card>
+        <CardContent className='flex flex-col gap-4'>
+          <Button
+            fullWidth
+            variant='contained'
+            className='capitalize'
+            startIcon={<i className='ri-send-plane-line' />}
+            onClick={() => setSendDrawerOpen(true)}
+          >
+            Send Invoice
+          </Button>
+          <Button fullWidth color='secondary' variant='outlined' className='capitalize'>
+            Download
+          </Button>
+          <div className='flex items-center gap-4'>
+            <Button
+              fullWidth
+              target='_blank'
+              component={Link}
+              color='secondary'
+              variant='outlined'
+              className='capitalize'
+              href={`/apps/invoice/print/${id}`}
+            >
+              Print
+            </Button>
+            <Button
+              fullWidth
+              component={Link}
+              color='secondary'
+              variant='outlined'
+              className='capitalize'
+              href={`/${locale}/apps/invoice/edit/${id}`}
+            >
+              Edit
+            </Button>
+          </div>
+          <Button
+            fullWidth
+            color='success'
+            variant='contained'
+            className='capitalize'
+            onClick={() => setPaymentDrawerOpen(true)}
+            startIcon={<i className='ri-money-dollar-circle-line' />}
+          >
+            Add Payment
+          </Button>
+        </CardContent>
+      </Card>
+      <AddPaymentDrawer open={paymentDrawerOpen} handleClose={() => setPaymentDrawerOpen(false)} />
+      <SendInvoiceDrawer open={sendDrawerOpen} handleClose={() => setSendDrawerOpen(false)} />
+    </>
   )
 }
 

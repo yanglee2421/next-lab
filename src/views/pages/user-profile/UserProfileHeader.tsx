@@ -1,111 +1,52 @@
-// ** React Imports
-import { useState, useEffect } from 'react'
+'use client'
 
-// ** MUI Components
-import Box from '@mui/material/Box'
+// MUI Imports
 import Card from '@mui/material/Card'
-import Button from '@mui/material/Button'
-import { styled } from '@mui/material/styles'
 import CardMedia from '@mui/material/CardMedia'
-import Typography from '@mui/material/Typography'
 import CardContent from '@mui/material/CardContent'
+import Typography from '@mui/material/Typography'
+import Button from '@mui/material/Button'
 
-// ** Third Party Imports
-import axios from 'axios'
+// Third-party Imports
+import classnames from 'classnames'
 
-// ** Icon Imports
-import Icon from 'src/@core/components/icon'
+// Type Imports
+import type { ProfileHeaderType } from '@/types/pages/profileTypes'
 
-// ** Types
-import { ProfileHeaderType } from 'src/@fake-db/types'
-
-const ProfilePicture = styled('img')(({ theme }) => ({
-  width: 120,
-  height: 120,
-  borderRadius: theme.shape.borderRadius,
-  border: `5px solid ${theme.palette.common.white}`,
-  [theme.breakpoints.down('md')]: {
-    marginBottom: theme.spacing(4)
-  }
-}))
-
-const UserProfileHeader = () => {
-  // ** State
-  const [data, setData] = useState<ProfileHeaderType | null>(null)
-
-  useEffect(() => {
-    axios.get('/pages/profile-header').then(response => {
-      setData(response.data)
-    })
-  }, [])
-
-  const designationIcon = data?.designationIcon || 'mdi:briefcase-outline'
-
-  return data !== null ? (
+const UserProfileHeader = ({ data }: { data?: ProfileHeaderType }) => {
+  return (
     <Card>
-      <CardMedia
-        component='img'
-        alt='profile-header'
-        image={data.coverImg}
-        sx={{
-          height: { xs: 150, md: 250 }
-        }}
-      />
-      <CardContent
-        sx={{
-          pt: 0,
-          mt: -8,
-          display: 'flex',
-          alignItems: 'flex-end',
-          flexWrap: { xs: 'wrap', md: 'nowrap' },
-          justifyContent: { xs: 'center', md: 'flex-start' }
-        }}
-      >
-        <ProfilePicture src={data.profileImg} alt='profile-picture' />
-        <Box
-          sx={{
-            width: '100%',
-            display: 'flex',
-            ml: { xs: 0, md: 6 },
-            alignItems: 'flex-end',
-            flexWrap: ['wrap', 'nowrap'],
-            justifyContent: ['center', 'space-between']
-          }}
-        >
-          <Box sx={{ mb: [6, 0], display: 'flex', flexDirection: 'column', alignItems: ['center', 'flex-start'] }}>
-            <Typography variant='h5' sx={{ mb: 4 }}>
-              {data.fullName}
-            </Typography>
-            <Box
-              sx={{
-                display: 'flex',
-                flexWrap: 'wrap',
-                justifyContent: ['center', 'flex-start']
-              }}
-            >
-              <Box sx={{ mr: 5, display: 'flex', alignItems: 'center', '& svg': { mr: 1, color: 'text.secondary' } }}>
-                <Icon icon={designationIcon} />
-                <Typography sx={{ ml: 1, color: 'text.secondary', fontWeight: 600 }}>{data.designation}</Typography>
-              </Box>
-              <Box sx={{ mr: 5, display: 'flex', alignItems: 'center', '& svg': { mr: 1, color: 'text.secondary' } }}>
-                <Icon icon='mdi:map-marker-outline' />
-                <Typography sx={{ ml: 1, color: 'text.secondary', fontWeight: 600 }}>{data.location}</Typography>
-              </Box>
-              <Box sx={{ display: 'flex', alignItems: 'center', '& svg': { mr: 1, color: 'text.secondary' } }}>
-                <Icon icon='mdi:calendar-blank' />
-                <Typography sx={{ ml: 1, color: 'text.secondary', fontWeight: 600 }}>
-                  Joined {data.joiningDate}
-                </Typography>
-              </Box>
-            </Box>
-          </Box>
-          <Button variant='contained' startIcon={<Icon icon='mdi:account-check-outline' fontSize={20} />}>
-            Connected
+      <CardMedia image={data?.coverImg} className='bs-[250px]' />
+      <CardContent className='flex gap-6 justify-center flex-col items-center md:items-end md:flex-row !pt-0 md:justify-start'>
+        <div className='flex, rounded-bs-md mbs-[-45px] border-[5px] border-backgroundPaper bg-backgroundPaper'>
+          <img height={120} width={120} src={data?.profileImg} className='rounded' alt='Profile Background' />
+        </div>
+        <div className='flex is-full flex-wrap justify-center flex-col items-center sm:flex-row sm:justify-between sm:items-end gap-5'>
+          <div className='flex flex-col items-center sm:items-start gap-2'>
+            <Typography variant='h4'>{data?.fullName}</Typography>
+            <div className='flex flex-wrap gap-6 justify-center sm:justify-normal'>
+              <div className='flex items-center gap-2'>
+                {data?.designationIcon && <i className={classnames(data?.designationIcon, 'text-textSecondary')} />}
+                <Typography className='font-medium'>{data?.designation}</Typography>
+              </div>
+              <div className='flex items-center gap-2'>
+                <i className='ri-map-pin-2-line text-textSecondary' />
+                <Typography className='font-medium'>{data?.location}</Typography>
+              </div>
+              <div className='flex items-center gap-2'>
+                <i className='ri-calendar-line text-textSecondary' />
+                <Typography className='font-medium'>{data?.joiningDate}</Typography>
+              </div>
+            </div>
+          </div>
+          <Button variant='contained' className='flex gap-2'>
+            <i className='ri-user-follow-line text-base'></i>
+            <span>Connected</span>
           </Button>
-        </Box>
+        </div>
       </CardContent>
     </Card>
-  ) : null
+  )
 }
 
 export default UserProfileHeader

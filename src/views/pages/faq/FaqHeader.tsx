@@ -1,66 +1,47 @@
-// ** React Imports
-import { ChangeEvent } from 'react'
-
-// ** MUI Imports
+// MUI Imports
+import Card from '@mui/material/Card'
 import { styled } from '@mui/material/styles'
 import Typography from '@mui/material/Typography'
 import CardContent from '@mui/material/CardContent'
-import MuiCard, { CardProps } from '@mui/material/Card'
 import InputAdornment from '@mui/material/InputAdornment'
-import MuiTextField, { TextFieldProps } from '@mui/material/TextField'
+import MuiTextField from '@mui/material/TextField'
 
-// ** Icon Imports
-import Icon from 'src/@core/components/icon'
+// Third-party Imports
+import classnames from 'classnames'
 
-interface Props {
-  searchTerm: string
-  setSearchTerm: (value: string) => void
-}
-
-// Styled Card component
-const Card = styled(MuiCard)<CardProps>(({ theme }) => ({
-  border: 0,
-  boxShadow: 'none',
-  backgroundSize: 'cover',
-  backgroundImage: `url(/images/pages/tree-cone-cube-bg-${theme.palette.mode}.png)`
-}))
+// Styles imports
+import styles from './styles.module.css'
 
 // Styled TextField component
-const TextField = styled(MuiTextField)<TextFieldProps>(({ theme }) => ({
-  width: '100%',
+const TextField = styled(MuiTextField)(({ theme }) => ({
   '& .MuiOutlinedInput-root': {
     backgroundColor: theme.palette.background.paper
-  },
-  [theme.breakpoints.up('sm')]: {
-    width: '55%'
   }
 }))
 
-const FaqHeader = (props: Props) => {
-  // ** Props
-  const { searchTerm, setSearchTerm } = props
+type Props = {
+  searchValue: string
+  setSearchValue: (value: string) => void
+}
 
-  const handleFaqFilter = (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
-    setSearchTerm(e.target.value)
-  }
-
+const FaqHeader = ({ searchValue, setSearchValue }: Props) => {
   return (
-    <Card>
-      <CardContent sx={{ pt: 23, textAlign: 'center', pb: theme => `${theme.spacing(23)} !important` }}>
-        <Typography variant='h5' sx={{ mb: 2.5, fontWeight: 600, color: 'primary.main' }}>
+    <Card className={classnames('shadow-none bg-transparent bg-cover', styles.bgImage)} elevation={0}>
+      <CardContent className='flex flex-col items-center is-full text-center !pbs-[4.5625rem] !pbe-[5.9375rem] pli-5'>
+        <Typography variant='h4' color='primary' className='mbe-2.5'>
           Hello, how can we help?
         </Typography>
-        <Typography variant='body2' sx={{ mb: 6.5 }}>
-          or choose a category to quickly find the help you need
-        </Typography>
+        <Typography className='mbe-6'>or choose a category to quickly find the help you need</Typography>
         <TextField
-          value={searchTerm}
-          placeholder='Search a question....'
-          onChange={e => handleFaqFilter(e)}
+          className='is-full sm:max-is-[55%] md:max-is-[600px]'
+          variant='outlined'
+          placeholder='Ask a question...'
+          value={searchValue}
+          onChange={e => setSearchValue(e.target.value)}
           InputProps={{
             startAdornment: (
               <InputAdornment position='start'>
-                <Icon icon='mdi:magnify' />
+                <i className='ri-search-line' />
               </InputAdornment>
             )
           }}

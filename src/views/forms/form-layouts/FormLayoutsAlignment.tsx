@@ -1,76 +1,48 @@
-// ** React Imports
-import { ChangeEvent, useState } from 'react'
+'use client'
 
-// ** MUI Imports
+// React Imports
+import { useState } from 'react'
+
+// MUI Imports
 import Card from '@mui/material/Card'
 import Grid from '@mui/material/Grid'
 import Button from '@mui/material/Button'
-import Checkbox from '@mui/material/Checkbox'
-import { styled } from '@mui/material/styles'
 import TextField from '@mui/material/TextField'
-import CardHeader from '@mui/material/CardHeader'
 import Typography from '@mui/material/Typography'
-import InputLabel from '@mui/material/InputLabel'
-import IconButton from '@mui/material/IconButton'
+import Checkbox from '@mui/material/Checkbox'
+import CardHeader from '@mui/material/CardHeader'
 import CardContent from '@mui/material/CardContent'
-import FormControl from '@mui/material/FormControl'
-import OutlinedInput from '@mui/material/OutlinedInput'
-import InputAdornment from '@mui/material/InputAdornment'
 import FormControlLabel from '@mui/material/FormControlLabel'
-
-// ** Icon Imports
-import Icon from 'src/@core/components/icon'
-
-interface State {
-  password: string
-  showPassword: boolean
-}
-
-// Styled component for the form
-const Form = styled('form')(({ theme }) => ({
-  maxWidth: 400,
-  padding: theme.spacing(12),
-  borderRadius: theme.shape.borderRadius,
-  border: `1px solid ${theme.palette.divider}`
-}))
+import InputAdornment from '@mui/material/InputAdornment'
+import IconButton from '@mui/material/IconButton'
 
 const FormLayoutsAlignment = () => {
-  // ** State
-  const [values, setValues] = useState<State>({
-    password: '',
-    showPassword: false
-  })
+  // States
+  const [isPasswordShown, setIsPasswordShown] = useState(false)
 
-  // Handle Password
-  const handleChange = (prop: keyof State) => (event: ChangeEvent<HTMLInputElement>) => {
-    setValues({ ...values, [prop]: event.target.value })
-  }
-  const handleClickShowPassword = () => {
-    setValues({ ...values, showPassword: !values.showPassword })
-  }
+  const handleClickShowPassword = () => setIsPasswordShown(show => !show)
 
   return (
     <Card>
       <CardHeader title='Form Alignment' />
-      <CardContent sx={{ minHeight: 500, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <Form onSubmit={e => e.preventDefault()}>
+      <CardContent className='flex flex-col items-center justify-center bs-[500px]'>
+        <form onSubmit={e => e.preventDefault()} className='p-12 max-is-[400px] border rounded'>
           <Grid container spacing={5}>
             <Grid item xs={12}>
               <Typography variant='h5'>Sign In</Typography>
             </Grid>
             <Grid item xs={12}>
-              <TextField fullWidth label='Username' placeholder='carterLeonard' />
+              <TextField fullWidth label='Username' placeholder='johnDoe ' />
             </Grid>
             <Grid item xs={12}>
-              <FormControl fullWidth>
-                <InputLabel htmlFor='form-layouts-alignment-password'>Password</InputLabel>
-                <OutlinedInput
-                  label='Password'
-                  value={values.password}
-                  onChange={handleChange('password')}
-                  id='form-layouts-alignment-password'
-                  type={values.showPassword ? 'text' : 'password'}
-                  endAdornment={
+              <TextField
+                fullWidth
+                label='Password'
+                placeholder='············'
+                id='form-layout-alignment-password'
+                type={isPasswordShown ? 'text' : 'password'}
+                InputProps={{
+                  endAdornment: (
                     <InputAdornment position='end'>
                       <IconButton
                         edge='end'
@@ -78,23 +50,23 @@ const FormLayoutsAlignment = () => {
                         onMouseDown={e => e.preventDefault()}
                         aria-label='toggle password visibility'
                       >
-                        <Icon icon={values.showPassword ? 'mdi:eye-outline' : 'mdi:eye-off-outline'} />
+                        <i className={isPasswordShown ? 'ri-eye-off-line' : 'ri-eye-line'} />
                       </IconButton>
                     </InputAdornment>
-                  }
-                />
-              </FormControl>
+                  )
+                }}
+              />
             </Grid>
-            <Grid item xs={12} sx={{ pt: theme => `${theme.spacing(2)} !important` }}>
-              <FormControlLabel label='Remember me' control={<Checkbox name='form-layouts-alignment-checkbox' />} />
+            <Grid item xs={12} className='pbs-2'>
+              <FormControlLabel control={<Checkbox />} label='Remember me' />
             </Grid>
-            <Grid item xs={12} sx={{ pt: theme => `${theme.spacing(2)} !important` }}>
-              <Button size='large' type='submit' variant='contained' sx={{ width: '100%' }}>
-                Login
+            <Grid item xs={12} className='pbs-2'>
+              <Button variant='contained' type='submit' fullWidth>
+                Log In
               </Button>
             </Grid>
           </Grid>
-        </Form>
+        </form>
       </CardContent>
     </Card>
   )

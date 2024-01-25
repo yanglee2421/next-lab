@@ -1,151 +1,97 @@
-// ** React Imports
+'use client'
+
+// React Imports
 import { useState } from 'react'
 
-// ** MUI Imports
-import Box from '@mui/material/Box'
+// MUI Imports
 import Card from '@mui/material/Card'
-import Button from '@mui/material/Button'
+import CardContent from '@mui/material/CardContent'
 import Stepper from '@mui/material/Stepper'
-import { styled } from '@mui/material/styles'
+import Step from '@mui/material/Step'
+import StepConnector from '@mui/material/StepConnector'
 import StepLabel from '@mui/material/StepLabel'
 import Typography from '@mui/material/Typography'
-import MuiStep, { StepProps } from '@mui/material/Step'
-import CardContent, { CardContentProps } from '@mui/material/CardContent'
+import { styled } from '@mui/material/styles'
 
-// ** Icon Imports
-import Icon from 'src/@core/components/icon'
+// Component Imports
+import StepDealType from './StepDealType'
+import StepDealDetails from './StepDealDetails'
+import StepDealUsage from './StepDealUsage'
+import StepReview from './StepReview'
 
-// ** Custom Components Imports
-import StepperCustomDot from 'src/views/forms/form-wizard/StepperCustomDot'
+// Styled Component Imports
+import StepperWrapper from '@core/styles/stepper'
+import StepperCustomDot from '@views/forms/form-wizard/StepperCustomDot'
 
-// ** Step Components
-import StepDealType from 'src/views/pages/wizard-examples/create-deal/StepDealType'
-import StepReview from 'src/views/pages/wizard-examples/create-deal/StepReview'
-import StepDealUsage from 'src/views/pages/wizard-examples/create-deal/StepDealUsage'
-import StepDealDetails from 'src/views/pages/wizard-examples/create-deal/StepDealDetails'
-
-// ** Styled Components
-import StepperWrapper from 'src/@core/styles/mui/stepper'
-
+// Vars
 const steps = [
   {
     title: 'Deal Type',
-    icon: 'mdi:tag-outline',
     subtitle: 'Choose type of deal'
   },
   {
     title: 'Deal Details',
-    subtitle: 'Provide deal details',
-    icon: 'mdi:clipboard-text-outline'
+    subtitle: 'Provide deal details'
   },
   {
     title: 'Deal Usage',
-    icon: 'mdi:credit-card-outline',
     subtitle: 'Limitations & Offers'
   },
   {
     subtitle: 'Launch a deal',
-    title: 'Review & Complete',
-    icon: 'mdi:rocket-launch-outline'
+    title: 'Review & Complete'
   }
 ]
 
-const Step = styled(MuiStep)<StepProps>(({ theme }) => ({
-  '&:not(:last-of-type)': {
-    marginBottom: theme.spacing(4)
-  },
-  '& .MuiStepLabel-root': {
-    padding: 0,
-    cursor: 'pointer'
+// Styled Components
+const ConnectorHeight = styled(StepConnector)(() => ({
+  '& .MuiStepConnector-line': {
+    minHeight: 20
   }
 }))
 
-const StepperHeaderContainer = styled(CardContent)<CardContentProps>(({ theme }) => ({
-  minWidth: 300,
-  borderRight: `1px solid ${theme.palette.divider}`,
-  [theme.breakpoints.down('md')]: {
-    borderRight: 0,
-    borderBottom: `1px solid ${theme.palette.divider}`
-  }
-}))
+const getStepContent = (step: number, handleNext: () => void, handlePrev: () => void) => {
+  const Tag = step === 0 ? StepDealType : step === 1 ? StepDealDetails : step === 2 ? StepDealUsage : StepReview
 
-const CreateDealWizard = () => {
-  // ** States
-  const [activeStep, setActiveStep] = useState<number>(0)
+  return <Tag activeStep={step} handleNext={handleNext} handlePrev={handlePrev} steps={steps} />
+}
 
-  // Handle Stepper
+const CreateDeal = () => {
+  // States
+  const [activeStep, setActiveStep] = useState(0)
+
   const handleNext = () => {
-    setActiveStep(activeStep + 1)
+    if (activeStep !== steps.length - 1) {
+      setActiveStep(activeStep + 1)
+    } else {
+      alert('Submitted..!!')
+    }
   }
+
   const handlePrev = () => {
     if (activeStep !== 0) {
       setActiveStep(activeStep - 1)
     }
   }
 
-  const getStepContent = (step: number) => {
-    switch (step) {
-      case 0:
-        return <StepDealType />
-      case 1:
-        return <StepDealDetails />
-      case 2:
-        return <StepDealUsage />
-      case 3:
-        return <StepReview />
-      default:
-        return null
-    }
-  }
-
-  const renderContent = () => {
-    return getStepContent(activeStep)
-  }
-
-  const renderFooter = () => {
-    const stepCondition = activeStep === steps.length - 1
-
-    return (
-      <Box sx={{ mt: 4, display: 'flex', justifyContent: 'space-between' }}>
-        <Button
-          color='secondary'
-          variant='outlined'
-          onClick={handlePrev}
-          disabled={activeStep === 0}
-          startIcon={<Icon icon='mdi:arrow-left' />}
-        >
-          Previous
-        </Button>
-        <Button
-          variant='contained'
-          color={stepCondition ? 'success' : 'primary'}
-          {...(!stepCondition ? { endIcon: <Icon icon='mdi:arrow-right' /> } : {})}
-          onClick={() => (stepCondition ? alert('Submitted..!!') : handleNext())}
-        >
-          {stepCondition ? 'Submit' : 'Next'}
-        </Button>
-      </Box>
-    )
-  }
-
   return (
-    <Card sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' } }}>
-      <StepperHeaderContainer>
-        <StepperWrapper sx={{ height: '100%', '& .MuiStepLabel-label': { cursor: 'pointer' } }}>
-          <Stepper connector={<></>} activeStep={activeStep} orientation='vertical'>
+    <Card className='flex flex-col md:flex-row'>
+      <CardContent className='border-be md:border-be-0 md:border-ie md:min-is-[300px]'>
+        <StepperWrapper className='bs-full'>
+          <Stepper activeStep={activeStep} connector={<ConnectorHeight />} orientation='vertical'>
             {steps.map((step, index) => {
               return (
-                <Step
-                  key={index}
-                  onClick={() => setActiveStep(index)}
-                  sx={{ '&.Mui-completed + svg': { color: 'primary.main' } }}
-                >
-                  <StepLabel StepIconComponent={StepperCustomDot}>
-                    <div className='step-label'>
-                      <Typography className='step-number'>{`0${index + 1}`}</Typography>
+                <Step key={index} onClick={() => setActiveStep(index)}>
+                  <StepLabel StepIconComponent={StepperCustomDot} className='p-0'>
+                    <div className='step-label cursor-pointer'>
+                      <Typography className='step-number' color='text.primary'>{`0${index + 1}`}</Typography>
                       <div>
-                        <Typography className='step-title'>{step.title}</Typography>
-                        <Typography className='step-subtitle'>{step.subtitle}</Typography>
+                        <Typography className='step-title' color='text.primary'>
+                          {step.title}
+                        </Typography>
+                        <Typography className='step-subtitle' color='text.primary'>
+                          {step.subtitle}
+                        </Typography>
                       </div>
                     </div>
                   </StepLabel>
@@ -154,15 +100,11 @@ const CreateDealWizard = () => {
             })}
           </Stepper>
         </StepperWrapper>
-      </StepperHeaderContainer>
-      <div>
-        <CardContent>
-          {renderContent()}
-          {renderFooter()}
-        </CardContent>
-      </div>
+      </CardContent>
+
+      <CardContent className='flex-1'>{getStepContent(activeStep, handleNext, handlePrev)}</CardContent>
     </Card>
   )
 }
 
-export default CreateDealWizard
+export default CreateDeal

@@ -1,22 +1,31 @@
-// ** MUI Imports
+'use client'
+
+// MUI Imports
 import Button from '@mui/material/Button'
 import Drawer from '@mui/material/Drawer'
+import Divider from '@mui/material/Divider'
 import Checkbox from '@mui/material/Checkbox'
 import Typography from '@mui/material/Typography'
 import FormControlLabel from '@mui/material/FormControlLabel'
 
-// ** Types
-import { ThemeColor } from 'src/@core/layouts/types'
-import { SidebarLeftType, CalendarFiltersType } from 'src/types/apps/calendarTypes'
+// Third-party imports
+import classnames from 'classnames'
 
-const SidebarLeft = (props: SidebarLeftType) => {
+// Types Imports
+import type { SidebarLeftProps, CalendarFiltersType } from '@/types/apps/calendarTypes'
+import type { ThemeColor } from '@core/types'
+
+// Styled Component Imports
+import AppReactDatepicker from '@/libs/styles/AppReactDatepicker'
+
+const SidebarLeft = (props: SidebarLeftProps) => {
+  // Props
   const {
-    store,
     mdAbove,
-    dispatch,
-    calendarsColor,
     leftSidebarOpen,
-    leftSidebarWidth,
+    calendars,
+    calendarsColor,
+    calendarApi,
     handleSelectEvent,
     handleAllCalendars,
     handleCalendarsUpdate,
@@ -24,19 +33,21 @@ const SidebarLeft = (props: SidebarLeftType) => {
     handleAddEventSidebarToggle
   } = props
 
+  // Vars
   const colorsArr = calendarsColor ? Object.entries(calendarsColor) : []
 
   const renderFilters = colorsArr.length
     ? colorsArr.map(([key, value]: string[]) => {
         return (
           <FormControlLabel
+            className='mbe-1'
             key={key}
             label={key}
             control={
               <Checkbox
                 color={value as ThemeColor}
-                checked={store.selectedCalendars.includes(key as CalendarFiltersType)}
-                onChange={() => dispatch(handleCalendarsUpdate(key as CalendarFiltersType))}
+                checked={calendars.selectedCalendars.indexOf(key as CalendarFiltersType) > -1}
+                onChange={() => handleCalendarsUpdate(key as CalendarFiltersType)}
               />
             }
           />
@@ -45,8 +56,8 @@ const SidebarLeft = (props: SidebarLeftType) => {
     : null
 
   const handleSidebarToggleSidebar = () => {
+    handleSelectEvent(null)
     handleAddEventSidebarToggle()
-    dispatch(handleSelectEvent(null))
   }
 
   if (renderFilters) {
@@ -61,20 +72,19 @@ const SidebarLeft = (props: SidebarLeftType) => {
           disableScrollLock: true,
           keepMounted: true // Better open performance on mobile.
         }}
+        className={classnames('block', { static: mdAbove, absolute: !mdAbove })}
+        PaperProps={{
+          className: classnames('items-start is-[280px] shadow-none', {
+            static: mdAbove,
+            absolute: !mdAbove
+          })
+        }}
         sx={{
           zIndex: 3,
-          display: 'block',
-          position: mdAbove ? 'static' : 'absolute',
           '& .MuiDrawer-paper': {
-            borderRadius: 1,
-            boxShadow: 'none',
-            width: leftSidebarWidth,
             borderTopRightRadius: 0,
-            alignItems: 'flex-start',
             borderBottomRightRadius: 0,
-            p: theme => theme.spacing(5),
-            zIndex: mdAbove ? 2 : 'drawer',
-            position: mdAbove ? 'static' : 'absolute'
+            zIndex: mdAbove ? 2 : 'drawer'
           },
           '& .MuiBackdrop-root': {
             borderRadius: 1,
@@ -82,24 +92,44 @@ const SidebarLeft = (props: SidebarLeftType) => {
           }
         }}
       >
-        <Button fullWidth variant='contained' onClick={handleSidebarToggleSidebar}>
-          Add Event
-        </Button>
-
-        <Typography variant='caption' sx={{ mt: 7, mb: 2, textTransform: 'uppercase' }}>
-          Calendars
-        </Typography>
-        <FormControlLabel
-          label='View All'
-          control={
-            <Checkbox
-              color='secondary'
-              checked={store.selectedCalendars.length === colorsArr.length}
-              onChange={e => dispatch(handleAllCalendars(e.target.checked))}
-            />
-          }
+        <div className='is-full p-5'>
+          <Button
+            fullWidth
+            variant='contained'
+            onClick={handleSidebarToggleSidebar}
+            startIcon={<i className='ri-add-line' />}
+          >
+            Add Event
+          </Button>
+        </div>
+        <Divider className='is-full' />
+        <AppReactDatepicker
+          inline
+          onChange={date => calendarApi.gotoDate(date)}
+          boxProps={{
+            className: 'flex justify-center is-full',
+            sx: { '& .react-datepicker': { boxShadow: 'none !important', border: 'none !important' } }
+          }}
         />
-        {renderFilters}
+        <Divider className='is-full' />
+
+        <div className='flex flex-col p-5 is-full'>
+          <Typography variant='h5' className='mbe-4'>
+            Event Filters
+          </Typography>
+          <FormControlLabel
+            className='mbe-1'
+            label='View All'
+            control={
+              <Checkbox
+                color='secondary'
+                checked={calendars.selectedCalendars.length === colorsArr.length}
+                onChange={e => handleAllCalendars(e.target.checked)}
+              />
+            }
+          />
+          {renderFilters}
+        </div>
       </Drawer>
     )
   } else {

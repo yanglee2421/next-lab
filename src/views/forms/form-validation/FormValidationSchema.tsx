@@ -1,88 +1,64 @@
-// ** React Imports
+'use client'
+
+// React Imports
 import { useState } from 'react'
 
-// ** MUI Imports
+// MUI Imports
 import Card from '@mui/material/Card'
 import Grid from '@mui/material/Grid'
 import Button from '@mui/material/Button'
-import TextField from '@mui/material/TextField'
 import CardHeader from '@mui/material/CardHeader'
-import InputLabel from '@mui/material/InputLabel'
-import IconButton from '@mui/material/IconButton'
 import CardContent from '@mui/material/CardContent'
-import FormControl from '@mui/material/FormControl'
-import OutlinedInput from '@mui/material/OutlinedInput'
-import FormHelperText from '@mui/material/FormHelperText'
+import TextField from '@mui/material/TextField'
 import InputAdornment from '@mui/material/InputAdornment'
+import IconButton from '@mui/material/IconButton'
 
-// ** Third Party Imports
-import * as yup from 'yup'
-import toast from 'react-hot-toast'
-import { useForm, Controller } from 'react-hook-form'
-import { yupResolver } from '@hookform/resolvers/yup'
+// Third-party Imports
+import { toast } from 'react-toastify'
+import { Controller, useForm } from 'react-hook-form'
+import { valibotResolver } from '@hookform/resolvers/valibot'
+import { email, object, minLength, string } from 'valibot'
+import type { Input } from 'valibot'
 
-// ** Icon Imports
-import Icon from 'src/@core/components/icon'
+type FormData = Input<typeof schema>
 
-interface State {
-  password: string
-  showPassword: boolean
-}
-
-const defaultValues = {
-  email: '',
-  lastName: '',
-  password: '',
-  firstName: ''
-}
-
-const showErrors = (field: string, valueLen: number, min: number) => {
-  if (valueLen === 0) {
-    return `${field} field is required`
-  } else if (valueLen > 0 && valueLen < min) {
-    return `${field} must be at least ${min} characters`
-  } else {
-    return ''
-  }
-}
-
-const schema = yup.object().shape({
-  email: yup.string().email().required(),
-  lastName: yup
-    .string()
-    .min(3, obj => showErrors('lastName', obj.value.length, obj.min))
-    .required(),
-  password: yup
-    .string()
-    .min(8, obj => showErrors('password', obj.value.length, obj.min))
-    .required(),
-  firstName: yup
-    .string()
-    .min(3, obj => showErrors('firstName', obj.value.length, obj.min))
-    .required()
+const schema = object({
+  firstName: string([
+    minLength(1, 'This field is required'),
+    minLength(3, 'First Name must be at least 3 characters long')
+  ]),
+  lastName: string([
+    minLength(1, 'This field is required'),
+    minLength(3, 'Last Name must be at least 3 characters long')
+  ]),
+  email: string([minLength(1, 'This field is required'), email('Please enter a valid email address')]),
+  password: string([
+    minLength(1, 'This field is required'),
+    minLength(8, 'Password must be at least 8 characters long')
+  ])
 })
 
-const FormValidationSchema = () => {
-  // ** States
-  const [state, setState] = useState<State>({
-    password: '',
-    showPassword: false
-  })
+const FormValidationOnScheme = () => {
+  // States
+  const [isPasswordShown, setIsPasswordShown] = useState(false)
 
-  // ** Hook
+  // Hooks
   const {
     control,
+    reset,
     handleSubmit,
     formState: { errors }
-  } = useForm({
-    defaultValues,
-    mode: 'onChange',
-    resolver: yupResolver(schema)
+  } = useForm<FormData>({
+    resolver: valibotResolver(schema),
+    defaultValues: {
+      firstName: '',
+      lastName: '',
+      email: '',
+      password: ''
+    }
   })
 
-  const handleClickShowPassword = () => {
-    setState({ ...state, showPassword: !state.showPassword })
-  }
+  const handleClickShowPassword = () => setIsPasswordShown(show => !show)
 
   const onSubmit = () => toast.success('Form Submitted')
 
@@ -93,99 +69,69 @@ const FormValidationSchema = () => {
         <form onSubmit={handleSubmit(onSubmit)}>
           <Grid container spacing={5}>
             <Grid item xs={12}>
-              <FormControl fullWidth>
-                <Controller
-                  name='firstName'
-                  control={control}
-                  rules={{ required: true }}
-                  render={({ field: { value, onChange } }) => (
-                    <TextField
-                      value={value}
-                      label='First Name'
-                      onChange={onChange}
-                      placeholder='Leonard'
-                      error={Boolean(errors.firstName)}
-                      aria-describedby='validation-schema-first-name'
-                    />
-                  )}
-                />
-                {errors.firstName && (
-                  <FormHelperText sx={{ color: 'error.main' }} id='validation-schema-first-name'>
-                    {errors.firstName.message}
-                  </FormHelperText>
+              <Controller
+                name='firstName'
+                control={control}
+                rules={{ required: true }}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    fullWidth
+                    label='First Name'
+                    placeholder='John'
+                    {...(errors.firstName && { error: true, helperText: errors.firstName.message })}
+                  />
                 )}
-              </FormControl>
+              />
             </Grid>
-
             <Grid item xs={12}>
-              <FormControl fullWidth>
-                <Controller
-                  name='lastName'
-                  control={control}
-                  rules={{ required: true }}
-                  render={({ field: { value, onChange } }) => (
-                    <TextField
-                      value={value}
-                      label='Last Name'
-                      onChange={onChange}
-                      placeholder='Carter'
-                      error={Boolean(errors.lastName)}
-                      aria-describedby='validation-schema-last-name'
-                    />
-                  )}
-                />
-                {errors.lastName && (
-                  <FormHelperText sx={{ color: 'error.main' }} id='validation-schema-last-name'>
-                    {errors.lastName.message}
-                  </FormHelperText>
+              <Controller
+                name='lastName'
+                control={control}
+                rules={{ required: true }}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    fullWidth
+                    label='Last Name'
+                    placeholder='Doe'
+                    {...(errors.lastName && { error: true, helperText: errors.lastName.message })}
+                  />
                 )}
-              </FormControl>
+              />
             </Grid>
-
             <Grid item xs={12}>
-              <FormControl fullWidth>
-                <Controller
-                  name='email'
-                  control={control}
-                  rules={{ required: true }}
-                  render={({ field: { value, onChange } }) => (
-                    <TextField
-                      type='email'
-                      value={value}
-                      label='Email'
-                      onChange={onChange}
-                      error={Boolean(errors.email)}
-                      placeholder='carterleonard@gmail.com'
-                      aria-describedby='validation-schema-email'
-                    />
-                  )}
-                />
-                {errors.email && (
-                  <FormHelperText sx={{ color: 'error.main' }} id='validation-schema-email'>
-                    {errors.email.message}
-                  </FormHelperText>
+              <Controller
+                name='email'
+                control={control}
+                rules={{ required: true }}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    fullWidth
+                    type='email'
+                    label='Email'
+                    placeholder='johndoe@gmail.com'
+                    {...(errors.email && { error: true, helperText: errors.email.message })}
+                  />
                 )}
-              </FormControl>
+              />
             </Grid>
-
             <Grid item xs={12}>
-              <FormControl fullWidth>
-                <InputLabel htmlFor='validation-schema-password' error={Boolean(errors.password)}>
-                  Password
-                </InputLabel>
-                <Controller
-                  name='password'
-                  control={control}
-                  rules={{ required: true }}
-                  render={({ field: { value, onChange } }) => (
-                    <OutlinedInput
-                      value={value}
-                      label='Password'
-                      onChange={onChange}
-                      id='validation-schema-password'
-                      error={Boolean(errors.password)}
-                      type={state.showPassword ? 'text' : 'password'}
-                      endAdornment={
+              <Controller
+                name='password'
+                control={control}
+                rules={{ required: true }}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    fullWidth
+                    label='Password'
+                    placeholder='············'
+                    id='form-validation-scheme-password'
+                    type={isPasswordShown ? 'text' : 'password'}
+                    InputProps={{
+                      endAdornment: (
                         <InputAdornment position='end'>
                           <IconButton
                             edge='end'
@@ -193,24 +139,22 @@ const FormValidationSchema = () => {
                             onMouseDown={e => e.preventDefault()}
                             aria-label='toggle password visibility'
                           >
-                            <Icon icon={state.showPassword ? 'mdi:eye-outline' : 'mdi:eye-off-outline'} />
+                            <i className={isPasswordShown ? 'ri-eye-off-line' : 'ri-eye-line'} />
                           </IconButton>
                         </InputAdornment>
-                      }
-                    />
-                  )}
-                />
-                {errors.password && (
-                  <FormHelperText sx={{ color: 'error.main' }} id='validation-schema-password'>
-                    {errors.password.message}
-                  </FormHelperText>
+                      )
+                    }}
+                    {...(errors.password && { error: true, helperText: errors.password.message })}
+                  />
                 )}
-              </FormControl>
+              />
             </Grid>
-
-            <Grid item xs={12}>
-              <Button size='large' type='submit' variant='contained'>
+            <Grid item xs={12} className='flex gap-4'>
+              <Button variant='contained' type='submit'>
                 Submit
+              </Button>
+              <Button variant='outlined' type='reset' onClick={() => reset()}>
+                Reset
               </Button>
             </Grid>
           </Grid>
@@ -220,4 +164,4 @@ const FormValidationSchema = () => {
   )
 }
 
-export default FormValidationSchema
+export default FormValidationOnScheme

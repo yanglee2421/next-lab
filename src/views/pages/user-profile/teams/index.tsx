@@ -1,91 +1,78 @@
-// ** Next Import
-import Link from 'next/link'
-
-// ** MUI Components
-import Box from '@mui/material/Box'
+// MUI Imports
 import Grid from '@mui/material/Grid'
 import Card from '@mui/material/Card'
-import Avatar from '@mui/material/Avatar'
-import Tooltip from '@mui/material/Tooltip'
-import IconButton from '@mui/material/IconButton'
-import Typography from '@mui/material/Typography'
-import AvatarGroup from '@mui/material/AvatarGroup'
 import CardContent from '@mui/material/CardContent'
+import Avatar from '@mui/material/Avatar'
+import Typography from '@mui/material/Typography'
+import IconButton from '@mui/material/IconButton'
+import AvatarGroup from '@mui/material/AvatarGroup'
+import Tooltip from '@mui/material/Tooltip'
+import Chip from '@mui/material/Chip'
 
-// ** Icon Imports
-import Icon from 'src/@core/components/icon'
+// Type Imports
+import type { TeamsTabType } from '@/types/pages/profileTypes'
 
-// ** Types
-import { TeamsTabType } from 'src/@fake-db/types'
+// Component Imports
+import CustomAvatar from '@core/components/mui/Avatar'
+import OptionMenu from '@core/components/option-menu'
+import Link from '@components/Link'
 
-// ** Custom Components Imports
-import CustomChip from 'src/@core/components/mui/chip'
-import OptionsMenu from 'src/@core/components/option-menu'
-
-const Teams = ({ data }: { data: TeamsTabType[] }) => {
+const Teams = ({ data }: { data?: TeamsTabType[] }) => {
   return (
     <Grid container spacing={6}>
       {data &&
-        Array.isArray(data) &&
         data.map((item, index) => {
           return (
-            <Grid key={index} item xs={12} md={6} lg={4}>
+            <Grid item key={index} xs={12} md={6} lg={4}>
               <Card>
-                <CardContent>
-                  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                      <Avatar src={item.avatar} sx={{ mr: 2.5, height: 38, width: 38 }} />
-                      <Typography variant='h6'>{item.title}</Typography>
-                    </Box>
-                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                      <IconButton size='small' sx={{ color: 'text.secondary' }}>
-                        <Icon icon='mdi:star-outline' />
+                <CardContent className='flex flex-col gap-4'>
+                  <div className='flex items-center justify-between gap-2'>
+                    <div className='flex items-center gap-2'>
+                      <CustomAvatar size={38} src={item.avatar} />
+                      <Typography variant='h5'>{item.title}</Typography>
+                    </div>
+                    <div className='flex items-center gap-2'>
+                      <IconButton size='small'>
+                        <i className='ri-star-line text-textDisabled' />
                       </IconButton>
-                      <OptionsMenu
-                        iconButtonProps={{ size: 'small' }}
+                      <OptionMenu
+                        iconButtonProps={{
+                          size: 'small',
+                          className: 'text-textDisabled'
+                        }}
                         options={[
                           'Rename Team',
                           'View Details',
-                          'Add to Favorites',
+                          'Add to Favorite',
                           { divider: true },
-                          { text: 'Delete Team', menuItemProps: { sx: { color: 'error.main' } } }
+                          { text: 'Delete Team', menuItemProps: { className: 'text-error' } }
                         ]}
                       />
-                    </Box>
-                  </Box>
-                  <Typography sx={{ my: 5, color: 'text.secondary' }}>{item.description}</Typography>
-                  <Box sx={{ gap: 2, display: 'flex', flexWrap: 'wrap', alignItems: 'center' }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                      <AvatarGroup className='pull-up' sx={{ zIndex: 1, alignItems: 'center' }}>
-                        {item.avatarGroup.map((person, index) => {
-                          return (
-                            <Tooltip key={index} title={person.name}>
-                              <Avatar src={person.avatar} alt={person.name} sx={{ height: 32, width: 32 }} />
-                            </Tooltip>
-                          )
-                        })}
-                      </AvatarGroup>
-                      <Avatar sx={{ ml: -1, height: 32, width: 32, fontSize: '1rem' }}>+{item.extraMembers}</Avatar>
-                    </Box>
-                    <Box sx={{ ml: 'auto', display: 'flex', alignItems: 'center' }}>
-                      {item.chips &&
-                        item.chips.map((chip, index) => (
-                          <Box
-                            href='/'
-                            key={index}
-                            component={Link}
-                            onClick={e => e.preventDefault()}
-                            sx={{
-                              textDecoration: 'none',
-                              '&:not(:last-of-type)': { mr: 3 },
-                              '& .MuiChip-root': { cursor: 'pointer' }
-                            }}
-                          >
-                            <CustomChip size='small' skin='light' color={chip.color} label={chip.title} />
-                          </Box>
-                        ))}
-                    </Box>
-                  </Box>
+                    </div>
+                  </div>
+                  <Typography>{item.description}</Typography>
+                  <div className='flex items-center justify-between flex-wrap'>
+                    <AvatarGroup
+                      total={item.extraMembers ? item.extraMembers + 3 : 3}
+                      sx={{ '& .MuiAvatar-root': { width: '2rem', height: '2rem', fontSize: '1rem' } }}
+                      className='items-center pull-up'
+                    >
+                      {item.avatarGroup.map((person, index) => {
+                        return (
+                          <Tooltip key={index} title={person.name}>
+                            <Avatar src={person.avatar} alt={person.name} />
+                          </Tooltip>
+                        )
+                      })}
+                    </AvatarGroup>
+                    <div className='flex items-center gap-2'>
+                      {item.chips.map((chip, index) => (
+                        <Link key={index}>
+                          <Chip variant='tonal' size='small' label={chip.title} color={chip.color} />
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
                 </CardContent>
               </Card>
             </Grid>

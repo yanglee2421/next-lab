@@ -1,4 +1,6 @@
-// ** MUI Imports
+'use client'
+
+// MUI Imports
 import Card from '@mui/material/Card'
 import Grid from '@mui/material/Grid'
 import Button from '@mui/material/Button'
@@ -7,10 +9,7 @@ import CardHeader from '@mui/material/CardHeader'
 import CardContent from '@mui/material/CardContent'
 import InputAdornment from '@mui/material/InputAdornment'
 
-// ** Icon Imports
-import Icon from 'src/@core/components/icon'
-
-const FormLayoutsIcons = () => {
+const FormLayoutsWithIcon = () => {
   return (
     <Card>
       <CardHeader title='Basic with Icons' />
@@ -20,12 +19,12 @@ const FormLayoutsIcons = () => {
             <Grid item xs={12}>
               <TextField
                 fullWidth
-                label='Full Name'
-                placeholder='Leonard Carter'
+                label='Name'
+                placeholder='John Doe'
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position='start'>
-                      <Icon icon='mdi:account-outline' />
+                      <i className='ri-user-3-line' />
                     </InputAdornment>
                   )
                 }}
@@ -36,12 +35,11 @@ const FormLayoutsIcons = () => {
                 fullWidth
                 type='email'
                 label='Email'
-                placeholder='carterleonard@gmail.com'
-                helperText='You can use letters, numbers & periods'
+                placeholder='johndoe@gmail.com'
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position='start'>
-                      <Icon icon='mdi:email-outline' />
+                      <i className='ri-mail-line' />
                     </InputAdornment>
                   )
                 }}
@@ -50,13 +48,12 @@ const FormLayoutsIcons = () => {
             <Grid item xs={12}>
               <TextField
                 fullWidth
-                type='number'
                 label='Phone No.'
                 placeholder='123-456-7890'
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position='start'>
-                      <Icon icon='mdi:phone' />
+                      <i className='ri-phone-fill' />
                     </InputAdornment>
                   )
                 }}
@@ -65,22 +62,22 @@ const FormLayoutsIcons = () => {
             <Grid item xs={12}>
               <TextField
                 fullWidth
+                rows={4}
                 multiline
-                minRows={3}
                 label='Message'
                 placeholder='Bio...'
                 sx={{ '& .MuiOutlinedInput-root': { alignItems: 'baseline' } }}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position='start'>
-                      <Icon icon='mdi:message-outline' />
+                      <i className='ri-message-2-line' />
                     </InputAdornment>
                   )
                 }}
               />
             </Grid>
             <Grid item xs={12}>
-              <Button type='submit' variant='contained' size='large'>
+              <Button variant='contained' type='submit'>
                 Submit
               </Button>
             </Grid>
@@ -91,4 +88,4 @@ const FormLayoutsIcons = () => {
   )
 }
 
-export default FormLayoutsIcons
+export default FormLayoutsWithIcon

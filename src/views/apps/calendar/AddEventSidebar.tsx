@@ -1,7 +1,9 @@
-// ** React Imports
-import { useState, useEffect, forwardRef, useCallback, Fragment } from 'react'
+'use client'
 
-// ** MUI Imports
+// React Imports
+import { useState, useEffect, forwardRef, useCallback } from 'react'
+
+// MUI Imports
 import Box from '@mui/material/Box'
 import Drawer from '@mui/material/Drawer'
 import Select from '@mui/material/Select'
@@ -12,22 +14,20 @@ import TextField from '@mui/material/TextField'
 import IconButton from '@mui/material/IconButton'
 import InputLabel from '@mui/material/InputLabel'
 import Typography from '@mui/material/Typography'
+import useMediaQuery from '@mui/material/useMediaQuery'
 import FormControl from '@mui/material/FormControl'
-import FormHelperText from '@mui/material/FormHelperText'
 import FormControlLabel from '@mui/material/FormControlLabel'
+import type { Theme } from '@mui/material/styles'
 
-// ** Third Party Imports
-import DatePicker from 'react-datepicker'
+// Third-party Imports
 import { useForm, Controller } from 'react-hook-form'
+import PerfectScrollbar from 'react-perfect-scrollbar'
 
-// ** Icon Imports
-import Icon from 'src/@core/components/icon'
+// Type Imports
+import type { EventDateType, AddEventSidebarType } from '@/types/apps/calendarTypes'
 
-// ** Styled Components
-import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
-
-// ** Types
-import { EventDateType, AddEventSidebarType } from 'src/types/apps/calendarTypes'
+// Styled Component Imports
+import AppReactDatepicker from '@/libs/styles/AppReactDatepicker'
 
 interface PickerProps {
   label?: string
@@ -46,6 +46,7 @@ interface DefaultStateType {
   guests: string[] | string | undefined
 }
 
+// Vars
 const capitalize = (string: string) => string && string[0].toUpperCase() + string.slice(1)
 
 const defaultState: DefaultStateType = {
@@ -60,22 +61,36 @@ const defaultState: DefaultStateType = {
 }
 
 const AddEventSidebar = (props: AddEventSidebarType) => {
-  // ** Props
+  // Props
   const {
-    store,
-    dispatch,
-    addEvent,
-    updateEvent,
-    drawerWidth,
+    calendars,
     calendarApi,
-    deleteEvent,
+    handleAddEvent,
+    handleUpdateEvent,
+    handleDeleteEvent,
     handleSelectEvent,
     addEventSidebarOpen,
     handleAddEventSidebarToggle
   } = props
 
-  // ** States
+  // States
   const [values, setValues] = useState<DefaultStateType>(defaultState)
+
+  const PickersComponent = forwardRef(({ ...props }: PickerProps, ref) => {
+    return (
+      <TextField
+        inputRef={ref}
+        fullWidth
+        {...props}
+        label={props.label || ''}
+        className='is-full'
+        error={props.error}
+      />
+    )
+  })
+
+  // Hooks
+  const isBelowSmScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'))
 
   const {
     control,
@@ -85,10 +100,33 @@ const AddEventSidebar = (props: AddEventSidebarType) => {
     formState: { errors }
   } = useForm({ defaultValues: { title: '' } })
 
+  const resetToStoredValues = useCallback(() => {
+    if (calendars.selectedEvent !== null) {
+      const event = calendars.selectedEvent
+
+      setValue('title', event.title || '')
+      setValues({
+        url: event.url || '',
+        title: event.title || '',
+        allDay: event.allDay,
+        guests: event.extendedProps.guests || [],
+        description: event.extendedProps.description || '',
+        calendar: event.extendedProps.calendar || 'Business',
+        endDate: event.end !== null ? event.end : event.start,
+        startDate: event.start !== null ? event.start : new Date()
+      })
+    }
+  }, [setValue, calendars.selectedEvent])
+
+  const resetToEmptyValues = useCallback(() => {
+    setValue('title', '')
+    setValues(defaultState)
+  }, [setValue])
+
   const handleSidebarClose = async () => {
     setValues(defaultState)
     clearErrors()
-    dispatch(handleSelectEvent(null))
+    handleSelectEvent(null)
     handleAddEventSidebarToggle()
   }
 
@@ -106,21 +144,26 @@ const AddEventSidebar = (props: AddEventSidebarType) => {
         description: values.description.length ? values.description : undefined
       }
     }
-    if (store.selectedEvent === null || (store.selectedEvent !== null && !store.selectedEvent.title.length)) {
-      dispatch(addEvent(modifiedEvent))
+
+    if (
+      calendars.selectedEvent === null ||
+      (calendars.selectedEvent !== null && !calendars.selectedEvent.title.length)
+    ) {
+      handleAddEvent(modifiedEvent)
     } else {
-      dispatch(updateEvent({ id: store.selectedEvent.id, ...modifiedEvent }))
+      handleUpdateEvent({ id: parseInt(calendars.selectedEvent.id), ...modifiedEvent })
     }
+
     calendarApi.refetchEvents()
     handleSidebarClose()
   }
 
-  const handleDeleteEvent = () => {
-    if (store.selectedEvent) {
-      dispatch(deleteEvent(store.selectedEvent.id))
+  const handleDeleteButtonClick = () => {
+    if (calendars.selectedEvent) {
+      handleDeleteEvent(parseInt(calendars.selectedEvent.id))
     }
 
-    // calendarApi.getEventById(store.selectedEvent.id).remove()
+    calendarApi.getEventById(calendars.selectedEvent.id).remove()
     handleSidebarClose()
   }
 
@@ -130,74 +173,41 @@ const AddEventSidebar = (props: AddEventSidebarType) => {
     }
   }
 
-  const resetToStoredValues = useCallback(() => {
-    if (store.selectedEvent !== null) {
-      const event = store.selectedEvent
-      setValue('title', event.title || '')
-      setValues({
-        url: event.url || '',
-        title: event.title || '',
-        allDay: event.allDay,
-        guests: event.extendedProps.guests || [],
-        description: event.extendedProps.description || '',
-        calendar: event.extendedProps.calendar || 'Business',
-        endDate: event.end !== null ? event.end : event.start,
-        startDate: event.start !== null ? event.start : new Date()
-      })
+  const RenderSidebarFooter = () => {
+    if (calendars.selectedEvent === null || (calendars.selectedEvent && !calendars.selectedEvent.title.length)) {
+      return (
+        <div className='flex gap-4'>
+          <Button type='submit' variant='contained'>
+            Add
+          </Button>
+          <Button variant='outlined' color='secondary' onClick={resetToEmptyValues}>
+            Reset
+          </Button>
+        </div>
+      )
+    } else {
+      return (
+        <div className='flex gap-4'>
+          <Button type='submit' variant='contained'>
+            Update
+          </Button>
+          <Button variant='outlined' color='secondary' onClick={resetToStoredValues}>
+            Reset
+          </Button>
+        </div>
+      )
     }
-  }, [setValue, store.selectedEvent])
+  }
 
-  const resetToEmptyValues = useCallback(() => {
-    setValue('title', '')
-    setValues(defaultState)
-  }, [setValue])
+  const ScrollWrapper = isBelowSmScreen ? 'div' : PerfectScrollbar
 
   useEffect(() => {
-    if (store.selectedEvent !== null) {
+    if (calendars.selectedEvent !== null) {
       resetToStoredValues()
     } else {
       resetToEmptyValues()
     }
-  }, [addEventSidebarOpen, resetToStoredValues, resetToEmptyValues, store.selectedEvent])
-
-  const PickersComponent = forwardRef(({ ...props }: PickerProps, ref) => {
-    return (
-      <TextField
-        inputRef={ref}
-        fullWidth
-        {...props}
-        label={props.label || ''}
-        sx={{ width: '100%' }}
-        error={props.error}
-      />
-    )
-  })
-
-  const RenderSidebarFooter = () => {
-    if (store.selectedEvent === null || (store.selectedEvent !== null && !store.selectedEvent.title.length)) {
-      return (
-        <Fragment>
-          <Button size='large' type='submit' variant='contained' sx={{ mr: 4 }}>
-            Add
-          </Button>
-          <Button size='large' variant='outlined' color='secondary' onClick={resetToEmptyValues}>
-            Reset
-          </Button>
-        </Fragment>
-      )
-    } else {
-      return (
-        <Fragment>
-          <Button size='large' type='submit' variant='contained' sx={{ mr: 4 }}>
-            Update
-          </Button>
-          <Button size='large' variant='outlined' color='secondary' onClick={resetToStoredValues}>
-            Reset
-          </Button>
-        </Fragment>
-      )
-    }
-  }
+  }, [addEventSidebarOpen, resetToStoredValues, resetToEmptyValues, calendars.selectedEvent])
 
   return (
     <Drawer
@@ -205,54 +215,50 @@ const AddEventSidebar = (props: AddEventSidebarType) => {
       open={addEventSidebarOpen}
       onClose={handleSidebarClose}
       ModalProps={{ keepMounted: true }}
-      sx={{ '& .MuiDrawer-paper': { width: ['100%', drawerWidth] } }}
+      sx={{ '& .MuiDrawer-paper': { width: ['100%', 400] } }}
     >
-      <Box
-        className='sidebar-header'
-        sx={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          backgroundColor: 'background.default',
-          p: theme => theme.spacing(3, 3.255, 3, 5.255)
-        }}
-      >
-        <Typography variant='h6'>
-          {store.selectedEvent !== null && store.selectedEvent.title.length ? 'Update Event' : 'Add Event'}
+      <Box className='flex justify-between items-center sidebar-header p-3 pis-[1.31375rem] pie-[0.81375rem] border-be'>
+        <Typography variant='h5'>
+          {calendars.selectedEvent && calendars.selectedEvent.title.length ? 'Update Event' : 'Add Event'}
         </Typography>
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          {store.selectedEvent !== null && store.selectedEvent.title.length ? (
-            <IconButton
-              size='small'
-              onClick={handleDeleteEvent}
-              sx={{ color: 'text.primary', mr: store.selectedEvent !== null ? 1 : 0 }}
-            >
-              <Icon icon='mdi:delete-outline' fontSize={20} />
+        {calendars.selectedEvent && calendars.selectedEvent.title.length ? (
+          <Box className='flex items-center' sx={{ gap: calendars.selectedEvent !== null ? 1 : 0 }}>
+            <IconButton size='small' onClick={handleDeleteButtonClick}>
+              <i className='ri-delete-bin-7-line text-xl' />
             </IconButton>
-          ) : null}
-          <IconButton size='small' onClick={handleSidebarClose} sx={{ color: 'text.primary' }}>
-            <Icon icon='mdi:close' fontSize={20} />
+            <IconButton size='small' onClick={handleSidebarClose}>
+              <i className='ri-close-line text-xl' />
+            </IconButton>
+          </Box>
+        ) : (
+          <IconButton size='small' onClick={handleSidebarClose}>
+            <i className='ri-close-line text-xl' />
           </IconButton>
-        </Box>
+        )}
       </Box>
-      <Box className='sidebar-body' sx={{ p: theme => theme.spacing(5, 6) }}>
-        <DatePickerWrapper>
+      <ScrollWrapper
+        {...(isBelowSmScreen
+          ? { className: 'bs-full overflow-y-auto overflow-x-hidden' }
+          : { options: { wheelPropagation: false, suppressScrollX: true } })}
+      >
+        <Box className='sidebar-body plb-5 pli-6'>
           <form onSubmit={handleSubmit(onSubmit)} autoComplete='off'>
-            <FormControl fullWidth sx={{ mb: 6 }}>
+            <FormControl fullWidth className='mbe-6'>
               <Controller
                 name='title'
                 control={control}
                 rules={{ required: true }}
                 render={({ field: { value, onChange } }) => (
-                  <TextField label='Title' value={value} onChange={onChange} error={Boolean(errors.title)} />
+                  <TextField
+                    label='Title'
+                    value={value}
+                    onChange={onChange}
+                    {...(errors.title && { error: true, helperText: 'This field is required' })}
+                  />
                 )}
               />
-              {errors.title && (
-                <FormHelperText sx={{ color: 'error.main' }} id='event-title-error'>
-                  This field is required
-                </FormHelperText>
-              )}
             </FormControl>
-            <FormControl fullWidth sx={{ mb: 6 }}>
+            <FormControl fullWidth className='mbe-6'>
               <InputLabel id='event-calendar'>Calendar</InputLabel>
               <Select
                 label='Calendar'
@@ -267,8 +273,8 @@ const AddEventSidebar = (props: AddEventSidebarType) => {
                 <MenuItem value='ETC'>ETC</MenuItem>
               </Select>
             </FormControl>
-            <Box sx={{ mb: 6 }}>
-              <DatePicker
+            <div className='mbe-6'>
+              <AppReactDatepicker
                 selectsStart
                 id='event-start-date'
                 endDate={values.endDate as EventDateType}
@@ -280,9 +286,9 @@ const AddEventSidebar = (props: AddEventSidebarType) => {
                 onChange={(date: Date) => setValues({ ...values, startDate: new Date(date) })}
                 onSelect={handleStartDate}
               />
-            </Box>
-            <Box sx={{ mb: 6 }}>
-              <DatePicker
+            </div>
+            <div className='mbe-6'>
+              <AppReactDatepicker
                 selectsEnd
                 id='event-end-date'
                 endDate={values.endDate as EventDateType}
@@ -294,8 +300,8 @@ const AddEventSidebar = (props: AddEventSidebarType) => {
                 customInput={<PickersComponent label='End Date' registername='endDate' />}
                 onChange={(date: Date) => setValues({ ...values, endDate: new Date(date) })}
               />
-            </Box>
-            <FormControl sx={{ mb: 6 }}>
+            </div>
+            <FormControl className='mbe-6'>
               <FormControlLabel
                 label='All Day'
                 control={
@@ -307,12 +313,12 @@ const AddEventSidebar = (props: AddEventSidebarType) => {
               fullWidth
               type='url'
               id='event-url'
-              sx={{ mb: 6 }}
+              className='mbe-6'
               label='Event URL'
               value={values.url}
               onChange={e => setValues({ ...values, url: e.target.value })}
             />
-            <FormControl fullWidth sx={{ mb: 6 }}>
+            <FormControl fullWidth className='mbe-6'>
               <InputLabel id='event-guests'>Guests</InputLabel>
               <Select
                 multiple
@@ -333,18 +339,18 @@ const AddEventSidebar = (props: AddEventSidebarType) => {
               rows={4}
               multiline
               fullWidth
-              sx={{ mb: 6 }}
+              className='mbe-6'
               label='Description'
               id='event-description'
               value={values.description}
               onChange={e => setValues({ ...values, description: e.target.value })}
             />
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <div className='flex items-center'>
               <RenderSidebarFooter />
-            </Box>
+            </div>
           </form>
-        </DatePickerWrapper>
-      </Box>
+        </Box>
+      </ScrollWrapper>
     </Drawer>
   )
 }

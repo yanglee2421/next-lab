@@ -1,36 +1,22 @@
-// ** React Imports
-import { forwardRef, useState } from 'react'
+'use client'
 
-// ** MUI Imports
-import Box from '@mui/material/Box'
+// Next Imports
+import dynamic from 'next/dynamic'
+
+// MUI Imports
 import Card from '@mui/material/Card'
-import TextField from '@mui/material/TextField'
 import { useTheme } from '@mui/material/styles'
 import CardHeader from '@mui/material/CardHeader'
 import Typography from '@mui/material/Typography'
 import CardContent from '@mui/material/CardContent'
-import InputAdornment from '@mui/material/InputAdornment'
 
-// ** Third Party Imports
-import format from 'date-fns/format'
-import DatePicker from 'react-datepicker'
-import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts'
+// Component Imports
+import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from '@/libs/Recharts'
 
-// ** Icon Imports
-import Icon from 'src/@core/components/icon'
+// Styled Component Imports
+const AppRecharts = dynamic(() => import('@/libs/styles/AppRecharts'))
 
-// ** Types
-import { DateType } from 'src/types/forms/reactDatepickerTypes'
-
-interface Props {
-  direction: 'ltr' | 'rtl'
-}
-
-interface PickerProps {
-  start: Date | number
-  end: Date | number
-}
-
+// Vars
 const angularData = [
   { x: 5.4, y: 170 },
   { x: 5.4, y: 100 },
@@ -79,47 +65,9 @@ const reactData = [
   { x: 20.0, y: 120 }
 ]
 
-const RechartsScatterChart = ({ direction }: Props) => {
-  // ** States
-  const [endDate, setEndDate] = useState<DateType>(null)
-  const [startDate, setStartDate] = useState<DateType>(null)
-
-  // ** Hooks
+const RechartsScatterChart = () => {
+  // Hooks
   const theme = useTheme()
-
-  const CustomInput = forwardRef((props: PickerProps, ref) => {
-    const startDate = props.start !== null ? format(props.start, 'MM/dd/yyyy') : ''
-    const endDate = props.end !== null ? ` - ${format(props.end, 'MM/dd/yyyy')}` : null
-
-    const value = `${startDate}${endDate !== null ? endDate : ''}`
-
-    return (
-      <TextField
-        {...props}
-        size='small'
-        value={value}
-        inputRef={ref}
-        InputProps={{
-          startAdornment: (
-            <InputAdornment position='start'>
-              <Icon icon='mdi:bell-outline' />
-            </InputAdornment>
-          ),
-          endAdornment: (
-            <InputAdornment position='end'>
-              <Icon icon='mdi:chevron-down' />
-            </InputAdornment>
-          )
-        }}
-      />
-    )
-  })
-
-  const handleOnChange = (dates: any) => {
-    const [start, end] = dates
-    setStartDate(start)
-    setEndDate(end)
-  }
 
   return (
     <Card>
@@ -131,46 +79,36 @@ const RechartsScatterChart = ({ direction }: Props) => {
           '& .MuiCardHeader-action': { mb: 0 },
           '& .MuiCardHeader-content': { mb: [2, 0] }
         }}
-        action={
-          <DatePicker
-            selectsRange
-            endDate={endDate}
-            selected={startDate}
-            id='recharts-scatter'
-            startDate={startDate}
-            onChange={handleOnChange}
-            placeholderText='Click to select a date'
-            customInput={<CustomInput start={startDate as Date | number} end={endDate as Date | number} />}
-          />
-        }
       />
       <CardContent>
-        <Box sx={{ display: 'flex', mb: 4 }}>
-          <Box sx={{ mr: 6, display: 'flex', alignItems: 'center', '& svg': { mr: 1.5, color: 'primary.main' } }}>
-            <Icon icon='mdi:circle' fontSize='0.75rem' />
+        <div className='flex mbe-4 gap-5'>
+          <div className='flex items-center'>
+            <i className='ri-circle-fill text-xs mie-1.5 text-primary' />
             <Typography variant='body2'>React</Typography>
-          </Box>
-          <Box sx={{ mr: 6, display: 'flex', alignItems: 'center', '& svg': { mr: 1.5, color: 'success.main' } }}>
-            <Icon icon='mdi:circle' fontSize='0.75rem' />
+          </div>
+          <div className='flex items-center'>
+            <i className='ri-circle-fill text-xs mie-1.5 text-success' />
             <Typography variant='body2'>Vue</Typography>
-          </Box>
-          <Box sx={{ display: 'flex', alignItems: 'center', '& svg': { mr: 1.5, color: 'error.main' } }}>
-            <Icon icon='mdi:circle' fontSize='0.75rem' />
+          </div>
+          <div className='flex items-center'>
+            <i className='ri-circle-fill text-xs mie-1.5 text-error' />
             <Typography variant='body2'>Angular</Typography>
-          </Box>
-        </Box>
-        <Box sx={{ height: 350 }}>
-          <ResponsiveContainer>
-            <ScatterChart height={350} style={{ direction }} margin={{ left: -20 }}>
-              <CartesianGrid />
-              <XAxis type='number' dataKey='x' reversed={direction === 'rtl'} />
-              <YAxis type='number' dataKey='y' orientation={direction === 'rtl' ? 'right' : 'left'} />
-              <Scatter name='Angular' data={angularData} fill={theme.palette.error.main} />
-              <Scatter name='Vue' data={vueData} fill={theme.palette.success.main} />
-              <Scatter name='React' data={reactData} fill={theme.palette.primary.main} />
-            </ScatterChart>
-          </ResponsiveContainer>
-        </Box>
+          </div>
+        </div>
+        <AppRecharts>
+          <div className='bs-[350px]'>
+            <ResponsiveContainer>
+              <ScatterChart height={350} style={{ direction: theme.direction }} margin={{ left: -20 }}>
+                <CartesianGrid />
+                <XAxis type='number' dataKey='x' reversed={theme.direction === 'rtl'} />
+                <YAxis type='number' dataKey='y' orientation={theme.direction === 'rtl' ? 'right' : 'left'} />
+                <Scatter name='Angular' data={angularData} fill={theme.palette.error.main} />
+                <Scatter name='Vue' data={vueData} fill={theme.palette.success.main} />
+                <Scatter name='React' data={reactData} fill={theme.palette.primary.main} />
+              </ScatterChart>
+            </ResponsiveContainer>
+          </div>
+        </AppRecharts>
       </CardContent>
     </Card>
   )

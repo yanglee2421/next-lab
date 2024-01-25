@@ -1,21 +1,29 @@
-// ** MUI Imports
+// MUI Imports
 import Grid from '@mui/material/Grid'
-import Radio from '@mui/material/Radio'
-import Select from '@mui/material/Select'
-import Checkbox from '@mui/material/Checkbox'
-import MenuItem from '@mui/material/MenuItem'
 import TextField from '@mui/material/TextField'
-import FormLabel from '@mui/material/FormLabel'
-import InputLabel from '@mui/material/InputLabel'
-import RadioGroup from '@mui/material/RadioGroup'
-import FormControl from '@mui/material/FormControl'
 import InputAdornment from '@mui/material/InputAdornment'
+import FormControl from '@mui/material/FormControl'
+import InputLabel from '@mui/material/InputLabel'
+import Select from '@mui/material/Select'
+import MenuItem from '@mui/material/MenuItem'
+import FormLabel from '@mui/material/FormLabel'
+import Radio from '@mui/material/Radio'
 import FormControlLabel from '@mui/material/FormControlLabel'
+import RadioGroup from '@mui/material/RadioGroup'
+import Checkbox from '@mui/material/Checkbox'
+import Button from '@mui/material/Button'
 
-// ** Icon Imports
-import Icon from 'src/@core/components/icon'
+// Component Imports
+import DirectionalIcon from '@components/DirectionalIcon'
 
-const StepPriceDetails = () => {
+type Props = {
+  activeStep: number
+  handleNext: () => void
+  handlePrev: () => void
+  steps: { title: string; subtitle: string }[]
+}
+
+const StepPriceDetails = ({ activeStep, handleNext, handlePrev, steps }: Props) => {
   return (
     <Grid container spacing={5}>
       <Grid item xs={12} md={6}>
@@ -27,7 +35,7 @@ const StepPriceDetails = () => {
           InputProps={{
             endAdornment: (
               <InputAdornment position='end'>
-                <Icon icon='mdi:currency-usd' />
+                <i className='ri-money-dollar-circle-line' />
               </InputAdornment>
             )
           }}
@@ -42,7 +50,7 @@ const StepPriceDetails = () => {
           InputProps={{
             endAdornment: (
               <InputAdornment position='end'>
-                <Icon icon='mdi:currency-usd' />
+                <i className='ri-money-dollar-circle-line' />
               </InputAdornment>
             )
           }}
@@ -57,7 +65,7 @@ const StepPriceDetails = () => {
           InputProps={{
             endAdornment: (
               <InputAdornment position='end'>
-                <Icon icon='mdi:currency-usd' />
+                <i className='ri-money-dollar-circle-line' />
               </InputAdornment>
             )
           }}
@@ -68,11 +76,11 @@ const StepPriceDetails = () => {
         <FormControl fullWidth>
           <InputLabel id='select-maintenance'>Maintenance Period</InputLabel>
           <Select labelId='select-maintenance' label='Maintenance Period' defaultValue=''>
-            <MenuItem value='Monthly'>Monthly</MenuItem>
-            <MenuItem value='Quarterly'>Quarterly</MenuItem>
-            <MenuItem value='Yearly'>Yearly</MenuItem>
-            <MenuItem value='One-time'>One-time</MenuItem>
-            <MenuItem value='Per Sqft.Monthly'>Per Sqft.Monthly</MenuItem>
+            <MenuItem value='monthly'>Monthly</MenuItem>
+            <MenuItem value='quarterly'>Quarterly</MenuItem>
+            <MenuItem value='half-yearly'>Half Yearly</MenuItem>
+            <MenuItem value='yearly'>Yearly</MenuItem>
+            <MenuItem value='one-time'>One-time</MenuItem>
           </Select>
         </FormControl>
       </Grid>
@@ -85,7 +93,7 @@ const StepPriceDetails = () => {
           InputProps={{
             endAdornment: (
               <InputAdornment position='end'>
-                <Icon icon='mdi:currency-usd' />
+                <i className='ri-money-dollar-circle-line' />
               </InputAdornment>
             )
           }}
@@ -100,14 +108,14 @@ const StepPriceDetails = () => {
           InputProps={{
             endAdornment: (
               <InputAdornment position='end'>
-                <Icon icon='mdi:currency-usd' />
+                <i className='ri-money-dollar-circle-line' />
               </InputAdornment>
             )
           }}
         />
       </Grid>
       <Grid item xs={12} md={6}>
-        <FormControl>
+        <FormControl className='gap-2'>
           <FormLabel id='price-radio'>Show Price As</FormLabel>
           <RadioGroup name='price-group' defaultValue='negotiable' aria-labelledby='price-radio'>
             <FormControlLabel value='negotiable' control={<Radio />} label='Negotiable' />
@@ -116,11 +124,38 @@ const StepPriceDetails = () => {
         </FormControl>
       </Grid>
       <Grid item xs={12} md={6}>
-        <FormControl component='fieldset'>
-          <FormLabel component='legend'>Price Includes</FormLabel>
-          <FormControlLabel control={<Checkbox />} label='Car Parking' />
+        <FormControl className='gap-2'>
+          <FormLabel>Price Includes</FormLabel>
+          <FormControlLabel control={<Checkbox defaultChecked />} label='Car Parking' />
           <FormControlLabel control={<Checkbox />} label='Club Membership' />
         </FormControl>
+      </Grid>
+      <Grid item xs={12}>
+        <div className='flex items-center justify-between'>
+          <Button
+            variant='outlined'
+            color='secondary'
+            disabled={activeStep === 0}
+            onClick={handlePrev}
+            startIcon={<DirectionalIcon ltrIconClass='ri-arrow-left-line' rtlIconClass='ri-arrow-right-line' />}
+          >
+            Previous
+          </Button>
+          <Button
+            variant='contained'
+            color={activeStep === steps.length - 1 ? 'success' : 'primary'}
+            onClick={handleNext}
+            endIcon={
+              activeStep === steps.length - 1 ? (
+                <i className='ri-check-line' />
+              ) : (
+                <DirectionalIcon ltrIconClass='ri-arrow-right-line' rtlIconClass='ri-arrow-left-line' />
+              )
+            }
+          >
+            {activeStep === steps.length - 1 ? 'Submit' : 'Next'}
+          </Button>
+        </div>
       </Grid>
     </Grid>
   )

@@ -1,45 +1,33 @@
-// ** React Imports
-import { useState, forwardRef } from 'react'
+// React Imports
+import { useState } from 'react'
 
-// ** MUI Imports
+// MUI Imports
 import Grid from '@mui/material/Grid'
-import Radio from '@mui/material/Radio'
 import TextField from '@mui/material/TextField'
-import FormLabel from '@mui/material/FormLabel'
-import RadioGroup from '@mui/material/RadioGroup'
-import FormControl from '@mui/material/FormControl'
 import InputAdornment from '@mui/material/InputAdornment'
+import FormControl from '@mui/material/FormControl'
+import FormLabel from '@mui/material/FormLabel'
+import Radio from '@mui/material/Radio'
+import RadioGroup from '@mui/material/RadioGroup'
+import Button from '@mui/material/Button'
 import FormControlLabel from '@mui/material/FormControlLabel'
 
-// ** Third Party Imports
-import DatePicker from 'react-datepicker'
+// Component Imports
+import DirectionalIcon from '@components/DirectionalIcon'
 
-// ** Types
-import { DateType } from 'src/types/forms/reactDatepickerTypes'
+// Styled Component Imports
+import AppReactDatepicker from '@/libs/styles/AppReactDatepicker'
 
-interface PickerProps {
-  label?: string
-  readOnly?: boolean
+type Props = {
+  activeStep: number
+  handleNext: () => void
+  handlePrev: () => void
+  steps: { title: string; subtitle: string }[]
 }
 
-const CustomInput = forwardRef(({ ...props }: PickerProps, ref) => {
-  // ** Props
-  const { label, readOnly } = props
-
-  return (
-    <TextField
-      fullWidth
-      {...props}
-      inputRef={ref}
-      label={label || ''}
-      {...(readOnly && { inputProps: { readOnly: true } })}
-    />
-  )
-})
-
-const StepPropertyArea = () => {
-  // ** States
-  const [date, setDate] = useState<DateType>(null)
+const StepPropertyDetails = ({ activeStep, handleNext, handlePrev, steps }: Props) => {
+  // States
+  const [date, setDate] = useState<Date | null | undefined>(null)
 
   return (
     <Grid container spacing={5}>
@@ -77,40 +65,26 @@ const StepPropertyArea = () => {
         />
       </Grid>
       <Grid item xs={12} md={6}>
-        <DatePicker
+        <AppReactDatepicker
           selected={date}
-          placeholderText='YYY-MM-DD'
+          placeholderText='YYYY-MM-DD'
+          dateFormat={'yyyy-MM-dd'}
           onChange={(date: Date) => setDate(date)}
-          customInput={<CustomInput label='Available From' />}
+          customInput={<TextField fullWidth label='Available From' />}
         />
       </Grid>
-
       <Grid item xs={12} md={6}>
-        <FormControl>
-          <FormLabel
-            id='possession-status-radio'
-            sx={{ fontWeight: 500, fontSize: '0.875rem', lineHeight: '21px', letterSpacing: '0.1px' }}
-          >
-            Possession Status
-          </FormLabel>
-          <RadioGroup
-            name='possession-status-group'
-            defaultValue='under-construction'
-            aria-labelledby='possession-status-radio'
-          >
+        <FormControl className='gap-2'>
+          <FormLabel id='possession-status-radio'>Possession Status</FormLabel>
+          <RadioGroup name='possession-status-group' defaultValue='under-construction'>
             <FormControlLabel value='under-construction' control={<Radio />} label='Under Construction' />
             <FormControlLabel value='ready-to-move' control={<Radio />} label='Ready to Move' />
           </RadioGroup>
         </FormControl>
       </Grid>
       <Grid item xs={12} md={6}>
-        <FormControl>
-          <FormLabel
-            id='transaction-radio'
-            sx={{ fontWeight: 500, fontSize: '0.875rem', lineHeight: '21px', letterSpacing: '0.1px' }}
-          >
-            Transaction Type
-          </FormLabel>
+        <FormControl className='gap-2'>
+          <FormLabel id='transaction-radio'>Transaction Type</FormLabel>
           <RadioGroup defaultValue='new-property' name='transaction-group' aria-labelledby='transaction-radio'>
             <FormControlLabel value='new-property' control={<Radio />} label='New property' />
             <FormControlLabel value='resale' control={<Radio />} label='Resale' />
@@ -118,35 +92,52 @@ const StepPropertyArea = () => {
         </FormControl>
       </Grid>
       <Grid item xs={12} md={6}>
-        <FormControl>
-          <FormLabel
-            id='main-road-radio'
-            sx={{ fontWeight: 500, fontSize: '0.875rem', lineHeight: '21px', letterSpacing: '0.1px' }}
-          >
-            Is Property Facing Main Road
-          </FormLabel>
+        <FormControl className='gap-2'>
+          <FormLabel id='main-road-radio'>Is Property Facing Main Road</FormLabel>
           <RadioGroup defaultValue='yes' name='main-road-group' aria-labelledby='main-road-radio'>
             <FormControlLabel value='yes' control={<Radio />} label='Yes' />
-            <FormControlLabel value='no' control={<Radio />} label='no' />
+            <FormControlLabel value='no' control={<Radio />} label='No' />
           </RadioGroup>
         </FormControl>
       </Grid>
       <Grid item xs={12} md={6}>
-        <FormControl>
-          <FormLabel
-            id='gated-colony-radio'
-            sx={{ fontWeight: 500, fontSize: '0.875rem', lineHeight: '21px', letterSpacing: '0.1px' }}
-          >
-            Gated Colony
-          </FormLabel>
+        <FormControl className='gap-2'>
+          <FormLabel id='gated-colony-radio'>Gated Colony</FormLabel>
           <RadioGroup defaultValue='yes' name='gated-colony-group' aria-labelledby='gated-colony-radio'>
             <FormControlLabel value='yes' control={<Radio />} label='Yes' />
-            <FormControlLabel value='no' control={<Radio />} label='no' />
+            <FormControlLabel value='no' control={<Radio />} label='No' />
           </RadioGroup>
         </FormControl>
+      </Grid>
+      <Grid item xs={12}>
+        <div className='flex items-center justify-between'>
+          <Button
+            variant='outlined'
+            color='secondary'
+            disabled={activeStep === 0}
+            onClick={handlePrev}
+            startIcon={<DirectionalIcon ltrIconClass='ri-arrow-left-line' rtlIconClass='ri-arrow-right-line' />}
+          >
+            Previous
+          </Button>
+          <Button
+            variant='contained'
+            color={activeStep === steps.length - 1 ? 'success' : 'primary'}
+            onClick={handleNext}
+            endIcon={
+              activeStep === steps.length - 1 ? (
+                <i className='ri-check-line' />
+              ) : (
+                <DirectionalIcon ltrIconClass='ri-arrow-right-line' rtlIconClass='ri-arrow-left-line' />
+              )
+            }
+          >
+            {activeStep === steps.length - 1 ? 'Submit' : 'Next'}
+          </Button>
+        </div>
       </Grid>
     </Grid>
   )
 }
 
-export default StepPropertyArea
+export default StepPropertyDetails

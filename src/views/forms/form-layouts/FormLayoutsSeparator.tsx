@@ -1,104 +1,124 @@
-// ** React Imports
-import { ChangeEvent, forwardRef, useState } from 'react'
+'use client'
 
-// ** MUI Imports
+// React Imports
+import { useState } from 'react'
+
+// MUI Imports
 import Card from '@mui/material/Card'
 import Grid from '@mui/material/Grid'
 import Button from '@mui/material/Button'
+import Select from '@mui/material/Select'
 import Divider from '@mui/material/Divider'
 import MenuItem from '@mui/material/MenuItem'
 import TextField from '@mui/material/TextField'
-import CardHeader from '@mui/material/CardHeader'
-import InputLabel from '@mui/material/InputLabel'
-import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
+import CardHeader from '@mui/material/CardHeader'
 import CardContent from '@mui/material/CardContent'
 import CardActions from '@mui/material/CardActions'
 import FormControl from '@mui/material/FormControl'
-import OutlinedInput from '@mui/material/OutlinedInput'
+import InputLabel from '@mui/material/InputLabel'
 import InputAdornment from '@mui/material/InputAdornment'
-import Select, { SelectChangeEvent } from '@mui/material/Select'
+import IconButton from '@mui/material/IconButton'
 
-// ** Third Party Imports
-import DatePicker from 'react-datepicker'
+// Styled Component Imports
+import AppReactDatepicker from '@/libs/styles/AppReactDatepicker'
 
-// ** Icon Imports
-import Icon from 'src/@core/components/icon'
-
-// ** Types
-import { DateType } from 'src/types/forms/reactDatepickerTypes'
-
-interface State {
+type FormDataType = {
+  username: string
+  email: string
   password: string
-  password2: string
-  showPassword: boolean
-  showPassword2: boolean
+  isPasswordShown: boolean
+  confirmPassword: string
+  isConfirmPasswordShown: boolean
+  firstName: string
+  lastName: string
+  country: string
+  language: string[]
+  date: Date | null
+  phoneNumber: string
 }
 
-const CustomInput = forwardRef((props, ref) => {
-  return <TextField fullWidth {...props} inputRef={ref} label='Birth Date' autoComplete='off' />
-})
-
 const FormLayoutsSeparator = () => {
-  // ** States
-  const [date, setDate] = useState<DateType>(null)
-  const [language, setLanguage] = useState<string[]>([])
-  const [values, setValues] = useState<State>({
+  // States
+  const [formData, setFormData] = useState<FormDataType>({
+    username: '',
+    email: '',
     password: '',
-    password2: '',
-    showPassword: false,
-    showPassword2: false
+    isPasswordShown: false,
+    confirmPassword: '',
+    isConfirmPasswordShown: false,
+    firstName: '',
+    lastName: '',
+    country: '',
+    language: [],
+    date: null,
+    phoneNumber: ''
   })
 
-  // Handle Password
-  const handlePasswordChange = (prop: keyof State) => (event: ChangeEvent<HTMLInputElement>) => {
-    setValues({ ...values, [prop]: event.target.value })
-  }
-  const handleClickShowPassword = () => {
-    setValues({ ...values, showPassword: !values.showPassword })
-  }
+  const handleClickShowPassword = () => setFormData(show => ({ ...show, isPasswordShown: !show.isPasswordShown }))
 
-  // Handle Confirm Password
-  const handleConfirmChange = (prop: keyof State) => (event: ChangeEvent<HTMLInputElement>) => {
-    setValues({ ...values, [prop]: event.target.value })
-  }
-  const handleClickShowConfirmPassword = () => {
-    setValues({ ...values, showPassword2: !values.showPassword2 })
-  }
+  const handleClickShowConfirmPassword = () =>
+    setFormData(show => ({ ...show, isConfirmPasswordShown: !show.isConfirmPasswordShown }))
 
-  // Handle Select
-  const handleSelectChange = (event: SelectChangeEvent<string[]>) => {
-    setLanguage(event.target.value as string[])
+  const handleReset = () => {
+    setFormData({
+      username: '',
+      email: '',
+      password: '',
+      isPasswordShown: false,
+      confirmPassword: '',
+      isConfirmPasswordShown: false,
+      firstName: '',
+      lastName: '',
+      country: '',
+      language: [],
+      date: null,
+      phoneNumber: ''
+    })
   }
 
   return (
     <Card>
       <CardHeader title='Multi Column with Form Separator' />
-      <Divider sx={{ m: '0 !important' }} />
+      <Divider />
       <form onSubmit={e => e.preventDefault()}>
         <CardContent>
           <Grid container spacing={5}>
             <Grid item xs={12}>
-              <Typography variant='body2' sx={{ fontWeight: 600 }}>
+              <Typography variant='body2' className='font-medium'>
                 1. Account Details
               </Typography>
             </Grid>
             <Grid item xs={12} sm={6}>
-              <TextField fullWidth label='Username' placeholder='carterLeonard' />
+              <TextField
+                fullWidth
+                label='UserName'
+                placeholder='johnDoe '
+                value={formData.username}
+                onChange={e => setFormData({ ...formData, username: e.target.value })}
+              />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <TextField fullWidth type='email' label='Email' placeholder='carterleonard@gmail.com' />
+              <TextField
+                fullWidth
+                type='email'
+                label='Email'
+                value={formData.email}
+                placeholder='johndoe@gmail.com'
+                onChange={e => setFormData({ ...formData, email: e.target.value })}
+              />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <FormControl fullWidth>
-                <InputLabel htmlFor='form-layouts-separator-password'>Password</InputLabel>
-                <OutlinedInput
-                  label='Password'
-                  value={values.password}
-                  id='form-layouts-separator-password'
-                  onChange={handlePasswordChange('password')}
-                  type={values.showPassword ? 'text' : 'password'}
-                  endAdornment={
+              <TextField
+                fullWidth
+                label='Password'
+                placeholder='············'
+                id='form-layout-separator-password'
+                type={formData.isPasswordShown ? 'text' : 'password'}
+                value={formData.password}
+                onChange={e => setFormData({ ...formData, password: e.target.value })}
+                InputProps={{
+                  endAdornment: (
                     <InputAdornment position='end'>
                       <IconButton
                         edge='end'
@@ -106,59 +126,71 @@ const FormLayoutsSeparator = () => {
                         onMouseDown={e => e.preventDefault()}
                         aria-label='toggle password visibility'
                       >
-                        <Icon icon={values.showPassword ? 'mdi:eye-outline' : 'mdi:eye-off-outline'} />
+                        <i className={formData.isPasswordShown ? 'ri-eye-off-line' : 'ri-eye-line'} />
                       </IconButton>
                     </InputAdornment>
-                  }
-                />
-              </FormControl>
+                  )
+                }}
+              />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <FormControl fullWidth>
-                <InputLabel htmlFor='form-layouts-separator-password-2'>Confirm Password</InputLabel>
-                <OutlinedInput
-                  value={values.password2}
-                  label='Confirm Password'
-                  id='form-layouts-separator-password-2'
-                  onChange={handleConfirmChange('password2')}
-                  type={values.showPassword2 ? 'text' : 'password'}
-                  endAdornment={
+              <TextField
+                fullWidth
+                label='Confirm Password'
+                placeholder='············'
+                id='form-layout-separator-confirm-password'
+                type={formData.isConfirmPasswordShown ? 'text' : 'password'}
+                value={formData.confirmPassword}
+                onChange={e => setFormData({ ...formData, confirmPassword: e.target.value })}
+                InputProps={{
+                  endAdornment: (
                     <InputAdornment position='end'>
                       <IconButton
                         edge='end'
-                        onMouseDown={e => e.preventDefault()}
-                        aria-label='toggle password visibility'
                         onClick={handleClickShowConfirmPassword}
+                        onMouseDown={e => e.preventDefault()}
+                        aria-label='toggle confirm password visibility'
                       >
-                        <Icon icon={values.showPassword2 ? 'mdi:eye-outline' : 'mdi:eye-off-outline'} />
+                        <i className={formData.isConfirmPasswordShown ? 'ri-eye-off-line' : 'ri-eye-line'} />
                       </IconButton>
                     </InputAdornment>
-                  }
-                />
-              </FormControl>
+                  )
+                }}
+              />
             </Grid>
             <Grid item xs={12}>
-              <Divider sx={{ mb: '0 !important' }} />
+              <Divider />
             </Grid>
             <Grid item xs={12}>
-              <Typography variant='body2' sx={{ fontWeight: 600 }}>
+              <Typography variant='body2' className='font-medium'>
                 2. Personal Info
               </Typography>
             </Grid>
             <Grid item xs={12} sm={6}>
-              <TextField fullWidth label='First Name' placeholder='Leonard' />
+              <TextField
+                fullWidth
+                label='First Name'
+                placeholder='John'
+                value={formData.firstName}
+                onChange={e => setFormData({ ...formData, firstName: e.target.value })}
+              />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <TextField fullWidth label='Last Name' placeholder='Carter' />
+              <TextField
+                fullWidth
+                label='Last Name'
+                placeholder='Doe'
+                value={formData.lastName}
+                onChange={e => setFormData({ ...formData, lastName: e.target.value })}
+              />
             </Grid>
             <Grid item xs={12} sm={6}>
               <FormControl fullWidth>
-                <InputLabel id='form-layouts-separator-select-label'>Country</InputLabel>
+                <InputLabel>Country</InputLabel>
                 <Select
                   label='Country'
-                  defaultValue=''
-                  id='form-layouts-separator-select'
-                  labelId='form-layouts-separator-select-label'
+                  value={formData.country}
+                  onChange={e => setFormData({ ...formData, country: e.target.value })}
                 >
                   <MenuItem value='UK'>UK</MenuItem>
                   <MenuItem value='USA'>USA</MenuItem>
@@ -169,14 +201,12 @@ const FormLayoutsSeparator = () => {
             </Grid>
             <Grid item xs={12} sm={6}>
               <FormControl fullWidth>
-                <InputLabel id='form-layouts-separator-multiple-select-label'>Language</InputLabel>
+                <InputLabel>Language</InputLabel>
                 <Select
                   multiple
-                  value={language}
-                  onChange={handleSelectChange}
-                  id='form-layouts-separator-multiple-select'
-                  labelId='form-layouts-separator-multiple-select-label'
-                  input={<OutlinedInput label='Language' id='select-multiple-language' />}
+                  label='Language'
+                  value={formData.language}
+                  onChange={e => setFormData({ ...formData, language: e.target.value as string[] })}
                 >
                   <MenuItem value='English'>English</MenuItem>
                   <MenuItem value='French'>French</MenuItem>
@@ -189,27 +219,39 @@ const FormLayoutsSeparator = () => {
               </FormControl>
             </Grid>
             <Grid item xs={12} sm={6}>
-              <DatePicker
-                selected={date}
+              <AppReactDatepicker
+                selected={formData.date}
                 showYearDropdown
                 showMonthDropdown
-                placeholderText='MM-DD-YYYY'
-                customInput={<CustomInput />}
-                id='form-layouts-separator-date'
-                onChange={(date: Date) => setDate(date)}
+                onChange={(date: Date) => setFormData({ ...formData, date })}
+                placeholderText='MM/DD/YYYY'
+                customInput={<TextField fullWidth label='Birth Date' placeholder='MM-DD-YYYY' />}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <TextField fullWidth type='number' label='Phone No.' placeholder='123-456-7890' />
+              <TextField
+                fullWidth
+                label='Phone Number'
+                type='number'
+                placeholder='123-456-7890'
+                value={formData.phoneNumber}
+                onChange={e => setFormData({ ...formData, phoneNumber: e.target.value })}
+              />
             </Grid>
           </Grid>
         </CardContent>
-        <Divider sx={{ m: '0 !important' }} />
+        <Divider />
         <CardActions>
-          <Button size='large' type='submit' sx={{ mr: 2 }} variant='contained'>
+          <Button type='submit' variant='contained' className='mie-2'>
             Submit
           </Button>
-          <Button type='reset' size='large' color='secondary' variant='outlined'>
+          <Button
+            type='reset'
+            variant='outlined'
+            onClick={() => {
+              handleReset()
+            }}
+          >
             Reset
           </Button>
         </CardActions>

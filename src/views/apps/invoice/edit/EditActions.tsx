@@ -1,85 +1,84 @@
-// ** Next Import
+'use client'
+
+// React Imports
+import { useState } from 'react'
+
+// Next Imports
 import Link from 'next/link'
+import { useParams } from 'next/navigation'
 
-// ** MUI Imports
+// MUI Imports
 import Card from '@mui/material/Card'
-import Grid from '@mui/material/Grid'
-import Select from '@mui/material/Select'
-import Button from '@mui/material/Button'
-import Switch from '@mui/material/Switch'
-import MenuItem from '@mui/material/MenuItem'
-import { styled } from '@mui/material/styles'
-import InputLabel from '@mui/material/InputLabel'
-import Box, { BoxProps } from '@mui/material/Box'
 import CardContent from '@mui/material/CardContent'
+import Button from '@mui/material/Button'
+import Grid from '@mui/material/Grid'
 import FormControl from '@mui/material/FormControl'
+import InputLabel from '@mui/material/InputLabel'
+import Select from '@mui/material/Select'
+import MenuItem from '@mui/material/MenuItem'
+import Switch from '@mui/material/Switch'
 
-// ** Icon Imports
-import Icon from 'src/@core/components/icon'
+// Component Imports
+import AddPaymentDrawer from '@views/apps/invoice/shared/AddPaymentDrawer'
+import SendInvoiceDrawer from '@views/apps/invoice/shared/SendInvoiceDrawer'
 
-interface Props {
-  id: string | undefined
-  toggleAddPaymentDrawer: () => void
-  toggleSendInvoiceDrawer: () => void
-}
+const EditActions = ({ id }: { id: string }) => {
+  // States
+  const [paymentDrawerOpen, setPaymentDrawerOpen] = useState(false)
+  const [sendDrawerOpen, setSendDrawerOpen] = useState(false)
 
-const OptionsWrapper = styled(Box)<BoxProps>(() => ({
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between'
-}))
+  // Hooks
+  const { lang: locale } = useParams()
 
-const EditActions = ({ id, toggleSendInvoiceDrawer, toggleAddPaymentDrawer }: Props) => {
   return (
     <Grid container spacing={6}>
       <Grid item xs={12}>
         <Card>
-          <CardContent>
+          <CardContent className='flex flex-col gap-4'>
             <Button
               fullWidth
-              sx={{ mb: 3.5 }}
               variant='contained'
-              onClick={toggleSendInvoiceDrawer}
-              startIcon={<Icon icon='mdi:send-outline' />}
+              className='capitalize'
+              startIcon={<i className='ri-send-plane-line' />}
+              onClick={() => setSendDrawerOpen(true)}
             >
               Send Invoice
             </Button>
-            <Button
-              fullWidth
-              sx={{ mb: 3.5 }}
-              component={Link}
-              color='secondary'
-              variant='outlined'
-              href={`/apps/invoice/preview/${id}`}
-            >
-              Preview
-            </Button>
-            <Button fullWidth color='secondary' variant='outlined' sx={{ mb: 3.5 }}>
-              Save
-            </Button>
+            <div className='flex items-center gap-4'>
+              <Button
+                fullWidth
+                component={Link}
+                color='secondary'
+                variant='outlined'
+                className='capitalize'
+                href={`/${locale}/apps/invoice/preview/${id}`}
+              >
+                Preview
+              </Button>
+              <Button fullWidth color='secondary' variant='outlined' className='capitalize'>
+                Save
+              </Button>
+            </div>
             <Button
               fullWidth
               color='success'
               variant='contained'
-              onClick={toggleAddPaymentDrawer}
-              startIcon={<Icon icon='mdi:currency-usd' />}
+              className='capitalize'
+              onClick={() => setPaymentDrawerOpen(true)}
+              startIcon={<i className='ri-money-dollar-circle-line' />}
             >
               Add Payment
             </Button>
           </CardContent>
         </Card>
+        <AddPaymentDrawer open={paymentDrawerOpen} handleClose={() => setPaymentDrawerOpen(false)} />
+        <SendInvoiceDrawer open={sendDrawerOpen} handleClose={() => setSendDrawerOpen(false)} />
       </Grid>
 
       <Grid item xs={12}>
-        <FormControl fullWidth>
+        <FormControl fullWidth className='mbe-4'>
           <InputLabel id='payment-select'>Accept payments via</InputLabel>
-          <Select
-            fullWidth
-            defaultValue='Internet Banking'
-            label='Accept payments via'
-            labelId='payment-select'
-            sx={{ mb: 4 }}
-          >
+          <Select fullWidth defaultValue='Internet Banking' label='Accept payments via' labelId='payment-select'>
             <MenuItem value='Internet Banking'>Internet Banking</MenuItem>
             <MenuItem value='Debit Card'>Debit Card</MenuItem>
             <MenuItem value='Credit Card'>Credit Card</MenuItem>
@@ -87,33 +86,24 @@ const EditActions = ({ id, toggleSendInvoiceDrawer, toggleAddPaymentDrawer }: Pr
             <MenuItem value='UPI Transfer'>UPI Transfer</MenuItem>
           </Select>
         </FormControl>
-        <OptionsWrapper sx={{ mb: 1 }}>
-          <InputLabel
-            htmlFor='invoice-edit-payment-terms'
-            sx={{ cursor: 'pointer', fontSize: '0.875rem', color: 'text.secondary' }}
-          >
+        <div className='flex items-center justify-between gap-6'>
+          <InputLabel htmlFor='invoice-edit-payment-terms' className='cursor-pointer'>
             Payment Terms
           </InputLabel>
           <Switch defaultChecked id='invoice-edit-payment-terms' />
-        </OptionsWrapper>
-        <OptionsWrapper sx={{ mb: 1 }}>
-          <InputLabel
-            htmlFor='invoice-edit-client-notes'
-            sx={{ cursor: 'pointer', fontSize: '0.875rem', color: 'text.secondary' }}
-          >
+        </div>
+        <div className='flex items-center justify-between gap-6'>
+          <InputLabel htmlFor='invoice-edit-client-notes' className='cursor-pointer'>
             Client Notes
           </InputLabel>
           <Switch id='invoice-edit-client-notes' />
-        </OptionsWrapper>
-        <OptionsWrapper>
-          <InputLabel
-            htmlFor='invoice-edit-payment-stub'
-            sx={{ cursor: 'pointer', fontSize: '0.875rem', color: 'text.secondary' }}
-          >
+        </div>
+        <div className='flex items-center justify-between gap-6'>
+          <InputLabel htmlFor='invoice-edit-payment-stub' className='cursor-pointer'>
             Payment Stub
           </InputLabel>
           <Switch id='invoice-edit-payment-stub' />
-        </OptionsWrapper>
+        </div>
       </Grid>
     </Grid>
   )

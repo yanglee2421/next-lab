@@ -1,48 +1,22 @@
-// ** MUI Imports
-import MuiBox, { BoxProps } from '@mui/material/Box'
-import { StepIconProps } from '@mui/material/StepIcon'
-import { styled, useTheme } from '@mui/material/styles'
+// MUI Imports
+import type { StepIconProps } from '@mui/material/StepIcon'
 
-// ** Custom Icon Import
-import Icon from 'src/@core/components/icon'
+// Third-party Imports
+import classnames from 'classnames'
 
-// ** Hooks Imports
-import useBgColor, { UseBgColorType } from 'src/@core/hooks/useBgColor'
-
-// Styled Box component
-const Box = styled(MuiBox)<BoxProps>(() => ({
-  width: 20,
-  height: 20,
-  borderWidth: 3,
-  borderRadius: '50%',
-  borderStyle: 'solid'
-}))
+// Style Imports
+import styles from './styles.module.css'
 
 const StepperCustomDot = (props: StepIconProps) => {
-  // ** Props
+  // Props
   const { active, completed, error } = props
 
-  // ** Hooks
-  const theme = useTheme()
-  const bgColors: UseBgColorType = useBgColor()
-
   if (error) {
-    return <Icon icon='mdi:alert' fontSize={20} color={theme.palette.error.main} transform='scale(1.2)' />
+    return <i className='ri-alert-fill text-xl scale-[1.2] text-error' />
   } else if (completed) {
-    return <Icon icon='mdi:check-circle' fontSize={20} color={theme.palette.primary.main} transform='scale(1.2)' />
+    return <i className='ri-checkbox-circle-fill text-xl scale-[1.2] text-primary' />
   } else {
-    return (
-      <Box
-        sx={{
-          borderColor: bgColors.primaryLight.backgroundColor,
-          ...(active && {
-            borderWidth: 5,
-            borderColor: 'primary.main',
-            backgroundColor: theme.palette.mode === 'light' ? 'common.white' : 'background.default'
-          })
-        }}
-      />
-    )
+    return <div className={classnames(styles.stepperCustomDot, { [styles.activeStepperCustomDot]: active })} />
   }
 }
 
