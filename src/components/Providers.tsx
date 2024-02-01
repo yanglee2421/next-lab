@@ -1,5 +1,12 @@
 'use client'
 
+// React Imports
+import React from 'react'
+
+// I18n Imports
+import '@/locales/i18n'
+import { useTranslation } from 'react-i18next'
+
 // Type Imports
 import type { ChildrenType, Direction } from '@core/types'
 import type { getMode, getSettingsFromCookie, getSystemMode } from '@core/server/actions'
@@ -9,13 +16,6 @@ import { VerticalNavProvider } from '@menu/contexts/verticalNavContext'
 import { SettingsProvider } from '@core/contexts/settingsContext'
 import ThemeProvider from '@components/theme'
 
-// I18n Imports
-import '@/locales'
-import { useTranslation } from 'react-i18next'
-
-// React Imports
-import React from 'react'
-
 export default function Providers(props: Props) {
   // Props
   const { children, direction, settingsCookie, mode, systemMode, lang } = props
@@ -24,7 +24,7 @@ export default function Providers(props: Props) {
 
   React.useEffect(() => {
     i18n.changeLanguage(lang)
-  }, [lang])
+  }, [i18n, lang])
 
   return (
     <VerticalNavProvider>

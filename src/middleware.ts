@@ -1,10 +1,10 @@
-// I18n Imports
-import { match } from '@formatjs/intl-localematcher'
-import Negotiator from 'negotiator'
-
 // Next Imports
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+
+// I18n Imports
+import { match } from '@formatjs/intl-localematcher'
+import Negotiator from 'negotiator'
 
 export function middleware(request: NextRequest) {
   // With locale
@@ -26,6 +26,7 @@ export function middleware(request: NextRequest) {
 
   // Without locale
   request.nextUrl.pathname = `/${match(new Negotiator({ headers: Object.fromEntries(request.headers.entries()) }).languages(), locales, fallbackLocale)}/${request.nextUrl.pathname}`
+
   return NextResponse.redirect(request.nextUrl)
 }
 

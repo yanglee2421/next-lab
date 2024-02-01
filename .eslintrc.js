@@ -100,7 +100,8 @@ module.exports = {
           '{}': false
         }
       }
-    ]
+    ],
+    'import/no-named-as-default-member': 'off'
   },
   settings: {
     react: {

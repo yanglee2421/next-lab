@@ -11,6 +11,7 @@ i18next.use(initReactI18next).init({
   ns: ['translation', 'common', 'button', 'label'],
   defaultNS: 'translation',
   fallbackNS: 'common',
-  // lng: "en-US",
   fallbackLng: 'en'
+
+  // lng: "en-US",
 })

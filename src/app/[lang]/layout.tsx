@@ -7,11 +7,11 @@ import '@/app/globals.css'
 // Generated Icon CSS Imports
 import '@assets/iconify-icons/generated-icons.css'
 
-// Components Imports
-import Providers from '@components/Providers'
-
 // React Imports
 import React from 'react'
+
+// Components Imports
+import Providers from '@components/Providers'
 
 // Util Imports
 import { getMode, getSettingsFromCookie, getSystemMode } from '@core/server/actions'
