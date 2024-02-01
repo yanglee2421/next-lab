@@ -98,15 +98,7 @@ const LoginV2 = ({ mode }: { mode: Mode }) => {
             <Typography variant='h4'>{`Welcome to ${themeConfig.templateName}!👋🏻`}</Typography>
             <Typography className='mbs-1'>Please sign-in to your account and start the adventure</Typography>
           </div>
-          <form
-            noValidate
-            autoComplete='off'
-            onSubmit={e => {
-              e.preventDefault()
-              router.push('/')
-            }}
-            className='flex flex-col gap-5'
-          >
+          <form noValidate autoComplete='off' onSubmit={e => {e.preventDefault();router.push('/')}} className='flex flex-col gap-5'>
             <TextField autoFocus fullWidth label='Email' />
             <TextField
               fullWidth
@@ -124,7 +116,12 @@ const LoginV2 = ({ mode }: { mode: Mode }) => {
             />
             <div className='flex justify-between items-center flex-wrap gap-x-3 gap-y-1'>
               <FormControlLabel control={<Checkbox />} label='Remember me' />
-              <Typography className='text-end' color='primary' component={Link}>
+              <Typography
+                className='text-end'
+                color='primary'
+                component={Link}
+                
+              >
                 Forgot password?
               </Typography>
             </div>
@@ -133,7 +130,7 @@ const LoginV2 = ({ mode }: { mode: Mode }) => {
             </Button>
             <div className='flex justify-center items-center flex-wrap gap-2'>
               <Typography>New on our platform?</Typography>
-              <Typography component={Link} color='primary'>
+              <Typography component={Link}  color='primary'>
                 Create an account
               </Typography>
             </div>

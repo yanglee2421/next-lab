@@ -6,9 +6,16 @@ import type { ChildrenType } from '@core/types'
 
 // Style Imports
 import '@/app/globals.css'
+
+// Generated Icon CSS Imports
 import '@assets/iconify-icons/generated-icons.css'
 
-export default function RootLayout({ children }: ChildrenType) {
+export const metadata = {
+  title: 'Master Next.js Framework Independent ',
+  description: 'Master Next.js Framework Independent'
+}
+
+const RootLayout = ({ children }: ChildrenType) => {
   // Vars
   const direction = 'ltr'
 
@@ -19,7 +26,4 @@ export default function RootLayout({ children }: ChildrenType) {
   )
 }
 
-export const metadata = {
-  title: 'Master Next.js Framework Independent ',
-  description: 'Master Next.js Framework Independent'
-}
+export default RootLayout
