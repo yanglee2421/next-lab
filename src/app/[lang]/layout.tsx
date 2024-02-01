@@ -18,7 +18,7 @@ import { getMode, getSettingsFromCookie, getSystemMode } from '@core/server/acti
 
 export default function RootLayout(props: Props) {
   // ** Props
-  const { children, params } = props
+  const { children } = props
 
   const direction = 'ltr'
 
@@ -30,7 +30,6 @@ export default function RootLayout(props: Props) {
           mode={getMode()}
           settingsCookie={getSettingsFromCookie()}
           systemMode={getSystemMode()}
-          lang={params.lang}
         >
           {children}
         </Providers>

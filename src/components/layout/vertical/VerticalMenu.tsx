@@ -1,5 +1,8 @@
 'use client'
 
+// NextJs Imports
+import { useParams } from 'next/navigation'
+
 // MUI Imports
 import { useTheme } from '@mui/material/styles'
 
@@ -38,12 +41,13 @@ const RenderExpandIcon = ({ open, transitionDuration }: RenderExpandIconProps) =
   </StyledVerticalNavExpandIcon>
 )
 
-const VerticalMenu = ({ scrollMenu }: Props) => {
+export default function VerticalMenu({ scrollMenu }: Props) {
   // Hooks
   const theme = useTheme()
   const verticalNavOptions = useVerticalNav()
   const { isBreakpointReached } = useVerticalNav()
   const { settings } = useSettings()
+  const params = useParams()
 
   // Vars
   const { transitionDuration } = verticalNavOptions
@@ -73,10 +77,10 @@ const VerticalMenu = ({ scrollMenu }: Props) => {
         renderExpandedMenuItemIcon={{ icon: <i className='ri-circle-line' /> }}
         menuSectionStyles={menuSectionStyles(verticalNavOptions, theme)}
       >
-        <MenuItem href='/home' icon={<i className='ri-home-smile-line' />}>
+        <MenuItem href={`/${params.lang}/home`} icon={<i className='ri-home-smile-line' />}>
           Home
         </MenuItem>
-        <MenuItem href='/about' icon={<i className='ri-information-line' />}>
+        <MenuItem href={`/${params.lang}/about`} icon={<i className='ri-information-line' />}>
           About
         </MenuItem>
       </Menu>
@@ -92,5 +96,3 @@ const VerticalMenu = ({ scrollMenu }: Props) => {
     </ScrollWrapper>
   )
 }
-
-export default VerticalMenu

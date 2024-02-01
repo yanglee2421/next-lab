@@ -3,6 +3,9 @@
 // React Imports
 import React from 'react'
 
+// NextJs Imports
+import { useParams } from 'next/navigation'
+
 // I18n Imports
 import '@/locales/i18n'
 import { useTranslation } from 'react-i18next'
@@ -18,13 +21,16 @@ import ThemeProvider from '@components/theme'
 
 export default function Providers(props: Props) {
   // Props
-  const { children, direction, settingsCookie, mode, systemMode, lang } = props
+  const { children, direction, settingsCookie, mode, systemMode } = props
 
   const { i18n } = useTranslation()
+  const params = useParams()
 
   React.useEffect(() => {
-    i18n.changeLanguage(lang)
-  }, [i18n, lang])
+    if (typeof params.lang === 'string') {
+      i18n.changeLanguage(params.lang)
+    }
+  }, [i18n, params.lang])
 
   return (
     <VerticalNavProvider>
@@ -42,5 +48,4 @@ type Props = ChildrenType & {
   mode: ReturnType<typeof getMode>
   settingsCookie: ReturnType<typeof getSettingsFromCookie>
   systemMode: ReturnType<typeof getSystemMode>
-  lang: string
 }
