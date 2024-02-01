@@ -2,15 +2,14 @@
 
 // Type Imports
 import type { ChildrenType, Direction } from '@core/types'
+import type { getMode, getSettingsFromCookie, getSystemMode } from '@core/server/actions'
 
 // Context Imports
 import { VerticalNavProvider } from '@menu/contexts/verticalNavContext'
 import { SettingsProvider } from '@core/contexts/settingsContext'
 import ThemeProvider from '@components/theme'
 
-// Util Imports
-import type { getMode, getSettingsFromCookie, getSystemMode } from '@core/server/actions'
-
+// I18n Imports
 import '@/locales'
 import { useTranslation } from 'react-i18next'
 
@@ -22,6 +21,7 @@ export default function Providers(props: Props) {
   const { children, direction, settingsCookie, mode, systemMode, lang } = props
 
   const { i18n } = useTranslation()
+
   React.useEffect(() => {
     i18n.changeLanguage(lang)
   }, [lang])

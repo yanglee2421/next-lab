@@ -7,11 +7,7 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 export function middleware(request: NextRequest) {
-  console.log(
-    match(new Negotiator({ headers: Object.fromEntries(request.headers.entries()) }).languages(), locales, 'en-US')
-  )
-
-  // Pathname with locale
+  // With locale
   if (
     locales.some(locale => {
       if (request.nextUrl.pathname.startsWith(`/${locale}/`)) {
@@ -25,10 +21,10 @@ export function middleware(request: NextRequest) {
       return false
     })
   ) {
-    return
+    return NextResponse.next()
   }
 
-  // Pathname without locale
+  // Without locale
   request.nextUrl.pathname = `/${match(new Negotiator({ headers: Object.fromEntries(request.headers.entries()) }).languages(), locales, fallbackLocale)}/${request.nextUrl.pathname}`
   return NextResponse.redirect(request.nextUrl)
 }
