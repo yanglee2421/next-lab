@@ -8,6 +8,7 @@ import NavToggle from './NavToggle'
 import Logo from '@components/layout/shared/Logo'
 import ModeDropdown from '@components/layout/shared/ModeDropdown'
 import UserDropdown from '@components/layout/shared/UserDropdown'
+import LanguageDropdown from '@components/layout/shared/LanguageDropdown'
 
 // Hook Imports
 import useHorizontalNav from '@menu/hooks/useHorizontalNav'
@@ -15,7 +16,7 @@ import useHorizontalNav from '@menu/hooks/useHorizontalNav'
 // Util Imports
 import { horizontalLayoutClasses } from '@layouts/utils/layoutClasses'
 
-const NavbarContent = () => {
+export default function NavbarContent() {
   // Hooks
   const { isBreakpointReached } = useHorizontalNav()
 
@@ -29,11 +30,10 @@ const NavbarContent = () => {
         {!isBreakpointReached && <Logo />}
       </div>
       <div className='flex items-center'>
+        <LanguageDropdown />
         <ModeDropdown />
         <UserDropdown />
       </div>
     </div>
   )
 }
-
-export default NavbarContent

@@ -10,7 +10,6 @@ import VerticalLayout from '@layouts/VerticalLayout'
 import HorizontalLayout from '@layouts/HorizontalLayout'
 
 // Component Imports
-import Providers from '@components/Providers'
 import Navigation from '@components/layout/vertical/Navigation'
 import Header from '@components/layout/horizontal/Header'
 import Navbar from '@components/layout/vertical/Navbar'
@@ -21,16 +20,14 @@ import ScrollToTop from '@core/components/scroll-to-top'
 // Util Imports
 import { getMode, getSettingsFromCookie, getSkin, getSystemMode } from '@core/server/actions'
 
-const Layout = async ({ children }: ChildrenType) => {
-  // Vars
-  const direction = 'ltr'
+export default async function Layout({ children }: ChildrenType) {
   const mode = getMode()
   const systemMode = getSystemMode()
   const settingsCookie = getSettingsFromCookie()
   const skin = getSkin()
 
   return (
-    <Providers direction={direction}>
+    <>
       <LayoutWrapper
         systemMode={systemMode}
         verticalLayout={
@@ -53,8 +50,6 @@ const Layout = async ({ children }: ChildrenType) => {
           <i className='ri-arrow-up-line' />
         </Button>
       </ScrollToTop>
-    </Providers>
+    </>
   )
 }
-
-export default Layout
