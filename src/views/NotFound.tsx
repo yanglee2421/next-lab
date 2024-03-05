@@ -1,28 +1,19 @@
 'use client'
 
-// Next Imports
 import Link from 'next/link'
 
-// MUI Imports
+import { useParams } from 'next/navigation'
+
 import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
 
-// Type Imports
 import type { Mode } from '@core/types'
-
-// Component Imports
 import Illustrations from '@components/Illustrations'
-
-// Hook Imports
 import { useImageVariant } from '@core/hooks/useImageVariant'
 
-const NotFound = ({ mode }: { mode: Mode }) => {
-  // Vars
-  const darkImg = '/images/pages/misc-mask-dark.png'
-  const lightImg = '/images/pages/misc-mask-light.png'
-
-  // Hooks
+export default function NotFound({ mode }: { mode: Mode }) {
   const miscBackground = useImageVariant(mode, lightImg, darkImg)
+  const params = useParams()
 
   return (
     <div className='flex items-center justify-center min-bs-[100dvh] relative p-6 overflow-x-hidden'>
@@ -39,7 +30,7 @@ const NotFound = ({ mode }: { mode: Mode }) => {
           src='/images/illustrations/characters/9.png'
           className='object-cover bs-[400px] md:bs-[450px] lg:bs-[500px]'
         />
-        <Button href='/' component={Link} variant='contained'>
+        <Button href={`/${params.lang}`} component={Link} variant='contained'>
           Back to Home
         </Button>
       </div>
@@ -48,4 +39,5 @@ const NotFound = ({ mode }: { mode: Mode }) => {
   )
 }
 
-export default NotFound
+const darkImg = '/images/pages/misc-mask-dark.png'
+const lightImg = '/images/pages/misc-mask-light.png'

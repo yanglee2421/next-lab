@@ -1,42 +1,42 @@
 'use client'
 
-// React Imports
 import React from 'react'
 
-// NextJs Imports
-import { useParams } from 'next/navigation'
-
-// I18n Imports
-import '@/locales/i18n'
-import { useTranslation } from 'react-i18next'
-
-// Type Imports
-import type { ChildrenType, Direction } from '@core/types'
+import type { ChildrenType } from '@core/types'
 import type { getMode, getSettingsFromCookie, getSystemMode } from '@core/server/actions'
-
-// Context Imports
 import { VerticalNavProvider } from '@menu/contexts/verticalNavContext'
 import { SettingsProvider } from '@core/contexts/settingsContext'
 import ThemeProvider from '@components/theme'
+import { QueryProvider } from '@components/providers/QueryProvider'
+import AppReactToastify from '@/libs/styles/AppReactToastify'
+import { AclProvider } from '@components/providers/AclProvider'
+import { useThemeStore } from '@/hooks/store/useThemeStore'
+import { PosthogProvider } from '@components/providers/PosthogProvider'
 
 export default function Providers(props: Props) {
-  // Props
-  const { children, direction, settingsCookie, mode, systemMode } = props
-
-  const { i18n } = useTranslation()
-  const params = useParams()
+  const { children, settingsCookie, mode, systemMode } = props
+  const direction = useThemeStore(store => store.direction)
 
   React.useEffect(() => {
-    if (typeof params.lang === 'string') {
-      i18n.changeLanguage(params.lang)
+    const prevDir = document.documentElement.dir
+
+    document.documentElement.setAttribute('dir', direction)
+
+    return () => {
+      document.documentElement.setAttribute('dir', prevDir)
     }
-  }, [i18n, params.lang])
+  }, [direction])
 
   return (
     <VerticalNavProvider>
       <SettingsProvider settingsCookie={settingsCookie} mode={mode}>
         <ThemeProvider direction={direction} systemMode={systemMode}>
-          {children}
+          <AppReactToastify></AppReactToastify>
+          <QueryProvider>
+            <AclProvider>
+              <PosthogProvider>{children}</PosthogProvider>
+            </AclProvider>
+          </QueryProvider>
         </ThemeProvider>
       </SettingsProvider>
     </VerticalNavProvider>
@@ -44,7 +44,6 @@ export default function Providers(props: Props) {
 }
 
 type Props = ChildrenType & {
-  direction: Direction
   mode: ReturnType<typeof getMode>
   settingsCookie: ReturnType<typeof getSettingsFromCookie>
   systemMode: ReturnType<typeof getSystemMode>

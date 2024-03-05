@@ -1,55 +1,33 @@
 'use client'
 
-// NextJs Imports
 import { useParams } from 'next/navigation'
 
-// MUI Imports
 import { useTheme } from '@mui/material/styles'
-
-// Third-party Imports
 import PerfectScrollbar from 'react-perfect-scrollbar'
 
-// Type Imports
 import type { VerticalMenuContextProps } from '@menu/components/vertical-menu/Menu'
-
-// Component Imports
-import { Menu, MenuItem } from '@menu/vertical-menu'
-
-// Hook Imports
+import { Menu, MenuItem, SubMenu, MenuSection } from '@menu/vertical-menu'
 import useVerticalNav from '@menu/hooks/useVerticalNav'
 import { useSettings } from '@core/hooks/useSettings'
-
-// Styled Component Imports
 import StyledVerticalNavExpandIcon from '@menu/styles/vertical/StyledVerticalNavExpandIcon'
-
-// Style Imports
 import menuItemStyles from '@core/styles/vertical/menuItemStyles'
 import menuSectionStyles from '@core/styles/vertical/menuSectionStyles'
-
-type RenderExpandIconProps = {
-  open?: boolean
-  transitionDuration?: VerticalMenuContextProps['transitionDuration']
-}
-
-type Props = {
-  scrollMenu: (container: any, isPerfectScrollbar: boolean) => void
-}
-
-const RenderExpandIcon = ({ open, transitionDuration }: RenderExpandIconProps) => (
-  <StyledVerticalNavExpandIcon open={open} transitionDuration={transitionDuration}>
-    <i className='ri-arrow-right-s-line' />
-  </StyledVerticalNavExpandIcon>
-)
+import { useAllSubscribedPlans } from '@/hooks/api-stg/useAllSubscribedPlans'
+import { PlanGuard } from '@components/guard/PlanGuard'
+import { StoreGuard } from '@components/guard/StoreGuard'
 
 export default function VerticalMenu({ scrollMenu }: Props) {
-  // Hooks
   const theme = useTheme()
   const verticalNavOptions = useVerticalNav()
   const { isBreakpointReached } = useVerticalNav()
   const { settings } = useSettings()
   const params = useParams()
+  const query = useAllSubscribedPlans()
 
-  // Vars
+  if (query.isPending) {
+    return
+  }
+
   const { transitionDuration } = verticalNavOptions
 
   const ScrollWrapper = isBreakpointReached ? 'div' : PerfectScrollbar
@@ -77,22 +55,76 @@ export default function VerticalMenu({ scrollMenu }: Props) {
         renderExpandedMenuItemIcon={{ icon: <i className='ri-circle-line' /> }}
         menuSectionStyles={menuSectionStyles(verticalNavOptions, theme)}
       >
-        <MenuItem href={`/${params.lang}/home`} icon={<i className='ri-home-smile-line' />}>
-          Home
-        </MenuItem>
-        <MenuItem href={`/${params.lang}/about`} icon={<i className='ri-information-line' />}>
-          About
-        </MenuItem>
+        <MenuSection label='Intelligent eCommerce'>
+          <PlanGuard role={2}>
+            <SubMenu label='IntelliRec' icon={<i className='ri-search-eye-line' />}>
+              <MenuItem href={`/${params.lang}/intellirec/dashboard`}>Dashboard</MenuItem>
+              <MenuItem href={`/${params.lang}/intellirec/setting`}>Setting</MenuItem>
+            </SubMenu>
+          </PlanGuard>
+          <SubMenu label='IntelliMerch' icon={<i className='ri-shopping-bag-line' />}>
+            <StoreGuard>
+              <MenuItem href={`/${params.lang}/intellimerch/dashboard`}>Dashboard</MenuItem>
+              <MenuItem href={`/${params.lang}/user-behaviours/user`}>User Insight</MenuItem>
+              <MenuItem href={`/${params.lang}/user-behaviours/user-features`}>User Features</MenuItem>
+              <MenuItem href={`/${params.lang}/user-behaviours/items`}>Items Insight</MenuItem>
+              <MenuItem href={`/${params.lang}/user-behaviours/items-features`}>Items Features</MenuItem>
+            </StoreGuard>
+            <MenuItem href={`/${params.lang}/intellimerch/product-optimisation`}>AI Copilot</MenuItem>
+            <MenuItem href={`/${params.lang}/intellitools/gpt-copywriting`}>GPT Copywriting</MenuItem>
+          </SubMenu>
+          <PlanGuard role={5}>
+            <SubMenu label='IntelliChain' icon={<i className='ri-links-line' />}>
+              <MenuItem href={`/${params.lang}/intellichain/dashboard`}>Dashboard</MenuItem>
+              <MenuItem href={`/${params.lang}/intellichain/product-optimisation`}>Product Listing</MenuItem>
+              <MenuItem href={`/${params.lang}/intellichain/subscription`}>Subscription</MenuItem>
+              <MenuItem href={`/${params.lang}/intellichain/logistics`}>Logistics</MenuItem>
+              <MenuItem href={`/${params.lang}/intellichain/orders`}>Orders</MenuItem>
+            </SubMenu>
+          </PlanGuard>
+          <PlanGuard role={6}>
+            <SubMenu label='IntelliVendor' icon={<i className='ri-equalizer-line' />}>
+              <MenuItem href={`/${params.lang}/intellivendor/product-listing`}>Product Listing</MenuItem>
+            </SubMenu>
+          </PlanGuard>
+        </MenuSection>
+        <MenuSection label='Setting'>
+          <SubMenu label='Account' icon={<i className='ri-user-line' />}>
+            <MenuItem href={`/${params.lang}/user/overview`}>Overview</MenuItem>
+            <MenuItem href={`/${params.lang}/user/security`}>Security</MenuItem>
+            <MenuItem href={`/${params.lang}/user/billing`}>Billing</MenuItem>
+          </SubMenu>
+          <SubMenu label='Subscription' icon={<i className='ri-money-dollar-circle-line' />}>
+            <MenuItem href={`/${params.lang}/subscription/1`}>AI Copilot</MenuItem>
+            <MenuItem href={`/${params.lang}/subscription/2`}>IntelliRec</MenuItem>
+            <MenuItem href={`/${params.lang}/subscription/4`}>IntelliMerch</MenuItem>
+            <MenuItem href={`/${params.lang}/subscription/5`}>IntelliChain</MenuItem>
+            <MenuItem href={`/${params.lang}/subscription/6`}>IntelliVendor</MenuItem>
+            <MenuItem href={`/${params.lang}/subscription/8`}>AI Agent</MenuItem>
+          </SubMenu>
+          <SubMenu label='Connection' icon={<i className='ri-git-commit-line' />}>
+            <MenuItem href={`/${params.lang}/connection/my-connection`}>My Connection</MenuItem>
+            <MenuItem href={`/${params.lang}/connection/new-connection`}>New Connection</MenuItem>
+          </SubMenu>
+        </MenuSection>
       </Menu>
-      {/* <Menu
-        popoutMenuOffset={{ mainAxis: 10 }}
-        menuItemStyles={menuItemStyles(verticalNavOptions, theme, settings)}
-        renderExpandIcon={({ open }) => <RenderExpandIcon open={open} transitionDuration={transitionDuration} />}
-        renderExpandedMenuItemIcon={{ icon: <i className='ri-circle-line' /> }}
-        menuSectionStyles={menuSectionStyles(verticalNavOptions, theme)}
-      >
-        <GenerateVerticalMenu menuData={menuData(dictionary, params)} />
-      </Menu> */}
     </ScrollWrapper>
   )
+}
+
+type Props = {
+  scrollMenu: (container: any, isPerfectScrollbar: boolean) => void
+}
+
+function RenderExpandIcon({ open, transitionDuration }: RenderExpandIconProps) {
+  return (
+    <StyledVerticalNavExpandIcon open={open} transitionDuration={transitionDuration}>
+      <i className='ri-arrow-right-s-line' />
+    </StyledVerticalNavExpandIcon>
+  )
+}
+
+type RenderExpandIconProps = {
+  open?: boolean
+  transitionDuration?: VerticalMenuContextProps['transitionDuration']
 }

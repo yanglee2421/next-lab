@@ -1,8 +1,7 @@
-// Component Imports
 import LayoutFooter from '@layouts/components/vertical/Footer'
 import FooterContent from './FooterContent'
 
-const Footer = () => {
+export function Footer() {
   return (
     <LayoutFooter>
       <FooterContent />
@@ -10,4 +9,6 @@ const Footer = () => {
   )
 }
 
-export default Footer
+export default function NoneFooter() {
+  return null
+}

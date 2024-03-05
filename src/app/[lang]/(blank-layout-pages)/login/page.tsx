@@ -1,22 +1,18 @@
-// Next Imports
 import type { Metadata } from 'next'
 
-// Component Imports
 import Login from '@views/Login'
-
-// Server Action Imports
+import { GuestGuard } from '@/components/guard/GuestGuard'
 import { getServerMode } from '@core/server/actions'
+
+export default function LoginPage() {
+  return (
+    <GuestGuard>
+      <Login mode={getServerMode()} />
+    </GuestGuard>
+  )
+}
 
 export const metadata: Metadata = {
   title: 'Login',
   description: 'Login to your account'
 }
-
-const LoginPage = () => {
-  // Vars
-  const mode = getServerMode()
-
-  return <Login mode={mode} />
-}
-
-export default LoginPage

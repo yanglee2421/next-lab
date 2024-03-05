@@ -1,37 +1,18 @@
-// Third-party Imports
 import 'react-perfect-scrollbar/dist/css/styles.css'
-
-// Style Imports
 import '@/app/globals.css'
-
-// Generated Icon CSS Imports
 import '@assets/iconify-icons/generated-icons.css'
-
-// React Imports
 import React from 'react'
 
-// Components Imports
 import Providers from '@components/Providers'
-
-// Util Imports
 import { getMode, getSettingsFromCookie, getSystemMode } from '@core/server/actions'
+import themeConfig from '@/configs/themeConfig'
 
 export default function RootLayout(props: Props) {
-  // ** Props
-  const { children } = props
-
-  const direction = 'ltr'
-
   return (
-    <html id='__next' lang='en' dir={direction}>
+    <html id='__next' lang='en'>
       <body className='flex is-full min-bs-full flex-auto flex-col'>
-        <Providers
-          direction={direction}
-          mode={getMode()}
-          settingsCookie={getSettingsFromCookie()}
-          systemMode={getSystemMode()}
-        >
-          {children}
+        <Providers mode={getMode()} settingsCookie={getSettingsFromCookie()} systemMode={getSystemMode()}>
+          {props.children}
         </Providers>
       </body>
     </html>
@@ -39,8 +20,10 @@ export default function RootLayout(props: Props) {
 }
 
 export const metadata = {
-  title: 'Master Next.js Framework Independent ',
-  description: 'Master Next.js Framework Independent'
+  title: 'WarpDriven AI - from eCommerce AI Copilot to eCommerce AI Agent',
+  description: `${themeConfig.templateName} – eCommerce Full Chain Recommendations`,
+  keywords:
+    'WarpDriven AI, eCommerce Copilot, eCommerce Agent, Integlligent Recommendations, Integlligent Merchant, Integlligent Supplychain'
 }
 
 type Props = {

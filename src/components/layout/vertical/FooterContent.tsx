@@ -1,26 +1,22 @@
 'use client'
 
-// Next Imports
 import Link from 'next/link'
 
-// Third-party Imports
+import { useParams } from 'next/navigation'
+
 import classnames from 'classnames'
 
-// Hook Imports
 import useVerticalNav from '@menu/hooks/useVerticalNav'
 import useHorizontalNav from '@menu/hooks/useHorizontalNav'
 import { useSettings } from '@core/hooks/useSettings'
-
-// Util Imports
 import { verticalLayoutClasses } from '@layouts/utils/layoutClasses'
 
-const FooterContent = () => {
-  // Hooks
+export default function FooterContent() {
   const { settings } = useSettings()
   const { isBreakpointReached: isVerticalBreakpointReached } = useVerticalNav()
   const { isBreakpointReached: isHorizontalBreakpointReached } = useHorizontalNav()
+  const params = useParams()
 
-  // Vars
   const isBreakpointReached =
     settings.layout === 'vertical' ? isVerticalBreakpointReached : isHorizontalBreakpointReached
 
@@ -32,13 +28,13 @@ const FooterContent = () => {
         <span>{`© ${new Date().getFullYear()}, Made with `}</span>
         <span>{`❤️`}</span>
         <span>{` by `}</span>
-        <Link href='https://themeselection.com' target='_blank' className='text-primary'>
-          ThemeSelection
+        <Link href='https://https://warp-driven.com' target='https://https://warp-driven.com' className='text-primary'>
+          WarpDriven
         </Link>
       </p>
       {!isBreakpointReached && (
         <div className='flex items-center gap-4'>
-          <Link href='https://themeselection.com/license' target='_blank' className='text-primary'>
+          {/* <Link href='https://themeselection.com/license' target='_blank' className='text-primary'>
             License
           </Link>
           <Link href='https://themeselection.com' target='_blank' className='text-primary'>
@@ -50,8 +46,8 @@ const FooterContent = () => {
             className='text-primary'
           >
             Documentation
-          </Link>
-          <Link href='https://themeselection.com/support' target='_blank' className='text-primary'>
+          </Link> */}
+          <Link href={`/${params.lang}/ticket`} className='text-primary'>
             Support
           </Link>
         </div>
@@ -59,5 +55,3 @@ const FooterContent = () => {
     </div>
   )
 }
-
-export default FooterContent

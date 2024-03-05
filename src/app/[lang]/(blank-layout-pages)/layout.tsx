@@ -1,16 +1,8 @@
-// Type Imports
-import type { ChildrenType } from '@core/types'
+import React from 'react'
 
-// Component Imports
 import BlankLayout from '@layouts/BlankLayout'
-
-// Util Imports
 import { getSystemMode } from '@core/server/actions'
 
-type Props = ChildrenType
-
-const Layout = ({ children }: Props) => {
-  return <BlankLayout systemMode={getSystemMode()}>{children}</BlankLayout>
+export default function Layout(props: React.PropsWithChildren) {
+  return <BlankLayout systemMode={getSystemMode()}>{props.children}</BlankLayout>
 }
-
-export default Layout

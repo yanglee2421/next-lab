@@ -1,24 +1,17 @@
-// MUI Imports
 import Button from '@mui/material/Button'
 
-// Type Imports
 import type { ChildrenType } from '@core/types'
-
-// Layout Imports
 import LayoutWrapper from '@layouts/LayoutWrapper'
 import VerticalLayout from '@layouts/VerticalLayout'
 import HorizontalLayout from '@layouts/HorizontalLayout'
-
-// Component Imports
 import Navigation from '@components/layout/vertical/Navigation'
 import Header from '@components/layout/horizontal/Header'
 import Navbar from '@components/layout/vertical/Navbar'
 import VerticalFooter from '@components/layout/vertical/Footer'
 import HorizontalFooter from '@components/layout/horizontal/Footer'
 import ScrollToTop from '@core/components/scroll-to-top'
-
-// Util Imports
 import { getMode, getSettingsFromCookie, getSkin, getSystemMode } from '@core/server/actions'
+import { AuthGuard } from '@/components/guard/AuthGuard'
 
 export default async function Layout({ children }: ChildrenType) {
   const mode = getMode()
@@ -27,7 +20,7 @@ export default async function Layout({ children }: ChildrenType) {
   const skin = getSkin()
 
   return (
-    <>
+    <AuthGuard>
       <LayoutWrapper
         systemMode={systemMode}
         verticalLayout={
@@ -50,6 +43,6 @@ export default async function Layout({ children }: ChildrenType) {
           <i className='ri-arrow-up-line' />
         </Button>
       </ScrollToTop>
-    </>
+    </AuthGuard>
   )
 }

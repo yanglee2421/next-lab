@@ -1,13 +1,10 @@
-// Next Imports
-import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { NextResponse } from 'next/server'
 
-// I18n Imports
 import { match } from '@formatjs/intl-localematcher'
 import Negotiator from 'negotiator'
 
 export function middleware(request: NextRequest) {
-  // With locale
   if (
     locales.some(locale => {
       if (request.nextUrl.pathname.startsWith(`/${locale}/`)) {
@@ -24,8 +21,7 @@ export function middleware(request: NextRequest) {
     return NextResponse.next()
   }
 
-  // Without locale
-  request.nextUrl.pathname = `/${match(new Negotiator({ headers: Object.fromEntries(request.headers.entries()) }).languages(), locales, fallbackLocale)}/${request.nextUrl.pathname}`
+  request.nextUrl.pathname = `/${match(new Negotiator({ headers: Object.fromEntries(request.headers.entries()) }).languages(locales), locales, fallbackLocale)}/${request.nextUrl.pathname}`
 
   return NextResponse.redirect(request.nextUrl)
 }
@@ -46,6 +42,6 @@ export const config = {
      *    - next.svg (Next.js logo)
      *    - vercel.svg (Vercel logo)
      */
-    '/((?!api|_next/static|_next/image|favicon.ico|.+?/hook-examples|.+?/menu-examples|images|next.svg|vercel.svg).*)'
+    '/((?!api|_next/static|_next/image|favicon.ico|.+?/hook-examples|.+?/menu-examples|images|tinymce|next.svg|vercel.svg).*)'
   ]
 }
