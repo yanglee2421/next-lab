@@ -100,11 +100,7 @@ module.exports = {
           '{}': false
         }
       }
-    ],
-
-    // Custom
-    'import/no-named-as-default-member': 'off',
-    'react/no-unescaped-entities': 'off'
+    ]
   },
   settings: {
     react: {

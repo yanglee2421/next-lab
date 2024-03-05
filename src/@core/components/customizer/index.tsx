@@ -1,7 +1,13 @@
 'use client'
 
-import React from 'react'
+// React Imports
+import { useEffect, useRef, useState } from 'react'
 
+// Next Imports
+import { usePathname } from 'next/navigation'
+import Link from 'next/link'
+
+// MUI Imports
 import Chip from '@mui/material/Chip'
 import Fade from '@mui/material/Fade'
 import Paper from '@mui/material/Paper'
@@ -10,14 +16,19 @@ import { useTheme } from '@mui/material/styles'
 import ClickAwayListener from '@mui/material/ClickAwayListener'
 import Checkbox from '@mui/material/Checkbox'
 import type { Breakpoint } from '@mui/material/styles'
+
+// Third-party Imports
 import classnames from 'classnames'
 import { useDebounce, useMedia } from 'react-use'
 import { HexColorPicker, HexColorInput } from 'react-colorful'
 import PerfectScrollbar from 'react-perfect-scrollbar'
 
+// Type Imports
 import type { Settings } from '@core/contexts/settingsContext'
 import type { Direction } from '@core/types'
 import type { PrimaryColorConfig } from '@configs/primaryColorConfig'
+
+// Icon Imports
 import Cog from '@core/svg/Cog'
 import EyeDropper from '@core/svg/EyeDropper'
 import SkinDefault from '@core/svg/SkinDefault'
@@ -29,23 +40,82 @@ import ContentCompact from '@core/svg/ContentCompact'
 import ContentWide from '@core/svg/ContentWide'
 import DirectionLtr from '@core/svg/DirectionLtr'
 import DirectionRtl from '@core/svg/DirectionRtl'
+
+// Config Imports
 import primaryColorConfig from '@configs/primaryColorConfig'
+
+// Hook Imports
 import { useSettings } from '@core/hooks/useSettings'
 import useVerticalNav from '@menu/hooks/useVerticalNav'
-import styles from './styles.module.css'
-import { useThemeStore } from '@/hooks/store/useThemeStore'
 
-export default function Customizer({ breakpoint = '1200px', disableDirection = false }: CustomizerProps) {
-  const [isOpen, setIsOpen] = React.useState(false)
-  const [isMenuOpen, setIsMenuOpen] = React.useState(false)
-  const anchorRef = React.useRef<HTMLDivElement | null>(null)
+// Style Imports
+import styles from './styles.module.css'
+
+type CustomizerProps = {
+  breakpoint?: Breakpoint | 'xxl' | `${number}px` | `${number}rem` | `${number}em`
+  dir?: Direction
+  disableDirection?: boolean
+}
+
+const getLocalePath = (pathName: string, locale: string) => {
+  if (!pathName) return '/'
+  const segments = pathName.split('/')
+
+  segments[1] = locale
+
+  return segments.join('/')
+}
+
+type DebouncedColorPickerProps = {
+  settings: Settings
+  isColorFromPrimaryConfig: PrimaryColorConfig | undefined
+  handleChange: (field: keyof Settings | 'primaryColor', value: Settings[keyof Settings] | string) => void
+}
+
+const DebouncedColorPicker = (props: DebouncedColorPickerProps) => {
+  // Props
+  const { settings, isColorFromPrimaryConfig, handleChange } = props
+
+  // States
+  const [debouncedColor, setDebouncedColor] = useState(settings.primaryColor ?? primaryColorConfig[0].main)
+
+  // Hooks
+  useDebounce(() => handleChange('primaryColor', debouncedColor), 200, [debouncedColor])
+
+  return (
+    <>
+      <HexColorPicker
+        color={!isColorFromPrimaryConfig ? settings.primaryColor ?? primaryColorConfig[0].main : '#eee'}
+        onChange={setDebouncedColor}
+      />
+      <HexColorInput
+        className={styles.colorInput}
+        color={!isColorFromPrimaryConfig ? settings.primaryColor ?? primaryColorConfig[0].main : '#eee'}
+        onChange={setDebouncedColor}
+        prefixed
+        placeholder='Type a color'
+      />
+    </>
+  )
+}
+
+const Customizer = ({ breakpoint = '1200px', dir = 'ltr', disableDirection = false }: CustomizerProps) => {
+  // States
+  const [isOpen, setIsOpen] = useState(false)
+  const [direction, setDirection] = useState(dir)
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+
+  // Refs
+  const anchorRef = useRef<HTMLDivElement | null>(null)
+
+  // Hooks
   const theme = useTheme()
+  const pathName = usePathname()
   const { settings, updateSettings, resetSettings, isSettingsChanged } = useSettings()
   const { collapseVerticalNav } = useVerticalNav()
   const isSystemDark = useMedia('(prefers-color-scheme: dark)', false)
-  const direction = useThemeStore(store => store.direction)
-  const setDirection = useThemeStore(store => store.setDirection)
 
+  // Vars
   let breakpointValue: CustomizerProps['breakpoint']
 
   switch (breakpoint) {
@@ -101,7 +171,7 @@ export default function Customizer({ breakpoint = '1200px', disableDirection = f
     setIsMenuOpen(false)
   }
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (settings.layout === 'collapsed') {
       collapseVerticalNav(true)
     } else {
@@ -403,42 +473,36 @@ export default function Customizer({ breakpoint = '1200px', disableDirection = f
                 <div className='flex flex-col gap-2.5'>
                   <p className='font-medium'>Direction</p>
                   <div className='flex items-center gap-4'>
-                    <div className='flex flex-col items-start gap-0.5'>
-                      <div
-                        className={classnames(styles.itemWrapper, {
-                          [styles.active]: direction === 'ltr'
-                        })}
-                        onClick={() => {
-                          React.startTransition(() => {
-                            handleChange('direction', 'ltr')
-                          })
-                        }}
-                      >
-                        <DirectionLtr />
+                    <Link href={getLocalePath(pathName, 'en')}>
+                      <div className='flex flex-col items-start gap-0.5'>
+                        <div
+                          className={classnames(styles.itemWrapper, {
+                            [styles.active]: direction === 'ltr'
+                          })}
+                        >
+                          <DirectionLtr />
+                        </div>
+                        <p className={styles.itemLabel}>
+                          Left to Right <br />
+                          (English)
+                        </p>
                       </div>
-                      <p className={styles.itemLabel}>
-                        Left to Right <br />
-                        (English)
-                      </p>
-                    </div>
-                    <div className='flex flex-col items-start gap-0.5'>
-                      <div
-                        className={classnames(styles.itemWrapper, {
-                          [styles.active]: direction === 'rtl'
-                        })}
-                        onClick={() => {
-                          React.startTransition(() => {
-                            handleChange('direction', 'rtl')
-                          })
-                        }}
-                      >
-                        <DirectionRtl />
+                    </Link>
+                    <Link href={getLocalePath(pathName, 'ar')}>
+                      <div className='flex flex-col items-start gap-0.5'>
+                        <div
+                          className={classnames(styles.itemWrapper, {
+                            [styles.active]: direction === 'rtl'
+                          })}
+                        >
+                          <DirectionRtl />
+                        </div>
+                        <p className={styles.itemLabel}>
+                          Right to Left <br />
+                          (Arabic)
+                        </p>
                       </div>
-                      <p className={styles.itemLabel}>
-                        Right to Left <br />
-                        (Arabic)
-                      </p>
-                    </div>
+                    </Link>
                   </div>
                 </div>
               )}
@@ -450,36 +514,4 @@ export default function Customizer({ breakpoint = '1200px', disableDirection = f
   )
 }
 
-function DebouncedColorPicker(props: DebouncedColorPickerProps) {
-  const { settings, isColorFromPrimaryConfig, handleChange } = props
-  const [debouncedColor, setDebouncedColor] = React.useState(settings.primaryColor ?? primaryColorConfig[0].main)
-
-  useDebounce(() => handleChange('primaryColor', debouncedColor), 200, [debouncedColor])
-
-  return (
-    <>
-      <HexColorPicker
-        color={!isColorFromPrimaryConfig ? settings.primaryColor ?? primaryColorConfig[0].main : '#eee'}
-        onChange={setDebouncedColor}
-      />
-      <HexColorInput
-        className={styles.colorInput}
-        color={!isColorFromPrimaryConfig ? settings.primaryColor ?? primaryColorConfig[0].main : '#eee'}
-        onChange={setDebouncedColor}
-        prefixed
-        placeholder='Type a color'
-      />
-    </>
-  )
-}
-
-type CustomizerProps = {
-  breakpoint?: Breakpoint | 'xxl' | `${number}px` | `${number}rem` | `${number}em`
-  disableDirection?: boolean
-}
-
-type DebouncedColorPickerProps = {
-  settings: Settings
-  isColorFromPrimaryConfig: PrimaryColorConfig | undefined
-  handleChange: (field: keyof Settings | 'primaryColor', value: Settings[keyof Settings] | string) => void
-}
+export default Customizer

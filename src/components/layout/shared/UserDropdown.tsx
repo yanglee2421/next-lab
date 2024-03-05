@@ -1,10 +1,13 @@
 'use client'
 
-import React from 'react'
+// React Imports
+import { useRef, useState } from 'react'
 import type { MouseEvent } from 'react'
 
-import { useParams, useRouter } from 'next/navigation'
+// Next Imports
+import { useRouter } from 'next/navigation'
 
+// MUI Imports
 import { styled } from '@mui/material/styles'
 import Badge from '@mui/material/Badge'
 import Avatar from '@mui/material/Avatar'
@@ -18,25 +21,34 @@ import Divider from '@mui/material/Divider'
 import MenuItem from '@mui/material/MenuItem'
 import Button from '@mui/material/Button'
 
-import { useQueryClient } from '@tanstack/react-query'
-
+// Hook Imports
 import { useSettings } from '@core/hooks/useSettings'
-import { useAuthLocalStore } from '@/hooks/store/useAuthLocalStore'
-import { useAuth } from '@/hooks/useAuth'
 
-export default function UserDropdown() {
-  const [open, setOpen] = React.useState(false)
-  const anchorRef = React.useRef<HTMLDivElement>(null)
+// Styled component for badge content
+const BadgeContentSpan = styled('span')({
+  width: 8,
+  height: 8,
+  borderRadius: '50%',
+  cursor: 'pointer',
+  backgroundColor: 'var(--mui-palette-success-main)',
+  boxShadow: '0 0 0 2px var(--mui-palette-background-paper)'
+})
+
+const UserDropdown = () => {
+  // States
+  const [open, setOpen] = useState(false)
+
+  // Refs
+  const anchorRef = useRef<HTMLDivElement>(null)
+
+  // Hooks
+  const router = useRouter()
 
   const { settings } = useSettings()
-  const router = useRouter()
-  const queryClient = useQueryClient()
-  const clearAccessToken = useAuthLocalStore(s => s.clearAccessToken)
-  const auth = useAuth()
-  const params = useParams()
+  
 
   const handleDropdownOpen = () => {
-    setOpen(p => !p)
+    !open ? setOpen(true) : setOpen(false)
   }
 
   const handleDropdownClose = (event?: MouseEvent<HTMLLIElement> | (MouseEvent | TouchEvent), url?: string) => {
@@ -51,8 +63,9 @@ export default function UserDropdown() {
     setOpen(false)
   }
 
-  if (!auth) {
-    return null
+  const handleUserLogout = async () => {
+    // Redirect to login page
+    router.push('/login')
   }
 
   return (
@@ -66,8 +79,8 @@ export default function UserDropdown() {
       >
         <Avatar
           ref={anchorRef}
-          alt='Avatar'
-          src={auth.user_data.avatar ? `data:image/png;base64,${auth.user_data.avatar}` : '/images/avatars/1.png'}
+          alt='John Doe'
+          src='/images/avatars/1.png'
           onClick={handleDropdownOpen}
           className='cursor-pointer bs-[38px] is-[38px]'
         />
@@ -91,57 +104,30 @@ export default function UserDropdown() {
               <ClickAwayListener onClickAway={e => handleDropdownClose(e as MouseEvent | TouchEvent)}>
                 <MenuList>
                   <div className='flex items-center plb-2 pli-4 gap-2' tabIndex={-1}>
-                    <Avatar
-                      alt='Avatar'
-                      src={
-                        auth.user_data.avatar
-                          ? `data:image/png;base64,${auth.user_data.avatar}`
-                          : '/images/avatars/1.png'
-                      }
-                    />
+                    <Avatar alt='John Doe' src='/images/avatars/1.png' />
                     <div className='flex items-start flex-col'>
                       <Typography className='font-medium' color='text.primary'>
-                        {auth.user_data.name}
+                        John Doe
                       </Typography>
-                      <Typography variant='caption'>{auth.user_data.email}</Typography>
+                      <Typography variant='caption'>admin@materio.com</Typography>
                     </div>
                   </div>
                   <Divider className='mlb-1' />
-                  <MenuItem
-                    className='gap-3'
-                    onClick={e => {
-                      handleDropdownClose(e, `/${params.lang}/user/overview/`)
-                    }}
-                  >
+                  <MenuItem className='gap-3' onClick={e => e.preventDefault()}>
                     <i className='ri-user-3-line text-[22px]' />
                     <Typography color='text.primary'>My Profile</Typography>
                   </MenuItem>
-                  <MenuItem
-                    className='gap-3'
-                    onClick={e => {
-                      handleDropdownClose(e, `/${params.lang}/account-setting/account/`)
-                    }}
-                  >
+                  <MenuItem className='gap-3' onClick={e => e.preventDefault()}>
                     <i className='ri-settings-4-line text-[22px]' />
-                    <Typography color='text.primary'>Account</Typography>
+                    <Typography color='text.primary'>Settings</Typography>
                   </MenuItem>
-                  <MenuItem
-                    className='gap-3'
-                    onClick={e => {
-                      handleDropdownClose(e, `/${params.lang}/subscription/1`)
-                    }}
-                  >
+                  <MenuItem className='gap-3' onClick={e => e.preventDefault()}>
                     <i className='ri-money-dollar-circle-line text-[22px]' />
-                    <Typography color='text.primary'>Subscriptions</Typography>
+                    <Typography color='text.primary'>Pricing</Typography>
                   </MenuItem>
-                  <MenuItem
-                    className='gap-3'
-                    onClick={e => {
-                      handleDropdownClose(e, `/${params.lang}/organization`)
-                    }}
-                  >
-                    <i className='ri-organization-chart text-[22px]' />
-                    <Typography color='text.primary'>Organization</Typography>
+                  <MenuItem className='gap-3' onClick={e => e.preventDefault()}>
+                    <i className='ri-question-line text-[22px]' />
+                    <Typography color='text.primary'>FAQ</Typography>
                   </MenuItem>
                   <div className='flex items-center plb-2 pli-4'>
                     <Button
@@ -150,11 +136,7 @@ export default function UserDropdown() {
                       color='error'
                       size='small'
                       endIcon={<i className='ri-logout-box-r-line' />}
-                      onClick={() => {
-                        clearAccessToken()
-                        queryClient.setQueryData(['refresh_token'], null)
-                        queryClient.clear()
-                      }}
+                      onClick={handleUserLogout}
                       sx={{ '& .MuiButton-endIcon': { marginInlineStart: 1.5 } }}
                     >
                       Logout
@@ -170,11 +152,4 @@ export default function UserDropdown() {
   )
 }
 
-const BadgeContentSpan = styled('span')({
-  width: 8,
-  height: 8,
-  borderRadius: '50%',
-  cursor: 'pointer',
-  backgroundColor: 'var(--mui-palette-success-main)',
-  boxShadow: '0 0 0 2px var(--mui-palette-background-paper)'
-})
+export default UserDropdown

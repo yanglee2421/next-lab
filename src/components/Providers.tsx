@@ -1,50 +1,36 @@
-'use client'
+// Type Imports
+import type { ChildrenType, Direction } from '@core/types'
 
-import React from 'react'
-
-import type { ChildrenType } from '@core/types'
-import type { getMode, getSettingsFromCookie, getSystemMode } from '@core/server/actions'
+// Context Imports
 import { VerticalNavProvider } from '@menu/contexts/verticalNavContext'
 import { SettingsProvider } from '@core/contexts/settingsContext'
 import ThemeProvider from '@components/theme'
-import { QueryProvider } from '@components/providers/QueryProvider'
-import AppReactToastify from '@/libs/styles/AppReactToastify'
-import { AclProvider } from '@components/providers/AclProvider'
-import { useThemeStore } from '@/hooks/store/useThemeStore'
-import { PosthogProvider } from '@components/providers/PosthogProvider'
 
-export default function Providers(props: Props) {
-  const { children, settingsCookie, mode, systemMode } = props
-  const direction = useThemeStore(store => store.direction)
+// Util Imports
+import { getMode, getSettingsFromCookie, getSystemMode } from '@core/server/actions'
 
-  React.useEffect(() => {
-    const prevDir = document.documentElement.dir
+type Props = ChildrenType & {
+  direction: Direction
+}
 
-    document.documentElement.setAttribute('dir', direction)
+const Providers = (props: Props) => {
+  // Props
+  const { children, direction } = props
 
-    return () => {
-      document.documentElement.setAttribute('dir', prevDir)
-    }
-  }, [direction])
+  // Vars
+  const mode = getMode()
+  const settingsCookie = getSettingsFromCookie()
+  const systemMode = getSystemMode()
 
   return (
     <VerticalNavProvider>
       <SettingsProvider settingsCookie={settingsCookie} mode={mode}>
         <ThemeProvider direction={direction} systemMode={systemMode}>
-          <AppReactToastify></AppReactToastify>
-          <QueryProvider>
-            <AclProvider>
-              <PosthogProvider>{children}</PosthogProvider>
-            </AclProvider>
-          </QueryProvider>
+          {children}
         </ThemeProvider>
       </SettingsProvider>
     </VerticalNavProvider>
   )
 }
 
-type Props = ChildrenType & {
-  mode: ReturnType<typeof getMode>
-  settingsCookie: ReturnType<typeof getSettingsFromCookie>
-  systemMode: ReturnType<typeof getSystemMode>
-}
+export default Providers

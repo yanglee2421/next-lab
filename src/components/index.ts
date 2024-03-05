@@ -1,5 +1,0 @@
-export * from './CopyBtn'
-export * from './TLink'
-export * from './TTypography'
-export * from './TButton'
-export * from './TLoadingButton'

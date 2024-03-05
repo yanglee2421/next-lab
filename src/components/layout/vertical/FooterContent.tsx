@@ -1,22 +1,26 @@
 'use client'
 
+// Next Imports
 import Link from 'next/link'
 
-import { useParams } from 'next/navigation'
-
+// Third-party Imports
 import classnames from 'classnames'
 
+// Hook Imports
 import useVerticalNav from '@menu/hooks/useVerticalNav'
 import useHorizontalNav from '@menu/hooks/useHorizontalNav'
 import { useSettings } from '@core/hooks/useSettings'
+
+// Util Imports
 import { verticalLayoutClasses } from '@layouts/utils/layoutClasses'
 
-export default function FooterContent() {
+const FooterContent = () => {
+  // Hooks
   const { settings } = useSettings()
   const { isBreakpointReached: isVerticalBreakpointReached } = useVerticalNav()
   const { isBreakpointReached: isHorizontalBreakpointReached } = useHorizontalNav()
-  const params = useParams()
 
+  // Vars
   const isBreakpointReached =
     settings.layout === 'vertical' ? isVerticalBreakpointReached : isHorizontalBreakpointReached
 
@@ -28,13 +32,13 @@ export default function FooterContent() {
         <span>{`© ${new Date().getFullYear()}, Made with `}</span>
         <span>{`❤️`}</span>
         <span>{` by `}</span>
-        <Link href='https://https://warp-driven.com' target='https://https://warp-driven.com' className='text-primary'>
-          WarpDriven
+        <Link href='https://themeselection.com' target='_blank' className='text-primary'>
+          ThemeSelection
         </Link>
       </p>
       {!isBreakpointReached && (
         <div className='flex items-center gap-4'>
-          {/* <Link href='https://themeselection.com/license' target='_blank' className='text-primary'>
+          <Link href='https://themeselection.com/license' target='_blank' className='text-primary'>
             License
           </Link>
           <Link href='https://themeselection.com' target='_blank' className='text-primary'>
@@ -46,8 +50,8 @@ export default function FooterContent() {
             className='text-primary'
           >
             Documentation
-          </Link> */}
-          <Link href={`/${params.lang}/ticket`} className='text-primary'>
+          </Link>
+          <Link href='https://themeselection.com/support' target='_blank' className='text-primary'>
             Support
           </Link>
         </div>
@@ -55,3 +59,5 @@ export default function FooterContent() {
     </div>
   )
 }
+
+export default FooterContent

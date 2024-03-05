@@ -1,30 +1,66 @@
 'use client'
 
-import React from 'react'
+// React Imports
+import { useRef } from 'react'
 
+// MUI Imports
 import { styled, useColorScheme, useTheme } from '@mui/material/styles'
 
+// Type Imports
 import type { Settings } from '@core/contexts/settingsContext'
 import type { Mode, Skin, SystemMode } from '@core/types'
+
+// Component Imports
 import VerticalNav, { NavHeader, NavCollapseIcons } from '@menu/vertical-menu'
 import VerticalMenu from './VerticalMenu'
+import Logo from '@components/layout/shared/Logo'
 
-// import Logo from '@components/layout/shared/Logo'
-import { WarpDrivenLogo } from '@components/layout/shared/WarpDrivenLogo'
+// Hook Imports
 import useVerticalNav from '@menu/hooks/useVerticalNav'
 import { useSettings } from '@core/hooks/useSettings'
+
+// Style Imports
 import navigationCustomStyles from '@core/styles/vertical/navigationCustomStyles'
 
-export default function Navigation(props: Props) {
+type Props = {
+  settingsCookie: Settings
+  mode: Mode
+  systemMode: SystemMode
+  skin: Skin
+}
+
+const StyledBoxForShadow = styled('div')(({ theme }) => ({
+  top: 60,
+  left: -8,
+  zIndex: 2,
+  opacity: 0,
+  position: 'absolute',
+  pointerEvents: 'none',
+  width: 'calc(100% + 15px)',
+  height: theme.mixins.toolbar.minHeight,
+  transition: 'opacity .15s ease-in-out',
+  background: `linear-gradient(var(--mui-palette-background-default) ${
+    theme.direction === 'rtl' ? '95%' : '5%'
+  }, rgb(var(--mui-palette-background-defaultChannel) / 0.85) 30%, rgb(var(--mui-palette-background-defaultChannel) / 0.5) 65%, rgb(var(--mui-palette-background-defaultChannel) / 0.3) 75%, transparent)`,
+  '&.scrolled': {
+    opacity: 1
+  }
+}))
+
+const Navigation = (props: Props) => {
+  // Props
   const { settingsCookie, mode, systemMode, skin } = props
 
+  // Hooks
   const verticalNavOptions = useVerticalNav()
   const { updateSettings, settings } = useSettings()
   const { mode: muiMode, systemMode: muiSystemMode } = useColorScheme()
   const theme = useTheme()
 
-  const shadowRef = React.useRef(null)
+  // Refs
+  const shadowRef = useRef(null)
 
+  // Vars
   const { isCollapsed, isHovered, isBreakpointReached } = verticalNavOptions
   const isServer = typeof window === 'undefined'
   let isSemiDark, isDark, isSkinBordered
@@ -71,7 +107,7 @@ export default function Navigation(props: Props) {
     >
       {/* Nav Header including Logo & nav toggle icons  */}
       <NavHeader>
-        <WarpDrivenLogo />
+        <Logo />
         {!(isCollapsed && !isHovered) && (
           <NavCollapseIcons
             lockedIcon={<i className='ri-radio-button-line text-xl' />}
@@ -88,27 +124,4 @@ export default function Navigation(props: Props) {
   )
 }
 
-type Props = {
-  settingsCookie: Settings
-  mode: Mode
-  systemMode: SystemMode
-  skin: Skin
-}
-
-const StyledBoxForShadow = styled('div')(({ theme }) => ({
-  top: 60,
-  left: -8,
-  zIndex: 2,
-  opacity: 0,
-  position: 'absolute',
-  pointerEvents: 'none',
-  width: 'calc(100% + 15px)',
-  height: theme.mixins.toolbar.minHeight,
-  transition: 'opacity .15s ease-in-out',
-  background: `linear-gradient(var(--mui-palette-background-default) ${
-    theme.direction === 'rtl' ? '95%' : '5%'
-  }, rgb(var(--mui-palette-background-defaultChannel) / 0.85) 30%, rgb(var(--mui-palette-background-defaultChannel) / 0.5) 65%, rgb(var(--mui-palette-background-defaultChannel) / 0.3) 75%, transparent)`,
-  '&.scrolled': {
-    opacity: 1
-  }
-}))
+export default Navigation
