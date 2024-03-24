@@ -9,6 +9,7 @@ import '@/app/globals.css'
 
 // Generated Icon CSS Imports
 import '@assets/iconify-icons/generated-icons.css'
+import { QueryProvider } from '@components/QueryProvider'
 
 export const metadata = {
   title: 'Master Next.js Framework Independent ',
@@ -21,7 +22,9 @@ const RootLayout = ({ children }: ChildrenType) => {
 
   return (
     <html id='__next' lang='en' dir={direction}>
-      <body className='flex is-full min-bs-full flex-auto flex-col'>{children}</body>
+      <body className='flex flex-auto flex-col min-bs-full is-full'>
+        <QueryProvider>{children}</QueryProvider>
+      </body>
     </html>
   )
 }
