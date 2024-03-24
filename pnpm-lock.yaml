@@ -47,6 +47,9 @@ dependencies:
   '@mui/material-nextjs':
     specifier: ^5.15.3
     version: 5.15.5(@emotion/cache@11.11.0)(@mui/material@5.15.5)(@types/react@18.2.48)(next@14.1.0)(react@18.2.0)
+  '@prisma/client':
+    specifier: ^5.11.0
+    version: 5.11.0(prisma@5.8.1)
   '@tanstack/match-sorter-utils':
     specifier: ^8.11.3
     version: 8.11.3
@@ -102,7 +105,7 @@ dependencies:
     specifier: ^3.1.1
     version: 3.2.4
   prisma:
-    specifier: ^5.8.0
+    specifier: ^5.8.1
     version: 5.8.1
   react:
     specifier: ^18.2.0
@@ -1145,6 +1148,19 @@ packages:
 
   /@popperjs/core@2.11.8:
     resolution: {integrity: sha512-P1st0aksCrn9sGZhp8GMYwBnQsbvAWsZAX44oXNNvLHGqAOcoVxmjZiohstwQ7SqKnbR47akdNi+uleWD8+g6A==}
+    dev: false
+
+  /@prisma/client@5.11.0(prisma@5.8.1):
+    resolution: {integrity: sha512-SWshvS5FDXvgJKM/a0y9nDC1rqd7KG0Q6ZVzd+U7ZXK5soe73DJxJJgbNBt2GNXOa+ysWB4suTpdK5zfFPhwiw==}
+    engines: {node: '>=16.13'}
+    requiresBuild: true
+    peerDependencies:
+      prisma: '*'
+    peerDependenciesMeta:
+      prisma:
+        optional: true
+    dependencies:
+      prisma: 5.8.1
     dev: false
 
   /@prisma/debug@5.8.1:
