@@ -13,6 +13,7 @@ datasource db {
 model User {
   id       Int    @id @default(autoincrement())
   name     String @unique
+  password String
   parentId Int?
   parent   User?  @relation("ParentChild", fields: [parentId], references: [id])
   children User[] @relation("ParentChild")
