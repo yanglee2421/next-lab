@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { validateJwt } from '@/utils/validateJwt'
+import { validateJwt } from '@/libs/validateJwt'
 import { prisma } from '@/data/prisma'
 
 export async function validateAuthorization(request: NextRequest) {

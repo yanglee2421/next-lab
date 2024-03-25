@@ -1,9 +1,10 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 import { prisma } from '@/data/prisma'
 import { z } from 'zod'
-import { createJwt } from '@/utils/createJwt'
+import { createJwt } from '@/libs/createJwt'
+import { withErrorHandler } from '@/libs/withErrorHandler'
 
-export async function POST(request: NextRequest) {
+export const POST = withErrorHandler(async request => {
   const body = await request.json()
   const params = schema.parse(body)
 
@@ -27,7 +28,7 @@ export async function POST(request: NextRequest) {
     user: userInfo,
     token
   })
-}
+})
 
 const schema = z.object({
   name: z.string(),

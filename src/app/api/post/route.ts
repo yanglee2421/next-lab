@@ -1,26 +1,28 @@
-import type { NextRequest } from 'next/server'
 import { NextResponse } from 'next/server'
-import { verify } from 'jsonwebtoken'
 import { prisma } from '@/data/prisma'
+import { validateAuthorization } from '@/libs/validateAuthorization'
+import { withErrorHandler } from '@/libs/withErrorHandler'
 
-export async function GET(request: NextRequest) {
-  const authorization = request.headers.get('Authorization')
-  const jwt = authorization?.split(' ').at(-1)
-  if (!jwt) {
-    return NextResponse.error()
+export const GET = withErrorHandler(async request => {
+  const { error } = await validateAuthorization(request)
+
+  if (error) {
+    return error
   }
-
-  try {
-    const user = verify(jwt, 'sec')
-  } catch (error) {}
 
   const data = await prisma.post.findMany()
 
   return NextResponse.json({ data })
-}
+})
 
-export async function POST(request: NextRequest) {
+export const POST = withErrorHandler(async request => {
+  const { error } = await validateAuthorization(request)
+
+  if (error) {
+    return error
+  }
+
   const data = await request.json()
 
   return NextResponse.json({ data })
-}
+})
