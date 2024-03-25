@@ -1,8 +1,10 @@
+import { NextResponse } from 'next/server'
+
+import { z } from 'zod'
+
 import { prisma } from '@/data/prisma'
 import { createJwt } from '@/libs/createJwt'
 import { withErrorHandler } from '@/libs/withErrorHandler'
-import { NextResponse } from 'next/server'
-import { z } from 'zod'
 
 export const POST = withErrorHandler(async request => {
   const body = await request.json()

@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+
 import { validateAuthorization } from '@/libs/validateAuthorization'
 import { createJwt } from '@/libs/createJwt'
 import { withErrorHandler } from '@/libs/withErrorHandler'

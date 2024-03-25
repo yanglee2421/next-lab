@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
-import { prisma } from '@/data/prisma'
+
 import { z } from 'zod'
+
+import { prisma } from '@/data/prisma'
 import { createJwt } from '@/libs/createJwt'
 import { withErrorHandler } from '@/libs/withErrorHandler'
 

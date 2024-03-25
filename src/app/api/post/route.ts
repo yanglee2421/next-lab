@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+
 import { prisma } from '@/data/prisma'
 import { validateAuthorization } from '@/libs/validateAuthorization'
 import { withErrorHandler } from '@/libs/withErrorHandler'
